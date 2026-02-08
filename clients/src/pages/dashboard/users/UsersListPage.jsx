@@ -12,7 +12,6 @@ import {
 import { toast } from 'react-hot-toast';
 import Layout from '../../../components/layout/Layout';
 import Button from '../../../components/common/Button';
-import Modal from '../../../components/common/Modal';
 import Spinner from '../../../components/common/Spinner';
 import UserFilter from '../../../components/users/UserFilter';
 import UserStats from '../../../components/users/UserStats';
@@ -25,9 +24,15 @@ const UsersListPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-  const [toggleModalOpen, setToggleModalOpen] = useState(false);
-  const [userToToggle, setUserToToggle] = useState(null);
-  const [isToggling, setIsToggling] = useState(false);
+  const [updatingUser, setUpdatingUser] = useState(null);
+  const [localUsers, setLocalUsers] = useState([]);
+
+  // Update local users when the fetched users change
+  useEffect(() => {
+    if (Array.isArray(users)) {
+      setLocalUsers(users);
+    }
+  }, [users]);
 
   // Fetch users on mount
   useEffect(() => {
@@ -41,7 +46,6 @@ const UsersListPage = () => {
       if (roleFilter) params.role = roleFilter;
       if (statusFilter) params.is_active = statusFilter;
       
-      console.log('Loading users with params:', params);
       await fetchUsers(params);
     } catch (error) {
       console.error('Failed to load users:', error);
@@ -64,49 +68,35 @@ const UsersListPage = () => {
     setStatusFilter('');
   };
 
-  // Simple toggle handler - just opens modal
-  const handleToggleClick = (user) => {
-    console.log('Toggle clicked for user:', user.username, 'ID:', user.id);
-    setUserToToggle(user);
-    setToggleModalOpen(true);
-  };
-
-  const handleToggleConfirm = async () => {
-    if (!userToToggle) return;
-
-    setIsToggling(true);
-
+  const handleToggleStatus = async (user) => {
+    setUpdatingUser(user.id);
+    
     try {
-      const newStatus = !userToToggle.is_active;
-      console.log('=== CONFIRM TOGGLE ===');
-      console.log('User:', userToToggle.username, 'ID:', userToToggle.id);
-      console.log('Current status:', userToToggle.is_active);
-      console.log('New status:', newStatus);
-
-      // Get current user for debugging
-      const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-      console.log('Current user role:', currentUser.role);
-
-      // Use the patchUser method from useUsers hook
-      await patchUser(userToToggle.id, { is_active: newStatus });
+      const newStatus = !user.is_active;
       
-      console.log('=== TOGGLE SUCCESS ===');
+      // Use the patchUser method directly
+      await patchUser(user.id, { is_active: newStatus });
+      
       toast.success(
-        `User "${userToToggle.username}" has been ${newStatus ? 'activated' : 'deactivated'}`
+        `User "${user.username || 'User'}" has been ${newStatus ? 'activated' : 'deactivated'}`
       );
       
-      setToggleModalOpen(false);
-      setUserToToggle(null);
+      // Update local state immediately
+      setLocalUsers(prevUsers => 
+        prevUsers.map(u => 
+          u.id === user.id 
+            ? { ...u, is_active: newStatus }
+            : u
+        )
+      );
       
-      // Reload users after a short delay
+      // Reload users after a short delay to get fresh data
       setTimeout(() => {
         loadUsers();
-      }, 300);
+      }, 500);
       
     } catch (error) {
-      console.error('=== TOGGLE ERROR ===');
-      console.error('Full error:', error);
-      console.error('Error response:', error.response?.data);
+      console.error('Toggle error:', error);
       
       let errorMessage = 'Failed to update user status';
       
@@ -114,8 +104,7 @@ const UsersListPage = () => {
         if (error.response.data.detail) {
           errorMessage = error.response.data.detail;
         } else if (typeof error.response.data === 'object') {
-          // Try to get first error message
-          const errors = Object.values(errorResponse.data).flat();
+          const errors = Object.values(error.response.data).flat();
           errorMessage = errors[0] || errorMessage;
         }
       }
@@ -124,21 +113,13 @@ const UsersListPage = () => {
         errorMessage = 'You do not have permission to change user status';
       }
       
-      if (error.response?.status === 400) {
-        console.log('Validation errors:', error.response.data);
-        if (error.response.data.is_active) {
-          errorMessage = `Cannot change status: ${error.response.data.is_active[0]}`;
-        }
-      }
-      
       toast.error(errorMessage);
     } finally {
-      setIsToggling(false);
+      setUpdatingUser(null);
     }
   };
 
   const handleRefresh = () => {
-    console.log('Manual refresh triggered');
     loadUsers();
   };
 
@@ -150,6 +131,35 @@ const UsersListPage = () => {
       donor: 'bg-green-100 text-green-800 border-green-200',
     };
     return colors[role] || 'bg-gray-100 text-gray-800 border-gray-200';
+  };
+
+  // Safe helper functions
+  const getAvatarInitial = (user) => {
+    if (user?.username) {
+      return user.username.charAt(0).toUpperCase();
+    } else if (user?.email) {
+      return user.email.charAt(0).toUpperCase();
+    } else if (user?.first_name) {
+      return user.first_name.charAt(0).toUpperCase();
+    }
+    return 'U';
+  };
+
+  const getDisplayName = (user) => {
+    if (user?.full_name) return user.full_name;
+    if (user?.first_name && user?.last_name) {
+      return `${user.first_name} ${user.last_name}`;
+    }
+    if (user?.first_name) return user.first_name;
+    if (user?.username) return user.username;
+    if (user?.email) return user.email.split('@')[0];
+    return 'Unknown User';
+  };
+
+  const getUsername = (user) => {
+    if (user?.username) return `@${user.username}`;
+    if (user?.email) return user.email;
+    return '';
   };
 
   return (
@@ -207,7 +217,7 @@ const UsersListPage = () => {
               </span>
             ) : (
               <span>
-                Showing <span className="font-semibold text-gray-900">{users.length}</span> user{users.length !== 1 ? 's' : ''}
+                Showing <span className="font-semibold text-gray-900">{localUsers.length}</span> user{localUsers.length !== 1 ? 's' : ''}
                 {(searchTerm || roleFilter || statusFilter) && (
                   <span className="text-gray-400"> (filtered)</span>
                 )}
@@ -217,11 +227,11 @@ const UsersListPage = () => {
         </div>
 
         {/* Users Table */}
-        {isLoading && !users.length ? (
+        {isLoading && localUsers.length === 0 ? (
           <div className="flex justify-center items-center py-20 bg-white rounded-lg shadow">
             <Spinner size="lg" />
           </div>
-        ) : users.length === 0 ? (
+        ) : localUsers.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-lg shadow-lg border border-gray-200">
             <div className="text-gray-400 mb-4">
               <svg
@@ -284,7 +294,7 @@ const UsersListPage = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {users.map((user, index) => (
+                  {localUsers.map((user, index) => (
                     <tr 
                       key={user.id} 
                       className={`transition-all duration-200 hover:bg-blue-50 hover:shadow-md ${
@@ -298,35 +308,35 @@ const UsersListPage = () => {
                               <img
                                 className="h-12 w-12 rounded-full ring-2 ring-blue-100"
                                 src={user.avatar}
-                                alt={user.username}
+                                alt={getDisplayName(user)}
                               />
                             ) : (
                               <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center ring-2 ring-blue-100 shadow-md">
                                 <span className="text-white font-bold text-lg">
-                                  {user.username.charAt(0).toUpperCase()}
+                                  {getAvatarInitial(user)}
                                 </span>
                               </div>
                             )}
                           </div>
                           <div className="ml-4">
                             <div className="text-sm font-semibold text-gray-900">
-                              {user.full_name || user.username}
+                              {getDisplayName(user)}
                             </div>
                             <div className="text-xs text-gray-500">
-                              @{user.username}
+                              {getUsername(user)}
                             </div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900">{user.email}</div>
+                        <div className="text-sm text-gray-900">{user.email || '-'}</div>
                         {user.phone_number && (
                           <div className="text-xs text-gray-500">{user.phone_number}</div>
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border ${getRoleBadgeColor(user.role)}`}>
-                          {user.role_display || user.role}
+                        <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border ${getRoleBadgeColor(user.role || '')}`}>
+                          {user.role_display || user.role || 'None'}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -346,11 +356,14 @@ const UsersListPage = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                        {new Date(user.date_joined).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric'
-                        })}
+                        {user.date_joined 
+                          ? new Date(user.date_joined).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric'
+                            })
+                          : '-'
+                        }
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center justify-center space-x-1">
@@ -369,15 +382,18 @@ const UsersListPage = () => {
                             <PencilIcon className="h-5 w-5 group-hover:scale-110 transition-transform" />
                           </button>
                           <button
-                            onClick={() => handleToggleClick(user)}
-                            className={`p-2.5 rounded-lg transition-all duration-200 hover:scale-110 group ${
+                            onClick={() => handleToggleStatus(user)}
+                            disabled={updatingUser === user.id}
+                            className={`p-2.5 rounded-lg transition-all duration-200 hover:scale-110 group disabled:opacity-50 disabled:cursor-not-allowed ${
                               user.is_active
                                 ? 'text-red-600 hover:bg-red-100'
                                 : 'text-green-600 hover:bg-green-100'
                             }`}
                             title={user.is_active ? 'Deactivate User' : 'Activate User'}
                           >
-                            {user.is_active ? (
+                            {updatingUser === user.id ? (
+                              <Spinner size="sm" />
+                            ) : user.is_active ? (
                               <NoSymbolIcon className="h-5 w-5 group-hover:scale-110 transition-transform" />
                             ) : (
                               <CheckCircleIcon className="h-5 w-5 group-hover:scale-110 transition-transform" />
@@ -392,63 +408,6 @@ const UsersListPage = () => {
             </div>
           </div>
         )}
-
-        {/* Toggle Status Confirmation Modal */}
-        <Modal
-          isOpen={toggleModalOpen}
-          onClose={() => !isToggling && setToggleModalOpen(false)}
-          title={userToToggle?.is_active ? 'Deactivate User' : 'Activate User'}
-        >
-          <div className="space-y-4">
-            <div className={`border-l-4 p-4 ${
-              userToToggle?.is_active 
-                ? 'bg-yellow-50 border-yellow-400' 
-                : 'bg-green-50 border-green-400'
-            }`}>
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  {userToToggle?.is_active ? (
-                    <NoSymbolIcon className="h-5 w-5 text-yellow-400" />
-                  ) : (
-                    <CheckCircleIcon className="h-5 w-5 text-green-400" />
-                  )}
-                </div>
-                <div className="ml-3">
-                  <p className={`text-sm ${
-                    userToToggle?.is_active ? 'text-yellow-700' : 'text-green-700'
-                  }`}>
-                    {userToToggle?.is_active
-                      ? 'This will deactivate the user account. The user will not be able to log in, but their data will be preserved.'
-                      : 'This will reactivate the user account. The user will be able to log in again.'}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <p className="text-gray-600">
-              Are you sure you want to {userToToggle?.is_active ? 'deactivate' : 'activate'}{' '}
-              <span className="font-semibold text-gray-900">{userToToggle?.username}</span>?
-            </p>
-
-            <div className="flex justify-end space-x-3 pt-4">
-              <Button
-                variant="outline"
-                onClick={() => setToggleModalOpen(false)}
-                disabled={isToggling}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant={userToToggle?.is_active ? 'danger' : 'primary'}
-                icon={userToToggle?.is_active ? NoSymbolIcon : CheckCircleIcon}
-                onClick={handleToggleConfirm}
-                isLoading={isToggling}
-              >
-                {userToToggle?.is_active ? 'Deactivate' : 'Activate'} User
-              </Button>
-            </div>
-          </div>
-        </Modal>
       </div>
     </Layout>
   );
