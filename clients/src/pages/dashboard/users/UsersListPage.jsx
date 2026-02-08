@@ -8,7 +8,6 @@ import {
   NoSymbolIcon,
   CheckCircleIcon,
   ArrowPathIcon,
-  ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline';
 import { toast } from 'react-hot-toast';
 import Layout from '../../../components/layout/Layout';
@@ -29,7 +28,6 @@ const UsersListPage = () => {
   const [toggleModalOpen, setToggleModalOpen] = useState(false);
   const [userToToggle, setUserToToggle] = useState(null);
   const [isToggling, setIsToggling] = useState(false);
-  const [debugInfo, setDebugInfo] = useState(null);
 
   // Fetch users on mount
   useEffect(() => {
@@ -45,7 +43,6 @@ const UsersListPage = () => {
       
       console.log('Loading users with params:', params);
       await fetchUsers(params);
-      setDebugInfo(null); // Clear debug info on successful load
     } catch (error) {
       console.error('Failed to load users:', error);
       toast.error('Failed to load users');
@@ -67,7 +64,11 @@ const UsersListPage = () => {
     setStatusFilter('');
   };
 
-  const handleToggleClick = (user) => {
+  const handleToggleClick = (user, e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     console.log('Toggle clicked for user:', user);
     setUserToToggle(user);
     setToggleModalOpen(true);
@@ -77,15 +78,6 @@ const UsersListPage = () => {
     if (!userToToggle) return;
 
     setIsToggling(true);
-    setDebugInfo({
-      action: 'list_toggle',
-      user: { 
-        id: userToToggle.id, 
-        username: userToToggle.username, 
-        currentStatus: userToToggle.is_active 
-      },
-      timestamp: new Date().toISOString(),
-    });
 
     try {
       const newStatus = !userToToggle.is_active;
@@ -94,20 +86,11 @@ const UsersListPage = () => {
       console.log('Current status:', userToToggle.is_active);
       console.log('New status:', newStatus);
 
-      // Get current user for permission check
+      // Get current user for debugging
       const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-      console.log('Current logged-in user:', currentUser.username, 'Role:', currentUser.role);
+      console.log('Current user role:', currentUser.role);
 
-      // Update debug info
-      setDebugInfo(prev => ({
-        ...prev,
-        newStatus,
-        currentUser,
-        requestData: { is_active: newStatus },
-      }));
-
-      // Call patchUser with enhanced debugging
-      console.log('Calling patchUser...');
+      // Use the patchUser method from useUsers hook
       await patchUser(userToToggle.id, { is_active: newStatus });
       
       console.log('=== LIST TOGGLE SUCCESS ===');
@@ -125,106 +108,41 @@ const UsersListPage = () => {
       
     } catch (error) {
       console.error('=== LIST TOGGLE ERROR ===');
-      console.error('Error:', error);
+      console.error('Full error:', error);
       console.error('Error response:', error.response?.data);
       
-      // Update debug info
-      setDebugInfo(prev => ({
-        ...prev,
-        error: {
-          message: error.message,
-          response: error.response?.data,
-          status: error.response?.status,
-        },
-        timestamp: new Date().toISOString(),
-      }));
-
       let errorMessage = 'Failed to update user status';
       
       if (error.response?.data) {
-        if (error.response.data.error) {
-          errorMessage = error.response.data.error;
-        } else if (error.response.data.detail) {
+        if (error.response.data.detail) {
           errorMessage = error.response.data.detail;
         } else if (typeof error.response.data === 'object') {
+          // Try to get first error message
           const errors = Object.values(error.response.data).flat();
           errorMessage = errors[0] || errorMessage;
         }
-        
-        if (error.response.status === 403) {
-          errorMessage = 'You do not have permission to change user status';
+      }
+      
+      if (error.response?.status === 403) {
+        errorMessage = 'You do not have permission to change user status';
+      }
+      
+      if (error.response?.status === 400) {
+        console.log('Validation errors:', error.response.data);
+        if (error.response.data.is_active) {
+          errorMessage = `Cannot change status: ${error.response.data.is_active[0]}`;
         }
       }
       
       toast.error(errorMessage);
-      
-      // Try alternative method if patch fails
-      if (error.response?.status === 403 || error.response?.status === 400) {
-        await tryAlternativeListToggle();
-      }
     } finally {
       setIsToggling(false);
-    }
-  };
-
-  const tryAlternativeListToggle = async () => {
-    try {
-      console.log('Trying alternative toggle for list...');
-      
-      // Try using the dedicated toggle endpoint
-      const response = await api.post(`/auth/${userToToggle.id}/toggle_active/`);
-      
-      console.log('Alternative toggle success:', response.data);
-      toast.success(response.data.message);
-      
-      setToggleModalOpen(false);
-      setUserToToggle(null);
-      loadUsers();
-      
-    } catch (altError) {
-      console.error('Alternative toggle failed:', altError);
-      toast.error('All toggle methods failed. Please check permissions.');
     }
   };
 
   const handleRefresh = () => {
     console.log('Manual refresh triggered');
     loadUsers();
-  };
-
-  const handleDebugToggle = async (user) => {
-    console.log('=== DEBUG TOGGLE ===');
-    console.log('User:', user);
-    
-    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-    console.log('Current user role:', currentUser.role);
-    
-    // Test the API endpoint directly
-    try {
-      const token = localStorage.getItem('access_token');
-      const response = await fetch(`/api/v1/auth/${user.id}/`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ is_active: !user.is_active }),
-      });
-      
-      const data = await response.json();
-      console.log('Direct fetch response:', data);
-      console.log('Status:', response.status);
-      
-      if (response.ok) {
-        toast.success('Debug toggle successful');
-        loadUsers();
-      } else {
-        toast.error(`Debug toggle failed: ${response.status}`);
-      }
-    } catch (error) {
-      console.error('Debug toggle error:', error);
-      toast.error('Debug toggle failed');
-    }
   };
 
   const getRoleBadgeColor = (role) => {
@@ -240,40 +158,6 @@ const UsersListPage = () => {
   return (
     <Layout>
       <div className="space-y-6">
-        {/* Debug Panel */}
-        {process.env.NODE_ENV === 'development' && debugInfo && (
-          <Card className="bg-yellow-50 border-yellow-200">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <ExclamationTriangleIcon className="h-5 w-5 text-yellow-500 mr-2" />
-                <span className="font-semibold text-yellow-800">Debug Info</span>
-              </div>
-              <div className="flex space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setDebugInfo(null)}
-                >
-                  Clear
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleRefresh}
-                  icon={ArrowPathIcon}
-                >
-                  Refresh
-                </Button>
-              </div>
-            </div>
-            <div className="mt-2 text-sm">
-              <pre className="bg-black bg-opacity-10 p-3 rounded overflow-auto max-h-40 text-xs">
-                {JSON.stringify(debugInfo, null, 2)}
-              </pre>
-            </div>
-          </Card>
-        )}
-
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
@@ -333,11 +217,6 @@ const UsersListPage = () => {
               </span>
             )}
           </div>
-          {process.env.NODE_ENV === 'development' && (
-            <div className="text-xs text-gray-500">
-              Debug: {users.filter(u => u.is_active).length} active, {users.filter(u => !u.is_active).length} inactive
-            </div>
-          )}
         </div>
 
         {/* Users Table */}
@@ -493,7 +372,7 @@ const UsersListPage = () => {
                             <PencilIcon className="h-5 w-5 group-hover:scale-110 transition-transform" />
                           </button>
                           <button
-                            onClick={() => handleToggleClick(user)}
+                            onClick={(e) => handleToggleClick(user, e)}
                             className={`p-2.5 rounded-lg transition-all duration-200 hover:scale-110 group ${
                               user.is_active
                                 ? 'text-red-600 hover:bg-red-100'
@@ -507,15 +386,6 @@ const UsersListPage = () => {
                               <CheckCircleIcon className="h-5 w-5 group-hover:scale-110 transition-transform" />
                             )}
                           </button>
-                          {process.env.NODE_ENV === 'development' && (
-                            <button
-                              onClick={() => handleDebugToggle(user)}
-                              className="p-2.5 text-yellow-600 hover:bg-yellow-100 rounded-lg transition-all duration-200 hover:scale-110 group"
-                              title="Debug Toggle"
-                            >
-                              <ExclamationTriangleIcon className="h-5 w-5 group-hover:scale-110 transition-transform" />
-                            </button>
-                          )}
                         </div>
                       </td>
                     </tr>
@@ -526,71 +396,64 @@ const UsersListPage = () => {
           </div>
         )}
 
-        {/* Toggle Status Confirmation Modal */}
-        <Modal
-          isOpen={toggleModalOpen}
-          onClose={() => !isToggling && setToggleModalOpen(false)}
-          title={userToToggle?.is_active ? 'Deactivate User' : 'Activate User'}
-        >
-          <div className="space-y-4">
-            <div className={`border-l-4 p-4 ${
-              userToToggle?.is_active 
-                ? 'bg-yellow-50 border-yellow-400' 
-                : 'bg-green-50 border-green-400'
-            }`}>
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  {userToToggle?.is_active ? (
-                    <NoSymbolIcon className="h-5 w-5 text-yellow-400" />
-                  ) : (
-                    <CheckCircleIcon className="h-5 w-5 text-green-400" />
-                  )}
-                </div>
-                <div className="ml-3">
-                  <p className={`text-sm ${
-                    userToToggle?.is_active ? 'text-yellow-700' : 'text-green-700'
-                  }`}>
-                    {userToToggle?.is_active
-                      ? 'This will deactivate the user account. The user will not be able to log in, but their data will be preserved.'
-                      : 'This will reactivate the user account. The user will be able to log in again.'}
-                  </p>
+        {/* Toggle Status Confirmation Modal - FIXED */}
+        {toggleModalOpen && userToToggle && (
+          <Modal
+            isOpen={toggleModalOpen}
+            onClose={() => !isToggling && setToggleModalOpen(false)}
+            title={userToToggle?.is_active ? 'Deactivate User' : 'Activate User'}
+          >
+            <div className="space-y-4">
+              <div className={`border-l-4 p-4 ${
+                userToToggle?.is_active 
+                  ? 'bg-yellow-50 border-yellow-400' 
+                  : 'bg-green-50 border-green-400'
+              }`}>
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    {userToToggle?.is_active ? (
+                      <NoSymbolIcon className="h-5 w-5 text-yellow-400" />
+                    ) : (
+                      <CheckCircleIcon className="h-5 w-5 text-green-400" />
+                    )}
+                  </div>
+                  <div className="ml-3">
+                    <p className={`text-sm ${
+                      userToToggle?.is_active ? 'text-yellow-700' : 'text-green-700'
+                    }`}>
+                      {userToToggle?.is_active
+                        ? 'This will deactivate the user account. The user will not be able to log in, but their data will be preserved.'
+                        : 'This will reactivate the user account. The user will be able to log in again.'}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <p className="text-gray-600">
-              Are you sure you want to {userToToggle?.is_active ? 'deactivate' : 'activate'}{' '}
-              <span className="font-semibold text-gray-900">{userToToggle?.username}</span>?
-            </p>
+              <p className="text-gray-600">
+                Are you sure you want to {userToToggle?.is_active ? 'deactivate' : 'activate'}{' '}
+                <span className="font-semibold text-gray-900">{userToToggle?.username}</span>?
+              </p>
 
-            {process.env.NODE_ENV === 'development' && (
-              <div className="bg-gray-50 p-3 rounded text-sm">
-                <p className="font-medium text-gray-700">Debug Info:</p>
-                <p className="text-gray-600">User ID: {userToToggle?.id}</p>
-                <p className="text-gray-600">Role: {userToToggle?.role}</p>
-                <p className="text-gray-600">Status: {userToToggle?.is_active ? 'Active' : 'Inactive'}</p>
+              <div className="flex justify-end space-x-3 pt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setToggleModalOpen(false)}
+                  disabled={isToggling}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant={userToToggle?.is_active ? 'danger' : 'primary'}
+                  icon={userToToggle?.is_active ? NoSymbolIcon : CheckCircleIcon}
+                  onClick={handleToggleConfirm}
+                  isLoading={isToggling}
+                >
+                  {userToToggle?.is_active ? 'Deactivate' : 'Activate'} User
+                </Button>
               </div>
-            )}
-
-            <div className="flex justify-end space-x-3 pt-4">
-              <Button
-                variant="outline"
-                onClick={() => setToggleModalOpen(false)}
-                disabled={isToggling}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant={userToToggle?.is_active ? 'danger' : 'primary'}
-                icon={userToToggle?.is_active ? NoSymbolIcon : CheckCircleIcon}
-                onClick={handleToggleConfirm}
-                isLoading={isToggling}
-              >
-                {userToToggle?.is_active ? 'Deactivate' : 'Activate'} User
-              </Button>
             </div>
-          </div>
-        </Modal>
+          </Modal>
+        )}
       </div>
     </Layout>
   );

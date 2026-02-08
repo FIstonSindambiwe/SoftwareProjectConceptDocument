@@ -33,11 +33,6 @@ const UserDetailPage = () => {
 
   useEffect(() => {
     loadUser();
-    
-    // Debug: Check current user info
-    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-    console.log('Current logged-in user:', currentUser);
-    console.log('Is admin?', currentUser.role === 'admin');
   }, [id]);
 
   const loadUser = async () => {
@@ -50,7 +45,10 @@ const UserDetailPage = () => {
     }
   };
 
-  const handleToggleStatus = () => {
+  const handleToggleStatus = (e) => {
+    e.preventDefault(); // Prevent any default behavior
+    e.stopPropagation(); // Stop event bubbling
+    console.log('Toggle status clicked, opening modal');
     setToggleModalOpen(true);
   };
 
@@ -122,7 +120,7 @@ const UserDetailPage = () => {
     }
   };
 
-  // Direct test function without custom headers
+  // Test API endpoints directly
   const testDirectToggle = async () => {
     if (!user) return;
     
@@ -150,9 +148,16 @@ const UserDetailPage = () => {
         toast.success('Direct toggle successful');
         loadUser();
       } else {
-        const errorData = await response.json();
-        console.error('Error response:', errorData);
-        toast.error(`Direct toggle failed: ${response.status} - ${JSON.stringify(errorData)}`);
+        const text = await response.text();
+        console.error('Error response text:', text);
+        try {
+          const errorData = JSON.parse(text);
+          console.error('Error response JSON:', errorData);
+          toast.error(`Toggle failed: ${response.status} - ${JSON.stringify(errorData)}`);
+        } catch (e) {
+          console.error('Error response is not JSON:', text);
+          toast.error(`Toggle failed: ${response.status} ${response.statusText}`);
+        }
       }
       
     } catch (error) {
@@ -215,6 +220,43 @@ const UserDetailPage = () => {
   return (
     <Layout>
       <div className="space-y-6">
+        {/* Debug Panel (Development Only) */}
+        {process.env.NODE_ENV === 'development' && (
+          <Card className="bg-yellow-50 border-yellow-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <ExclamationTriangleIcon className="h-5 w-5 text-yellow-500 mr-2" />
+                <span className="font-semibold text-yellow-800">Debug Tools</span>
+              </div>
+              <div className="text-xs text-yellow-600">
+                User ID: {id} | Status: {user.is_active ? 'Active' : 'Inactive'}
+              </div>
+            </div>
+            <div className="mt-2 flex space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={testDirectToggle}
+                isLoading={isUpdating}
+              >
+                Test Direct Toggle
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  console.log('Current modal state:', toggleModalOpen);
+                  console.log('Current user:', user);
+                  const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+                  console.log('Logged in as:', currentUser);
+                }}
+              >
+                Log Info
+              </Button>
+            </div>
+          </Card>
+        )}
+
         {/* Header */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex items-start justify-between">
@@ -421,79 +463,78 @@ const UserDetailPage = () => {
                 >
                   {user.is_active ? 'Deactivate Account' : 'Activate Account'}
                 </Button>
-                {/* Debug button */}
-                {process.env.NODE_ENV === 'development' && (
-                  <Button
-                    variant="outline"
-                    icon={ExclamationTriangleIcon}
-                    onClick={testDirectToggle}
-                    className="w-full justify-start text-yellow-600 hover:bg-yellow-50"
-                    isLoading={isUpdating}
-                  >
-                    Debug: Direct Toggle Test
-                  </Button>
-                )}
               </div>
             </Card>
           </div>
         </div>
 
-        {/* Toggle Status Modal */}
-        <Modal
-          isOpen={toggleModalOpen}
-          onClose={() => !isUpdating && setToggleModalOpen(false)}
-          title={user?.is_active ? 'Deactivate User' : 'Activate User'}
-        >
-          <div className="space-y-4">
-            <div className={`border-l-4 p-4 ${
-              user?.is_active 
-                ? 'bg-yellow-50 border-yellow-400' 
-                : 'bg-green-50 border-green-400'
-            }`}>
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  {user?.is_active ? (
-                    <NoSymbolIcon className="h-5 w-5 text-yellow-400" />
-                  ) : (
-                    <CheckCircleIcon className="h-5 w-5 text-green-400" />
-                  )}
-                </div>
-                <div className="ml-3">
-                  <p className={`text-sm ${
-                    user?.is_active ? 'text-yellow-700' : 'text-green-700'
-                  }`}>
-                    {user?.is_active
-                      ? 'This will deactivate the user account. The user will not be able to log in, but their data will be preserved.'
-                      : 'This will reactivate the user account. The user will be able to log in again.'}
-                  </p>
+        {/* Toggle Status Modal - FIXED */}
+        {toggleModalOpen && (
+          <Modal
+            isOpen={toggleModalOpen}
+            onClose={() => !isUpdating && setToggleModalOpen(false)}
+            title={user?.is_active ? 'Deactivate User' : 'Activate User'}
+          >
+            <div className="space-y-4">
+              <div className={`border-l-4 p-4 ${
+                user?.is_active 
+                  ? 'bg-yellow-50 border-yellow-400' 
+                  : 'bg-green-50 border-green-400'
+              }`}>
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    {user?.is_active ? (
+                      <NoSymbolIcon className="h-5 w-5 text-yellow-400" />
+                    ) : (
+                      <CheckCircleIcon className="h-5 w-5 text-green-400" />
+                    )}
+                  </div>
+                  <div className="ml-3">
+                    <p className={`text-sm ${
+                      user?.is_active ? 'text-yellow-700' : 'text-green-700'
+                    }`}>
+                      {user?.is_active
+                        ? 'This will deactivate the user account. The user will not be able to log in, but their data will be preserved.'
+                        : 'This will reactivate the user account. The user will be able to log in again.'}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <p className="text-gray-600">
-              Are you sure you want to {user?.is_active ? 'deactivate' : 'activate'}{' '}
-              <span className="font-semibold text-gray-900">{user?.username}</span>?
-            </p>
+              <p className="text-gray-600">
+                Are you sure you want to {user?.is_active ? 'deactivate' : 'activate'}{' '}
+                <span className="font-semibold text-gray-900">{user?.username}</span>?
+              </p>
 
-            <div className="flex justify-end space-x-3 pt-4">
-              <Button
-                variant="outline"
-                onClick={() => setToggleModalOpen(false)}
-                disabled={isUpdating}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant={user?.is_active ? 'danger' : 'primary'}
-                icon={user?.is_active ? NoSymbolIcon : CheckCircleIcon}
-                onClick={handleToggleConfirm}
-                isLoading={isUpdating}
-              >
-                {user?.is_active ? 'Deactivate' : 'Activate'} User
-              </Button>
+              {process.env.NODE_ENV === 'development' && (
+                <div className="bg-gray-50 p-3 rounded text-sm">
+                  <p className="font-medium text-gray-700">Debug Info:</p>
+                  <p className="text-gray-600">User ID: {user?.id}</p>
+                  <p className="text-gray-600">Current Status: {user?.is_active ? 'Active' : 'Inactive'}</p>
+                  <p className="text-gray-600">New Status: {!user?.is_active ? 'Active' : 'Inactive'}</p>
+                </div>
+              )}
+
+              <div className="flex justify-end space-x-3 pt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setToggleModalOpen(false)}
+                  disabled={isUpdating}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant={user?.is_active ? 'danger' : 'primary'}
+                  icon={user?.is_active ? NoSymbolIcon : CheckCircleIcon}
+                  onClick={handleToggleConfirm}
+                  isLoading={isUpdating}
+                >
+                  {user?.is_active ? 'Deactivate' : 'Activate'} User
+                </Button>
+              </div>
             </div>
-          </div>
-        </Modal>
+          </Modal>
+        )}
       </div>
     </Layout>
   );
