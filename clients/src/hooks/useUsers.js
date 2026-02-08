@@ -243,8 +243,8 @@ const useUsers = (userId = null) => {
     patchUser,
     deleteUser,
     fetchStats,
-    updateProfile,
-    patchProfile,
+    updateProfile,    // Exposed for ProfilePage
+    patchProfile,     // Exposed for ProfilePage
     getCurrentProfile,
     changePassword,
     getMyActivity,

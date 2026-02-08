@@ -157,22 +157,39 @@ const userService = {
     }
   },
 
-  /**
-   * Get current user profile
-   * GET /api/v1/auth/me/
-   */
-  async getCurrentProfile() {
-    try {
-      const response = await api.get('/auth/me/');
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-      console.error('Error response:', error.response?.data);
-      throw error.response?.data || error;
-    }
-  },
+  // /**
+  //  * Get current user profile
+  //  * GET /api/v1/auth/me/
+  //  */
+  // async getCurrentProfile() {
+  //   try {
+  //     const response = await api.get('/auth/me/');
+  //     return response.data;
+  //   } catch (error) {
+  //     console.error('Error fetching profile:', error);
+  //     console.error('Error response:', error.response?.data);
+  //     throw error.response?.data || error;
+  //   }
+  // },
 
-  /**
+  // /**
+  //  * Update current user profile
+  //  * PUT /api/v1/auth/update_profile/
+  //  */
+  // async updateProfile(userData) {
+  //   try {
+  //     console.log('Updating profile with data:', userData);
+  //     const response = await api.put('/auth/update_profile/', userData);
+  //     console.log('Profile updated successfully:', response.data);
+  //     return response.data;
+  //   } catch (error) {
+  //     console.error('Error updating profile:', error);
+  //     console.error('Error response:', error.response?.data);
+  //     throw error.response?.data || error;
+  //   }
+  // },
+
+   /**
    * Update current user profile
    * PUT /api/v1/auth/update_profile/
    */
@@ -184,6 +201,21 @@ const userService = {
       return response.data;
     } catch (error) {
       console.error('Error updating profile:', error);
+      console.error('Error response:', error.response?.data);
+      throw error.response?.data || error;
+    }
+  },
+
+  /**
+   * Get current user
+   * GET /api/v1/auth/me/
+   */
+  async getCurrentUser() {
+    try {
+      const response = await api.get('/auth/me/');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching current user:', error);
       console.error('Error response:', error.response?.data);
       throw error.response?.data || error;
     }

@@ -15,7 +15,7 @@ import { getUserRoleLabel, getRoleBadgeVariant, parseApiError } from '../../../u
 const ProfilePage = () => {
   const navigate = useNavigate();
   const { user: authUser, updateUser: updateAuthUser } = useAuth();
-  const { updateProfile, isLoading } = useUsers(); // Fixed: using updateProfile instead of updateCurrentProfile
+  const { updateProfile, isLoading } = useUsers(); // CORRECTED: using updateProfile instead of updateCurrentProfile
   
   const [formData, setFormData] = useState({
     username: '',
@@ -64,7 +64,8 @@ const ProfilePage = () => {
     setErrorMessage('');
 
     try {
-      const updatedUser = await updateProfile(formData); // Fixed: using updateProfile
+      // CORRECTED: using updateProfile instead of updateCurrentProfile
+      const updatedUser = await updateProfile(formData);
       updateAuthUser(updatedUser);
       setSuccessMessage('Profile updated successfully!');
     } catch (error) {
