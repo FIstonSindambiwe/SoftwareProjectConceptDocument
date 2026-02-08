@@ -131,6 +131,95 @@ const useUsers = (userId = null) => {
     }
   };
 
+  // Update current user profile (PUT)
+  const updateProfile = async (userData) => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const data = await userService.updateProfile(userData);
+      // Update both auth user state and local user state
+      if (user) {
+        setUser({ ...user, ...data });
+      }
+      return data;
+    } catch (err) {
+      setError(err.message || 'Failed to update profile');
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Partial update current user profile (PATCH)
+  const patchProfile = async (userData) => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const data = await userService.patchProfile(userData);
+      // Update both auth user state and local user state
+      if (user) {
+        setUser({ ...user, ...data });
+      }
+      return data;
+    } catch (err) {
+      setError(err.message || 'Failed to update profile');
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Get current user profile
+  const getCurrentProfile = async () => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const data = await userService.getCurrentProfile();
+      setUser(data);
+      return data;
+    } catch (err) {
+      setError(err.message || 'Failed to fetch profile');
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Change password
+  const changePassword = async (passwordData) => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const data = await userService.changePassword(passwordData);
+      return data;
+    } catch (err) {
+      setError(err.message || 'Failed to change password');
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Get current user's activity logs
+  const getMyActivity = async () => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const data = await userService.getMyActivity();
+      return data;
+    } catch (err) {
+      setError(err.message || 'Failed to fetch activity');
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Auto-fetch user if userId is provided
   useEffect(() => {
     if (userId) {
@@ -154,6 +243,11 @@ const useUsers = (userId = null) => {
     patchUser,
     deleteUser,
     fetchStats,
+    updateProfile,
+    patchProfile,
+    getCurrentProfile,
+    changePassword,
+    getMyActivity,
   };
 };
 

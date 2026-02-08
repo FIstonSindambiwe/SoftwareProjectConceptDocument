@@ -860,3 +860,9 @@ INFO 2026-02-08 19:25:08,332 log "GET /api/v1/auth/ HTTP/1.1" 200 862
 INFO 2026-02-08 19:25:08,339 log "GET /api/v1/auth/stats/ HTTP/1.1" 200 158
 INFO 2026-02-08 19:25:08,344 log "GET /api/v1/auth/ HTTP/1.1" 200 862
 INFO 2026-02-08 19:25:08,627 log "GET /api/v1/auth/ HTTP/1.1" 200 862
+INFO 2026-02-08 20:49:52,202 log "OPTIONS /api/v1/auth/update_profile/ HTTP/1.1" 200 0
+WARNING 2026-02-08 20:49:52,206 log Unauthorized: /api/v1/auth/update_profile/
+WARNING 2026-02-08 20:49:52,206 log "PUT /api/v1/auth/update_profile/ HTTP/1.1" 401 172
+INFO 2026-02-08 20:49:52,258 log "OPTIONS /api/v1/auth/refresh/ HTTP/1.1" 200 0
+INFO 2026-02-08 20:49:52,305 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-08 20:49:52,406 log "PUT /api/v1/auth/update_profile/ HTTP/1.1" 200 250
