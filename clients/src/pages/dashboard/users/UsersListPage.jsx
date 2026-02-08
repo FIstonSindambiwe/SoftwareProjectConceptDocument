@@ -64,12 +64,9 @@ const UsersListPage = () => {
     setStatusFilter('');
   };
 
-  const handleToggleClick = (user, e) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    console.log('Toggle clicked for user:', user);
+  // Simple toggle handler - just opens modal
+  const handleToggleClick = (user) => {
+    console.log('Toggle clicked for user:', user.username, 'ID:', user.id);
     setUserToToggle(user);
     setToggleModalOpen(true);
   };
@@ -81,7 +78,7 @@ const UsersListPage = () => {
 
     try {
       const newStatus = !userToToggle.is_active;
-      console.log('=== LIST TOGGLE START ===');
+      console.log('=== CONFIRM TOGGLE ===');
       console.log('User:', userToToggle.username, 'ID:', userToToggle.id);
       console.log('Current status:', userToToggle.is_active);
       console.log('New status:', newStatus);
@@ -93,7 +90,7 @@ const UsersListPage = () => {
       // Use the patchUser method from useUsers hook
       await patchUser(userToToggle.id, { is_active: newStatus });
       
-      console.log('=== LIST TOGGLE SUCCESS ===');
+      console.log('=== TOGGLE SUCCESS ===');
       toast.success(
         `User "${userToToggle.username}" has been ${newStatus ? 'activated' : 'deactivated'}`
       );
@@ -107,7 +104,7 @@ const UsersListPage = () => {
       }, 300);
       
     } catch (error) {
-      console.error('=== LIST TOGGLE ERROR ===');
+      console.error('=== TOGGLE ERROR ===');
       console.error('Full error:', error);
       console.error('Error response:', error.response?.data);
       
@@ -118,7 +115,7 @@ const UsersListPage = () => {
           errorMessage = error.response.data.detail;
         } else if (typeof error.response.data === 'object') {
           // Try to get first error message
-          const errors = Object.values(error.response.data).flat();
+          const errors = Object.values(errorResponse.data).flat();
           errorMessage = errors[0] || errorMessage;
         }
       }
@@ -372,7 +369,7 @@ const UsersListPage = () => {
                             <PencilIcon className="h-5 w-5 group-hover:scale-110 transition-transform" />
                           </button>
                           <button
-                            onClick={(e) => handleToggleClick(user, e)}
+                            onClick={() => handleToggleClick(user)}
                             className={`p-2.5 rounded-lg transition-all duration-200 hover:scale-110 group ${
                               user.is_active
                                 ? 'text-red-600 hover:bg-red-100'
@@ -396,64 +393,62 @@ const UsersListPage = () => {
           </div>
         )}
 
-        {/* Toggle Status Confirmation Modal - FIXED */}
-        {toggleModalOpen && userToToggle && (
-          <Modal
-            isOpen={toggleModalOpen}
-            onClose={() => !isToggling && setToggleModalOpen(false)}
-            title={userToToggle?.is_active ? 'Deactivate User' : 'Activate User'}
-          >
-            <div className="space-y-4">
-              <div className={`border-l-4 p-4 ${
-                userToToggle?.is_active 
-                  ? 'bg-yellow-50 border-yellow-400' 
-                  : 'bg-green-50 border-green-400'
-              }`}>
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    {userToToggle?.is_active ? (
-                      <NoSymbolIcon className="h-5 w-5 text-yellow-400" />
-                    ) : (
-                      <CheckCircleIcon className="h-5 w-5 text-green-400" />
-                    )}
-                  </div>
-                  <div className="ml-3">
-                    <p className={`text-sm ${
-                      userToToggle?.is_active ? 'text-yellow-700' : 'text-green-700'
-                    }`}>
-                      {userToToggle?.is_active
-                        ? 'This will deactivate the user account. The user will not be able to log in, but their data will be preserved.'
-                        : 'This will reactivate the user account. The user will be able to log in again.'}
-                    </p>
-                  </div>
+        {/* Toggle Status Confirmation Modal */}
+        <Modal
+          isOpen={toggleModalOpen}
+          onClose={() => !isToggling && setToggleModalOpen(false)}
+          title={userToToggle?.is_active ? 'Deactivate User' : 'Activate User'}
+        >
+          <div className="space-y-4">
+            <div className={`border-l-4 p-4 ${
+              userToToggle?.is_active 
+                ? 'bg-yellow-50 border-yellow-400' 
+                : 'bg-green-50 border-green-400'
+            }`}>
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  {userToToggle?.is_active ? (
+                    <NoSymbolIcon className="h-5 w-5 text-yellow-400" />
+                  ) : (
+                    <CheckCircleIcon className="h-5 w-5 text-green-400" />
+                  )}
+                </div>
+                <div className="ml-3">
+                  <p className={`text-sm ${
+                    userToToggle?.is_active ? 'text-yellow-700' : 'text-green-700'
+                  }`}>
+                    {userToToggle?.is_active
+                      ? 'This will deactivate the user account. The user will not be able to log in, but their data will be preserved.'
+                      : 'This will reactivate the user account. The user will be able to log in again.'}
+                  </p>
                 </div>
               </div>
-
-              <p className="text-gray-600">
-                Are you sure you want to {userToToggle?.is_active ? 'deactivate' : 'activate'}{' '}
-                <span className="font-semibold text-gray-900">{userToToggle?.username}</span>?
-              </p>
-
-              <div className="flex justify-end space-x-3 pt-4">
-                <Button
-                  variant="outline"
-                  onClick={() => setToggleModalOpen(false)}
-                  disabled={isToggling}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  variant={userToToggle?.is_active ? 'danger' : 'primary'}
-                  icon={userToToggle?.is_active ? NoSymbolIcon : CheckCircleIcon}
-                  onClick={handleToggleConfirm}
-                  isLoading={isToggling}
-                >
-                  {userToToggle?.is_active ? 'Deactivate' : 'Activate'} User
-                </Button>
-              </div>
             </div>
-          </Modal>
-        )}
+
+            <p className="text-gray-600">
+              Are you sure you want to {userToToggle?.is_active ? 'deactivate' : 'activate'}{' '}
+              <span className="font-semibold text-gray-900">{userToToggle?.username}</span>?
+            </p>
+
+            <div className="flex justify-end space-x-3 pt-4">
+              <Button
+                variant="outline"
+                onClick={() => setToggleModalOpen(false)}
+                disabled={isToggling}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant={userToToggle?.is_active ? 'danger' : 'primary'}
+                icon={userToToggle?.is_active ? NoSymbolIcon : CheckCircleIcon}
+                onClick={handleToggleConfirm}
+                isLoading={isToggling}
+              >
+                {userToToggle?.is_active ? 'Deactivate' : 'Activate'} User
+              </Button>
+            </div>
+          </div>
+        </Modal>
       </div>
     </Layout>
   );

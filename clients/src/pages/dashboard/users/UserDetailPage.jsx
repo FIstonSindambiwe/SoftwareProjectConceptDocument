@@ -45,10 +45,11 @@ const UserDetailPage = () => {
     }
   };
 
-  const handleToggleStatus = (e) => {
-    e.preventDefault(); // Prevent any default behavior
-    e.stopPropagation(); // Stop event bubbling
-    console.log('Toggle status clicked, opening modal');
+  // Simple toggle handler - just opens modal
+  const handleToggleClick = () => {
+    console.log('Toggle button clicked, opening modal');
+    console.log('Current user:', user);
+    console.log('Current user status:', user?.is_active);
     setToggleModalOpen(true);
   };
 
@@ -58,7 +59,7 @@ const UserDetailPage = () => {
     setIsUpdating(true);
     try {
       const newStatus = !user.is_active;
-      console.log('=== TOGGLE USER STATUS ===');
+      console.log('=== CONFIRM TOGGLE ===');
       console.log('User ID:', id);
       console.log('Username:', user.username);
       console.log('Current status:', user.is_active);
@@ -309,7 +310,7 @@ const UserDetailPage = () => {
               </div>
             </div>
 
-            {/* Action Buttons */}
+            {/* Action Buttons - FIXED */}
             <div className="flex space-x-2">
               <Button
                 variant="primary"
@@ -321,7 +322,7 @@ const UserDetailPage = () => {
               <Button
                 variant={user.is_active ? 'danger' : 'success'}
                 icon={user.is_active ? NoSymbolIcon : CheckCircleIcon}
-                onClick={handleToggleStatus}
+                onClick={handleToggleClick}
                 isLoading={isUpdating}
               >
                 {user.is_active ? 'Deactivate' : 'Activate'}
@@ -455,7 +456,7 @@ const UserDetailPage = () => {
                 <Button
                   variant="outline"
                   icon={user.is_active ? NoSymbolIcon : CheckCircleIcon}
-                  onClick={handleToggleStatus}
+                  onClick={handleToggleClick}
                   className={`w-full justify-start ${
                     user.is_active ? 'text-red-600 hover:bg-red-50' : 'text-green-600 hover:bg-green-50'
                   }`}
@@ -468,73 +469,71 @@ const UserDetailPage = () => {
           </div>
         </div>
 
-        {/* Toggle Status Modal - FIXED */}
-        {toggleModalOpen && (
-          <Modal
-            isOpen={toggleModalOpen}
-            onClose={() => !isUpdating && setToggleModalOpen(false)}
-            title={user?.is_active ? 'Deactivate User' : 'Activate User'}
-          >
-            <div className="space-y-4">
-              <div className={`border-l-4 p-4 ${
-                user?.is_active 
-                  ? 'bg-yellow-50 border-yellow-400' 
-                  : 'bg-green-50 border-green-400'
-              }`}>
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    {user?.is_active ? (
-                      <NoSymbolIcon className="h-5 w-5 text-yellow-400" />
-                    ) : (
-                      <CheckCircleIcon className="h-5 w-5 text-green-400" />
-                    )}
-                  </div>
-                  <div className="ml-3">
-                    <p className={`text-sm ${
-                      user?.is_active ? 'text-yellow-700' : 'text-green-700'
-                    }`}>
-                      {user?.is_active
-                        ? 'This will deactivate the user account. The user will not be able to log in, but their data will be preserved.'
-                        : 'This will reactivate the user account. The user will be able to log in again.'}
-                    </p>
-                  </div>
+        {/* Toggle Status Modal */}
+        <Modal
+          isOpen={toggleModalOpen}
+          onClose={() => !isUpdating && setToggleModalOpen(false)}
+          title={user?.is_active ? 'Deactivate User' : 'Activate User'}
+        >
+          <div className="space-y-4">
+            <div className={`border-l-4 p-4 ${
+              user?.is_active 
+                ? 'bg-yellow-50 border-yellow-400' 
+                : 'bg-green-50 border-green-400'
+            }`}>
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  {user?.is_active ? (
+                    <NoSymbolIcon className="h-5 w-5 text-yellow-400" />
+                  ) : (
+                    <CheckCircleIcon className="h-5 w-5 text-green-400" />
+                  )}
                 </div>
-              </div>
-
-              <p className="text-gray-600">
-                Are you sure you want to {user?.is_active ? 'deactivate' : 'activate'}{' '}
-                <span className="font-semibold text-gray-900">{user?.username}</span>?
-              </p>
-
-              {process.env.NODE_ENV === 'development' && (
-                <div className="bg-gray-50 p-3 rounded text-sm">
-                  <p className="font-medium text-gray-700">Debug Info:</p>
-                  <p className="text-gray-600">User ID: {user?.id}</p>
-                  <p className="text-gray-600">Current Status: {user?.is_active ? 'Active' : 'Inactive'}</p>
-                  <p className="text-gray-600">New Status: {!user?.is_active ? 'Active' : 'Inactive'}</p>
+                <div className="ml-3">
+                  <p className={`text-sm ${
+                    user?.is_active ? 'text-yellow-700' : 'text-green-700'
+                  }`}>
+                    {user?.is_active
+                      ? 'This will deactivate the user account. The user will not be able to log in, but their data will be preserved.'
+                      : 'This will reactivate the user account. The user will be able to log in again.'}
+                  </p>
                 </div>
-              )}
-
-              <div className="flex justify-end space-x-3 pt-4">
-                <Button
-                  variant="outline"
-                  onClick={() => setToggleModalOpen(false)}
-                  disabled={isUpdating}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  variant={user?.is_active ? 'danger' : 'primary'}
-                  icon={user?.is_active ? NoSymbolIcon : CheckCircleIcon}
-                  onClick={handleToggleConfirm}
-                  isLoading={isUpdating}
-                >
-                  {user?.is_active ? 'Deactivate' : 'Activate'} User
-                </Button>
               </div>
             </div>
-          </Modal>
-        )}
+
+            <p className="text-gray-600">
+              Are you sure you want to {user?.is_active ? 'deactivate' : 'activate'}{' '}
+              <span className="font-semibold text-gray-900">{user?.username}</span>?
+            </p>
+
+            {process.env.NODE_ENV === 'development' && (
+              <div className="bg-gray-50 p-3 rounded text-sm">
+                <p className="font-medium text-gray-700">Debug Info:</p>
+                <p className="text-gray-600">User ID: {user?.id}</p>
+                <p className="text-gray-600">Current Status: {user?.is_active ? 'Active' : 'Inactive'}</p>
+                <p className="text-gray-600">New Status: {!user?.is_active ? 'Active' : 'Inactive'}</p>
+              </div>
+            )}
+
+            <div className="flex justify-end space-x-3 pt-4">
+              <Button
+                variant="outline"
+                onClick={() => setToggleModalOpen(false)}
+                disabled={isUpdating}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant={user?.is_active ? 'danger' : 'primary'}
+                icon={user?.is_active ? NoSymbolIcon : CheckCircleIcon}
+                onClick={handleToggleConfirm}
+                isLoading={isUpdating}
+              >
+                {user?.is_active ? 'Deactivate' : 'Activate'} User
+              </Button>
+            </div>
+          </div>
+        </Modal>
       </div>
     </Layout>
   );
