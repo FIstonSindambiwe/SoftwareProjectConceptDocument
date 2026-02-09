@@ -14,7 +14,6 @@ import Layout from '../../../components/layout/Layout';
 import Card from '../../../components/common/Card';
 import Button from '../../../components/common/Button';
 import Badge from '../../../components/common/Badge';
-import Alert from '../../../components/common/Alert';
 import Spinner from '../../../components/common/Spinner';
 import Tabs from '../../../components/common/Tabs';
 import ParticipantInfo from '../../../components/participants/ParticipantInfo';
@@ -32,11 +31,13 @@ const ParticipantDetailPage = () => {
   const [participant, setParticipant] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
   const [stats, setStats] = useState({
     enrollments: [],
     progress: null,
-    faceEncodingStatus: null
+    faceEncodingStatus: null,
+    notes: []
   });
 
   const fetchParticipantData = async () => {
@@ -44,18 +45,20 @@ const ParticipantDetailPage = () => {
       setLoading(true);
       setError(null);
       
-      const [participantData, enrollmentsData, progressData, faceStatus] = await Promise.all([
+      const [participantData, enrollmentsData, progressData, faceStatus, notesData] = await Promise.all([
         participantService.getParticipant(id),
         participantService.getParticipantEnrollments(id),
         participantService.getParticipantProgress(id).catch(() => null),
-        participantService.getFaceEncodingStatus(id).catch(() => null)
+        participantService.getFaceEncodingStatus(id).catch(() => null),
+        participantService.getParticipantNotes({ participant: id }).catch(() => ({ results: [] }))
       ]);
       
       setParticipant(participantData);
       setStats({
-        enrollments: enrollmentsData.results || enrollmentsData,
+        enrollments: enrollmentsData.results || enrollmentsData || [],
         progress: progressData,
-        faceEncodingStatus: faceStatus
+        faceEncodingStatus: faceStatus,
+        notes: notesData.results || notesData || []
       });
       
     } catch (err) {
@@ -70,44 +73,67 @@ const ParticipantDetailPage = () => {
     fetchParticipantData();
   }, [id]);
 
+  // Auto-dismiss success messages after 5 seconds
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => setSuccess(''), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
+
+  // Auto-dismiss error messages after 10 seconds
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => setError(null), 10000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
+
   const handleAddNote = async (noteData) => {
     try {
+      setError(null);
       await participantService.addParticipantNote(id, noteData);
-      Alert.success('Note added successfully');
+      setSuccess('Note added successfully');
+      // Refresh participant data to get updated notes
       fetchParticipantData();
     } catch (err) {
-      Alert.error(err.message || 'Failed to add note');
+      console.error('Add note error:', err);
+      const errorMessage = err.participant?.[0] || err.message || 'Failed to add note';
+      setError(errorMessage);
     }
   };
 
   const handleUploadPhoto = async (formData) => {
     try {
+      setError(null);
       await participantService.uploadParticipantPhoto(id, formData);
-      Alert.success('Photo uploaded successfully');
+      setSuccess('Photo uploaded successfully');
       fetchParticipantData();
     } catch (err) {
-      Alert.error(err.message || 'Failed to upload photo');
+      setError(err.message || 'Failed to upload photo');
     }
   };
 
   const handleUpdateFaceEncoding = async () => {
     try {
+      setError(null);
       await participantService.updateFaceEncoding(id);
-      Alert.success('Face encoding updated successfully');
+      setSuccess('Face encoding updated successfully');
       fetchParticipantData();
     } catch (err) {
-      Alert.error(err.message || 'Failed to update face encoding');
+      setError(err.message || 'Failed to update face encoding');
     }
   };
 
   const handleDeactivate = async () => {
     if (window.confirm('Are you sure you want to deactivate this participant?')) {
       try {
+        setError(null);
         await participantService.deleteParticipant(id);
-        Alert.success('Participant deactivated successfully');
-        navigate('/dashboard/participants');
+        setSuccess('Participant deactivated successfully');
+        setTimeout(() => navigate('/dashboard/participants'), 1500);
       } catch (err) {
-        Alert.error(err.message || 'Failed to deactivate participant');
+        setError(err.message || 'Failed to deactivate participant');
       }
     }
   };
@@ -129,7 +155,7 @@ const ParticipantDetailPage = () => {
     );
   }
 
-  if (error || !participant) {
+  if (error && !participant) {
     return (
       <Layout>
         <div className="max-w-4xl mx-auto">
@@ -172,6 +198,60 @@ const ParticipantDetailPage = () => {
             <ArrowLeftIcon className="h-5 w-5 mr-2" />
             Back to Participants
           </Button>
+          
+          {/* Success Message */}
+          {success && (
+            <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm font-medium text-green-800">{success}</p>
+                </div>
+                <div className="ml-auto pl-3">
+                  <button
+                    onClick={() => setSuccess('')}
+                    className="text-green-500 hover:text-green-600"
+                  >
+                    <span className="sr-only">Dismiss</span>
+                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Error Message */}
+          {error && (
+            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm font-medium text-red-800">{error}</p>
+                </div>
+                <div className="ml-auto pl-3">
+                  <button
+                    onClick={() => setError(null)}
+                    className="text-red-500 hover:text-red-600"
+                  >
+                    <span className="sr-only">Dismiss</span>
+                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
           
           <div className="flex justify-between items-start">
             <div>
@@ -259,7 +339,7 @@ const ParticipantDetailPage = () => {
           {activeTab === 'notes' && (
             <NotesList
               participantId={participant.id}
-              notes={participant.progress_notes}
+              notes={stats.notes}
               onAddNote={handleAddNote}
               user={user}
             />

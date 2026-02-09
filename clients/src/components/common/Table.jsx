@@ -24,35 +24,59 @@ const Table = ({ columns, data, onRowClick, isLoading, emptyMessage = 'No data a
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
-            {columns.map((column) => (
+            {columns.map((column, index) => (
               <th
-                key={column.key}
+                key={column.key || index}
                 className={`px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider ${
                   column.align === 'right' ? 'text-right' : 'text-left'
                 }`}
               >
-                {column.label}
+                {column.label || column.header}
               </th>
             ))}
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {data.map((row, idx) => (
+          {data.map((row, rowIndex) => (
             <tr
-              key={row.id || idx}
+              key={row.id || rowIndex}
               onClick={() => onRowClick && onRowClick(row)}
-              className={onRowClick ? 'cursor-pointer hover:bg-gray-50 transition-colors' : ''}
+              className={onRowClick ? 'cursor-pointer hover:bg-gray-50 transition-colors' : 'hover:bg-gray-50'}
             >
-              {columns.map((column) => (
-                <td 
-                  key={column.key} 
-                  className={`px-6 py-4 whitespace-nowrap text-sm ${
-                    column.align === 'right' ? 'text-right' : 'text-left'
-                  }`}
-                >
-                  {column.render ? column.render(row) : row[column.key]}
-                </td>
-              ))}
+              {columns.map((column, colIndex) => {
+                // Get the value for this cell
+                const value = row[column.key];
+                
+                // If there's a custom render function, use it
+                let cellContent;
+                if (column.render) {
+                  try {
+                    // Call render with value, row, and rowIndex for flexibility
+                    cellContent = column.render(value, row, rowIndex);
+                  } catch (error) {
+                    console.error('Error rendering cell:', error, {
+                      column: column.key,
+                      row,
+                      value
+                    });
+                    cellContent = <span className="text-red-500">Error</span>;
+                  }
+                } else {
+                  // Default rendering - ensure we always return valid JSX
+                  cellContent = <span>{value != null ? String(value) : ''}</span>;
+                }
+
+                return (
+                  <td 
+                    key={column.key || colIndex} 
+                    className={`px-6 py-4 whitespace-nowrap text-sm ${
+                      column.align === 'right' ? 'text-right' : 'text-left'
+                    }`}
+                  >
+                    {cellContent}
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>

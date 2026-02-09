@@ -43,18 +43,17 @@ const participantService = {
    * POST /api/v1/participants/participants/
    */
   async createParticipant(participantData) {
-  try {
-    console.log('Creating participant with data:', participantData);
-    const response = await api.post('/participants/participants/', participantData);
-    console.log('Participant created successfully:', response.data);
-    return response.data;
-  } catch (error) {
-    console.error('Error creating participant:', error);
-    console.error('Error response:', error.response?.data);
-    // Re-throw the error so the calling code can handle it
-    throw error.response?.data || error;
-  }
-},
+    try {
+      console.log('Creating participant with data:', participantData);
+      const response = await api.post('/participants/participants/', participantData);
+      console.log('Participant created successfully:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error creating participant:', error);
+      console.error('Error response:', error.response?.data);
+      throw error.response?.data || error;
+    }
+  },
 
   /**
    * Update participant - Full update
@@ -177,12 +176,17 @@ const participantService = {
 
   /**
    * Add note for participant
-   * POST /api/v1/participants/participants/{id}/add_note/
+   * POST /api/v1/participants/notes/
    */
   async addParticipantNote(participantId, noteData) {
     try {
       console.log('Adding note for participant:', participantId, noteData);
-      const response = await api.post(`/participants/participants/${participantId}/add_note/`, noteData);
+      // Add participant ID to the note data
+      const payload = {
+        ...noteData,
+        participant: participantId
+      };
+      const response = await api.post(`/participants/notes/`, payload);
       console.log('Note added successfully:', response.data);
       return response.data;
     } catch (error) {

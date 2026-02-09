@@ -1,21 +1,19 @@
 import React, { useState } from 'react';
 import Card from '../common/Card';
 import Button from '../common/Button';
-import Input from '../common/Input';
 import Badge from '../common/Badge';
-import Alert from '../common/Alert';
 import Spinner from '../common/Spinner';
 import {
   PlusIcon,
   DocumentTextIcon,
   LockClosedIcon,
-  CalendarIcon,
-  UserCircleIcon
+  CalendarIcon
 } from '@heroicons/react/24/outline';
 
 const NotesList = ({ participantId, notes = [], onAddNote, user }) => {
   const [showAddNote, setShowAddNote] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [noteData, setNoteData] = useState({
     note_date: new Date().toISOString().split('T')[0],
     note_type: 'progress',
@@ -56,11 +54,13 @@ const NotesList = ({ participantId, notes = [], onAddNote, user }) => {
     e.preventDefault();
     
     if (!noteData.content.trim()) {
-      Alert.error('Please enter note content');
+      setError('Please enter note content');
+      setTimeout(() => setError(''), 3000);
       return;
     }
     
     setLoading(true);
+    setError('');
     
     try {
       await onAddNote(noteData);
@@ -77,6 +77,7 @@ const NotesList = ({ participantId, notes = [], onAddNote, user }) => {
       
     } catch (err) {
       console.error('Error adding note:', err);
+      // Error is handled by parent component (ParticipantDetailPage)
     } finally {
       setLoading(false);
     }
@@ -110,6 +111,13 @@ const NotesList = ({ participantId, notes = [], onAddNote, user }) => {
       {showAddNote && (
         <div className="mb-6 p-4 bg-gray-50 rounded-lg">
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Error Message */}
+            {error && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                <p className="text-sm text-red-800">{error}</p>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -180,7 +188,10 @@ const NotesList = ({ participantId, notes = [], onAddNote, user }) => {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setShowAddNote(false)}
+                onClick={() => {
+                  setShowAddNote(false);
+                  setError('');
+                }}
                 disabled={loading}
               >
                 Cancel

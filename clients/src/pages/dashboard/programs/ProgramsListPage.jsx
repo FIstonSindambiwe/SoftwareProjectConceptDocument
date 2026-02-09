@@ -11,11 +11,16 @@ import {
   CheckCircleIcon,
   ClockIcon,
   XCircleIcon,
+  TrashIcon,
+  EllipsisVerticalIcon,
+  ArchiveBoxIcon,
+  ArrowPathIcon
 } from '@heroicons/react/24/outline';
 import { toast } from 'react-hot-toast';
 import Layout from '../../../components/layout/Layout';
 import Button from '../../../components/common/Button';
 import Spinner from '../../../components/common/Spinner';
+import Dropdown from '../../../components/common/Dropdown';
 import Modal from '../../../components/common/Modal';
 import ProgramFilters from '../../../components/programs/ProgramFilters';
 import ProgramStatistics from '../../../components/programs/ProgramStatistics';
@@ -33,8 +38,10 @@ const ProgramsListPage = () => {
   
   // Modal states
   const [showToggleModal, setShowToggleModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const statusOptions = [
     { value: 'planning', label: 'Planning', color: 'gray' },
@@ -92,6 +99,7 @@ const ProgramsListPage = () => {
       setPrograms([]);
     } finally {
       setIsLoading(false);
+      setRefreshing(false);
     }
   };
 
@@ -154,6 +162,55 @@ const ProgramsListPage = () => {
     }
   };
 
+  const handleOpenDeleteModal = (program) => {
+    setSelectedProgram(program);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteProgram = async () => {
+    if (!selectedProgram) return;
+
+    setIsUpdating(true);
+    try {
+      await programService.deleteProgram(selectedProgram.id);
+      
+      toast.success('Program deleted successfully');
+      
+      // Remove the program from the list
+      setPrograms(programs.filter(p => p.id !== selectedProgram.id));
+      
+      setShowDeleteModal(false);
+    } catch (error) {
+      console.error('Error deleting program:', error);
+      toast.error(error.response?.data?.error || 'Failed to delete program');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleArchiveProgram = async (program) => {
+    if (!program?.id) return;
+
+    setIsUpdating(true);
+    try {
+      // Since there's no archive endpoint, we can toggle active status or change status
+      // Let's use toggle active status as an "archive" action
+      const response = await programService.toggleProgramActive(program.id);
+      
+      toast.success(response.message || 'Program archived successfully');
+      
+      // Update the program in the list
+      setPrograms(programs.map(p => 
+        p.id === program.id ? response.program : p
+      ));
+    } catch (error) {
+      console.error('Error archiving program:', error);
+      toast.error('Failed to archive program');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   const getStatusBadgeColor = (status) => {
     const colors = {
       planning: 'bg-gray-100 text-gray-800 border-gray-200',
@@ -163,6 +220,60 @@ const ProgramsListPage = () => {
       cancelled: 'bg-red-100 text-red-800 border-red-200',
     };
     return colors[status] || 'bg-gray-100 text-gray-800 border-gray-200';
+  };
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    loadPrograms();
+  };
+
+  const ActionMenu = ({ program }) => {
+    const menuItems = [
+      {
+        label: 'View Details',
+        icon: <EyeIcon className="h-4 w-4 mr-2" />,
+        onClick: () => navigate(`/dashboard/programs/${program.id}`),
+        className: 'text-gray-700 hover:bg-gray-50'
+      },
+      {
+        label: 'Edit Program',
+        icon: <PencilIcon className="h-4 w-4 mr-2" />,
+        onClick: () => navigate(`/dashboard/programs/${program.id}/edit`),
+        className: 'text-gray-700 hover:bg-gray-50'
+      },
+      {
+        divider: true
+      },
+      // {
+      //   label: program.is_active ? 'Deactivate Program' : 'Activate Program',
+      //   icon: program.is_active ? 
+      //     <XCircleIcon className="h-4 w-4 mr-2" /> : 
+      //     <CheckCircleIcon className="h-4 w-4 mr-2" />,
+      //   onClick: () => handleOpenToggleModal(program),
+      //   className: program.is_active ? 'text-orange-600 hover:bg-orange-50' : 'text-green-600 hover:bg-green-50'
+      // },
+      // {
+      //   label: 'Delete Program',
+      //   icon: <TrashIcon className="h-4 w-4 mr-2" />,
+      //   onClick: () => handleOpenDeleteModal(program),
+      //   className: 'text-red-600 hover:bg-red-50'
+      // }
+    ];
+
+    return (
+      <Dropdown
+        trigger={
+          <button 
+            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+            title="Actions"
+          >
+            <EllipsisVerticalIcon className="h-5 w-5" />
+          </button>
+        }
+        items={menuItems}
+        align="right"
+      />
+    );
   };
 
   return (
@@ -176,14 +287,24 @@ const ProgramsListPage = () => {
               Manage youth development programs
             </p>
           </div>
-          <Button
-            variant="primary"
-            icon={PlusIcon}
-            onClick={() => navigate('/programs/create')}
-            size="lg"
-          >
-            Create Program
-          </Button>
+          <div className="flex space-x-3">
+            <Button
+              variant="outline"
+              onClick={handleRefresh}
+              disabled={refreshing}
+            >
+              <ArrowPathIcon className={`h-5 w-5 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => navigate('/dashboard/programs/create')}
+              size="lg"
+            >
+              <PlusIcon className="h-5 w-5 mr-2" />
+              Create Program
+            </Button>
+          </div>
         </div>
 
         {/* Statistics */}
@@ -250,9 +371,9 @@ const ProgramsListPage = () => {
             {!searchTerm && !statusFilter && !locationFilter && !activeFilter && !ongoingFilter && (
               <Button
                 variant="primary"
-                icon={PlusIcon}
-                onClick={() => navigate('/programs/create')}
+                onClick={() => navigate('/dashboard/programs/create')}
               >
+                <PlusIcon className="h-5 w-5 mr-2" />
                 Create Your First Program
               </Button>
             )}
@@ -287,24 +408,27 @@ const ProgramsListPage = () => {
                   {programs.map((program, index) => (
                     <tr 
                       key={program.id} 
-                      className={`transition-all duration-200 hover:bg-blue-50 hover:shadow-md ${
+                      className={`transition-all duration-200 hover:bg-blue-50 ${
                         index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                       }`}
                     >
                       <td className="px-6 py-4">
                         <div>
-                          <div className="text-sm font-semibold text-gray-900">
+                          <div 
+                            className="text-sm font-semibold text-gray-900 hover:text-blue-600 cursor-pointer transition-colors"
+                            onClick={() => navigate(`/dashboard/programs/${program.id}`)}
+                          >
                             {program.name}
                           </div>
                           <div className="mt-1 flex items-center gap-2">
                             {program.is_ongoing && (
-                              <span className="inline-flex items-center text-xs text-green-600">
+                              <span className="inline-flex items-center text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded">
                                 <ClockIcon className="h-3 w-3 mr-1" />
                                 Ongoing
                               </span>
                             )}
                             {!program.is_active && (
-                              <span className="inline-flex items-center text-xs text-gray-500">
+                              <span className="inline-flex items-center text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
                                 <XCircleIcon className="h-3 w-3 mr-1" />
                                 Inactive
                               </span>
@@ -314,16 +438,18 @@ const ProgramsListPage = () => {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center text-sm text-gray-900">
-                          <MapPinIcon className="h-4 w-4 mr-2 text-gray-400" />
-                          <div>
-                            <div>{program.location_name}</div>
-                            <div className="text-xs text-gray-500">{program.location_city}</div>
+                          <MapPinIcon className="h-4 w-4 mr-2 text-gray-400 flex-shrink-0" />
+                          <div className="truncate">
+                            <div className="truncate">{program.location_name || 'No location'}</div>
+                            {program.location_city && (
+                              <div className="text-xs text-gray-500 truncate">{program.location_city}</div>
+                            )}
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center text-sm text-gray-900">
-                          <CalendarIcon className="h-4 w-4 mr-2 text-gray-400" />
+                          <CalendarIcon className="h-4 w-4 mr-2 text-gray-400 flex-shrink-0" />
                           <div>
                             <div>{new Date(program.start_date).toLocaleDateString()}</div>
                             {program.end_date && (
@@ -336,12 +462,14 @@ const ProgramsListPage = () => {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center text-sm">
-                          <UsersIcon className="h-4 w-4 mr-2 text-gray-400" />
-                          <span className="font-medium text-gray-900">
-                            {program.enrollment_count || 0}
-                          </span>
-                          <span className="text-gray-500 mx-1">/</span>
-                          <span className="text-gray-600">{program.target_participants}</span>
+                          <UsersIcon className="h-4 w-4 mr-2 text-gray-400 flex-shrink-0" />
+                          <div className="flex items-center">
+                            <span className="font-medium text-gray-900">
+                              {program.enrollment_count || 0}
+                            </span>
+                            <span className="text-gray-500 mx-1">/</span>
+                            <span className="text-gray-600">{program.target_participants || 'N/A'}</span>
+                          </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -359,36 +487,8 @@ const ProgramsListPage = () => {
                         </select>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center justify-center space-x-1">
-                          <button
-                            onClick={() => navigate(`/programs/${program.id}`)}
-                            className="p-2.5 text-blue-600 hover:bg-blue-100 rounded-lg transition-all duration-200 hover:scale-110 group"
-                            title="View Details"
-                          >
-                            <EyeIcon className="h-5 w-5 group-hover:scale-110 transition-transform" />
-                          </button>
-                          <button
-                            onClick={() => navigate(`/programs/${program.id}/edit`)}
-                            className="p-2.5 text-amber-600 hover:bg-amber-100 rounded-lg transition-all duration-200 hover:scale-110 group"
-                            title="Edit Program"
-                          >
-                            <PencilIcon className="h-5 w-5 group-hover:scale-110 transition-transform" />
-                          </button>
-                          {/* <button
-                            onClick={() => handleOpenToggleModal(program)}
-                            className={`p-2.5 ${
-                              program.is_active 
-                                ? 'text-red-600 hover:bg-red-100' 
-                                : 'text-green-600 hover:bg-green-100'
-                            } rounded-lg transition-all duration-200 hover:scale-110 group`}
-                            title={program.is_active ? 'Deactivate' : 'Activate'}
-                          >
-                            {program.is_active ? (
-                              <XCircleIcon className="h-5 w-5 group-hover:scale-110 transition-transform" />
-                            ) : (
-                              <CheckCircleIcon className="h-5 w-5 group-hover:scale-110 transition-transform" />
-                            )}
-                          </button> */}
+                        <div className="flex items-center justify-center">
+                          <ActionMenu program={program} />
                         </div>
                       </td>
                     </tr>
@@ -398,8 +498,8 @@ const ProgramsListPage = () => {
             </div>
           </div>
         )}
-{/* 
-        Toggle Active/Inactive Modal
+
+        {/* Toggle Active/Inactive Modal
         <Modal
           isOpen={showToggleModal}
           onClose={() => setShowToggleModal(false)}
@@ -409,15 +509,19 @@ const ProgramsListPage = () => {
             <p className="text-sm text-gray-600">
               {selectedProgram?.is_active ? (
                 <>
-                  Are you sure you want to deactivate <strong>{selectedProgram?.name}</strong>?
+                  Are you sure you want to deactivate <strong className="font-semibold">{selectedProgram?.name}</strong>?
                   <br /><br />
-                  This will prevent new enrollments and hide the program from active listings.
+                  <span className="text-amber-600 font-medium">
+                    This will prevent new enrollments and hide the program from active listings.
+                  </span>
                 </>
               ) : (
                 <>
-                  Are you sure you want to activate <strong>{selectedProgram?.name}</strong>?
+                  Are you sure you want to activate <strong className="font-semibold">{selectedProgram?.name}</strong>?
                   <br /><br />
-                  This will make the program visible and allow new enrollments.
+                  <span className="text-green-600 font-medium">
+                    This will make the program visible and allow new enrollments.
+                  </span>
                 </>
               )}
             </p>
@@ -431,11 +535,64 @@ const ProgramsListPage = () => {
                 Cancel
               </Button>
               <Button
-                variant={selectedProgram?.is_active ? 'danger' : 'primary'}
+                variant={selectedProgram?.is_active ? 'warning' : 'primary'}
                 onClick={handleToggleActive}
                 isLoading={isUpdating}
               >
                 {selectedProgram?.is_active ? 'Deactivate' : 'Activate'}
+              </Button>
+            </div>
+          </div>
+        </Modal> */}
+
+        {/* Delete Program Modal */}
+        {/* <Modal
+          isOpen={showDeleteModal}
+          onClose={() => setShowDeleteModal(false)}
+          title="Delete Program"
+          danger
+        >
+          <div className="space-y-4">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-red-800">Warning: Destructive Action</h3>
+                  <div className="mt-2 text-sm text-red-700">
+                    <p>This action cannot be undone. All program data including:</p>
+                    <ul className="list-disc pl-5 mt-1">
+                      <li>Program details</li>
+                      <li>Participant enrollments</li>
+                      <li>Milestones and progress</li>
+                    </ul>
+                    <p className="mt-2 font-bold">will be permanently deleted.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <p className="text-sm text-gray-600">
+              Are you sure you want to delete <strong className="font-semibold">{selectedProgram?.name}</strong>?
+            </p>
+
+            <div className="flex justify-end gap-3 pt-4">
+              <Button
+                variant="outline"
+                onClick={() => setShowDeleteModal(false)}
+                disabled={isUpdating}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="danger"
+                onClick={handleDeleteProgram}
+                isLoading={isUpdating}
+              >
+                Delete Program
               </Button>
             </div>
           </div>

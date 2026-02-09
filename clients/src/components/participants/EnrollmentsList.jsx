@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Card from '../common/Card';
 import Button from '../common/Button';
 import Badge from '../common/Badge';
-import Alert from '../common/Alert';
 import Table from '../common/Table';
+import Spinner from '../common/Spinner';
 import {
   PlusIcon,
   CheckCircleIcon,
@@ -17,8 +17,33 @@ import programService from '../../services/api/programService';
 
 const EnrollmentsList = ({ enrollments, participantId, user, onEnrollmentUpdated }) => {
   const [loading, setLoading] = useState({});
-  const [programs, setPrograms] = useState([]);
   const [showEnrollModal, setShowEnrollModal] = useState(false);
+  const [programs, setPrograms] = useState([]);
+  const [loadingPrograms, setLoadingPrograms] = useState(false);
+  const [enrolling, setEnrolling] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [selectedProgram, setSelectedProgram] = useState('');
+  const [enrollmentDate, setEnrollmentDate] = useState(new Date().toISOString().split('T')[0]);
+
+  useEffect(() => {
+    if (showEnrollModal) {
+      fetchPrograms();
+    }
+  }, [showEnrollModal]);
+
+  const fetchPrograms = async () => {
+    try {
+      setLoadingPrograms(true);
+      const response = await programService.getActivePrograms();
+      setPrograms(response.results || response || []);
+    } catch (err) {
+      console.error('Error fetching programs:', err);
+      setError('Failed to load programs');
+    } finally {
+      setLoadingPrograms(false);
+    }
+  };
 
   const getStatusBadge = (status) => {
     const statusConfig = {
@@ -33,17 +58,52 @@ const EnrollmentsList = ({ enrollments, participantId, user, onEnrollmentUpdated
     return <Badge color={config.color}>{config.label}</Badge>;
   };
 
+  const handleEnroll = async () => {
+    if (!selectedProgram) {
+      setError('Please select a program');
+      return;
+    }
+
+    setEnrolling(true);
+    setError('');
+
+    try {
+      await participantService.createEnrollment({
+        participant: participantId,
+        program: selectedProgram,
+        enrollment_date: enrollmentDate,
+        status: 'enrolled'
+      });
+
+      setSuccess('Participant enrolled successfully');
+      setTimeout(() => setSuccess(''), 3000);
+      setShowEnrollModal(false);
+      setSelectedProgram('');
+      setEnrollmentDate(new Date().toISOString().split('T')[0]);
+      onEnrollmentUpdated();
+    } catch (err) {
+      console.error('Error enrolling participant:', err);
+      setError(err.message || 'Failed to enroll participant');
+      setTimeout(() => setError(''), 5000);
+    } finally {
+      setEnrolling(false);
+    }
+  };
+
   const handleCompleteEnrollment = async (enrollmentId) => {
     if (!window.confirm('Mark this enrollment as completed?')) return;
     
     setLoading(prev => ({ ...prev, [enrollmentId]: true }));
+    setError('');
     
     try {
       await participantService.completeEnrollment(enrollmentId);
-      Alert.success('Enrollment marked as completed');
+      setSuccess('Enrollment marked as completed');
+      setTimeout(() => setSuccess(''), 3000);
       onEnrollmentUpdated();
     } catch (err) {
-      Alert.error(err.message || 'Failed to complete enrollment');
+      setError(err.message || 'Failed to complete enrollment');
+      setTimeout(() => setError(''), 5000);
     } finally {
       setLoading(prev => ({ ...prev, [enrollmentId]: false }));
     }
@@ -54,13 +114,16 @@ const EnrollmentsList = ({ enrollments, participantId, user, onEnrollmentUpdated
     if (reason === null) return;
     
     setLoading(prev => ({ ...prev, [enrollmentId]: true }));
+    setError('');
     
     try {
       await participantService.dropoutEnrollment(enrollmentId, reason);
-      Alert.success('Participant marked as dropped out');
+      setSuccess('Participant marked as dropped out');
+      setTimeout(() => setSuccess(''), 3000);
       onEnrollmentUpdated();
     } catch (err) {
-      Alert.error(err.message || 'Failed to mark as dropout');
+      setError(err.message || 'Failed to mark as dropout');
+      setTimeout(() => setError(''), 5000);
     } finally {
       setLoading(prev => ({ ...prev, [enrollmentId]: false }));
     }
@@ -68,13 +131,16 @@ const EnrollmentsList = ({ enrollments, participantId, user, onEnrollmentUpdated
 
   const handleUpdateAttendance = async (enrollmentId) => {
     setLoading(prev => ({ ...prev, [enrollmentId]: true }));
+    setError('');
     
     try {
       await participantService.updateEnrollmentAttendance(enrollmentId);
-      Alert.success('Attendance rate updated');
+      setSuccess('Attendance rate updated');
+      setTimeout(() => setSuccess(''), 3000);
       onEnrollmentUpdated();
     } catch (err) {
-      Alert.error(err.message || 'Failed to update attendance');
+      setError(err.message || 'Failed to update attendance');
+      setTimeout(() => setError(''), 5000);
     } finally {
       setLoading(prev => ({ ...prev, [enrollmentId]: false }));
     }
@@ -96,7 +162,7 @@ const EnrollmentsList = ({ enrollments, participantId, user, onEnrollmentUpdated
     {
       key: 'enrollment_date',
       header: 'Enrolled',
-      render: (value) => new Date(value).toLocaleDateString()
+      render: (value) => <span>{new Date(value).toLocaleDateString()}</span>
     },
     {
       key: 'status_display',
@@ -113,7 +179,7 @@ const EnrollmentsList = ({ enrollments, participantId, user, onEnrollmentUpdated
             value >= 80 ? 'text-green-600' :
             value >= 60 ? 'text-yellow-600' : 'text-red-600'
           }`}>
-            {value.toFixed(1)}%
+            {value ? value.toFixed(1) : '0.0'}%
           </span>
         </div>
       )
@@ -175,6 +241,20 @@ const EnrollmentsList = ({ enrollments, participantId, user, onEnrollmentUpdated
         )}
       </div>
 
+      {/* Success Message */}
+      {success && (
+        <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-md">
+          <p className="text-sm text-green-800">{success}</p>
+        </div>
+      )}
+
+      {/* Error Message */}
+      {error && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+          <p className="text-sm text-red-800">{error}</p>
+        </div>
+      )}
+
       {enrollments.length === 0 ? (
         <div className="text-center py-8">
           <CalendarIcon className="h-12 w-12 text-gray-400 mx-auto" />
@@ -196,27 +276,90 @@ const EnrollmentsList = ({ enrollments, participantId, user, onEnrollmentUpdated
         </div>
       )}
 
-      {/* Enrollment Modal (simplified - you'd need to build this) */}
+      {/* Enrollment Modal */}
       {showEnrollModal && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg max-w-md w-full p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Enroll in New Program
             </h3>
-            <p className="text-gray-600 mb-4">
-              This feature would allow you to select a program and enroll the participant.
-            </p>
-            <div className="flex justify-end space-x-3">
-              <Button
-                variant="outline"
-                onClick={() => setShowEnrollModal(false)}
-              >
-                Cancel
-              </Button>
-              <Button onClick={() => setShowEnrollModal(false)}>
-                Enroll
-              </Button>
-            </div>
+            
+            {loadingPrograms ? (
+              <div className="flex justify-center py-8">
+                <Spinner size="md" />
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {/* Program Selection */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Select Program *
+                  </label>
+                  <select
+                    value={selectedProgram}
+                    onChange={(e) => setSelectedProgram(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    disabled={enrolling}
+                  >
+                    <option value="">-- Select a program --</option>
+                    {programs.map(program => (
+                      <option key={program.id} value={program.id}>
+                        {program.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Enrollment Date */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Enrollment Date *
+                  </label>
+                  <input
+                    type="date"
+                    value={enrollmentDate}
+                    onChange={(e) => setEnrollmentDate(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    disabled={enrolling}
+                  />
+                </div>
+
+                {/* Error in modal */}
+                {error && (
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                    <p className="text-sm text-red-800">{error}</p>
+                  </div>
+                )}
+
+                {/* Actions */}
+                <div className="flex justify-end space-x-3 mt-6">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setShowEnrollModal(false);
+                      setSelectedProgram('');
+                      setError('');
+                    }}
+                    disabled={enrolling}
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    onClick={handleEnroll}
+                    disabled={enrolling || !selectedProgram}
+                  >
+                    {enrolling ? (
+                      <>
+                        <Spinner size="sm" className="mr-2" />
+                        Enrolling...
+                      </>
+                    ) : (
+                      'Enroll'
+                    )}
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
