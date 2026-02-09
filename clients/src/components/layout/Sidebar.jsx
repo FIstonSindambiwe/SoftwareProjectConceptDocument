@@ -1,5 +1,5 @@
 // src/components/layout/Sidebar.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
   HomeIcon,
@@ -11,12 +11,16 @@ import {
   DocumentTextIcon,
   MapPinIcon,
   XMarkIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+  FlagIcon,
 } from '@heroicons/react/24/outline';
 import authService from '../../services/api/authService';
 
 const Sidebar = ({ isOpen, onClose }) => {
   const user = authService.getCurrentUser();
   const userRole = authService.getUserRole();
+  const [isProgramsOpen, setIsProgramsOpen] = useState(false);
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, roles: ['all'] },
@@ -26,17 +30,32 @@ const Sidebar = ({ isOpen, onClose }) => {
       icon: UserGroupIcon, 
       roles: ['admin'] 
     },
-    { 
-      name: 'Locations', 
-      href: '/locations', 
-      icon: MapPinIcon, 
-      roles: ['admin', 'program_manager'] 
-    },
+    // Programs dropdown
     { 
       name: 'Programs', 
-      href: '/programs', 
       icon: AcademicCapIcon, 
-      roles: ['all'] 
+      roles: ['all'],
+      isDropdown: true,
+      children: [
+        { 
+          name: 'Locations', 
+          href: '/locations', 
+          icon: MapPinIcon, 
+          roles: ['admin', 'program_manager'] 
+        },
+        { 
+          name: 'Programs', 
+          href: '/programs', 
+          icon: AcademicCapIcon, 
+          roles: ['all'] 
+        },
+        { 
+          name: 'Milestones', 
+          href: '/milestones', 
+          icon: FlagIcon, 
+          roles: ['admin', 'teacher', 'program_manager'] 
+        },
+      ]
     },
     { 
       name: 'Participants', 
@@ -69,7 +88,20 @@ const Sidebar = ({ isOpen, onClose }) => {
     return item.roles.includes(userRole);
   };
 
-  const filteredNavigation = navigation.filter(hasAccess);
+  const filteredNavigation = navigation.filter(item => {
+    if (!hasAccess(item)) return false;
+    if (item.isDropdown && item.children) {
+      // Filter dropdown children
+      item.children = item.children.filter(hasAccess);
+      // Only show dropdown if it has accessible children
+      return item.children.length > 0;
+    }
+    return true;
+  });
+
+  const toggleProgramsDropdown = () => {
+    setIsProgramsOpen(!isProgramsOpen);
+  };
 
   return (
     <>
@@ -124,23 +156,72 @@ const Sidebar = ({ isOpen, onClose }) => {
 
           {/* Navigation */}
           <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-            {filteredNavigation.map((item) => (
-              <NavLink
-                key={item.name}
-                to={item.href}
-                onClick={() => onClose()}
-                className={({ isActive }) =>
-                  `flex items-center gap-4 px-4 py-3 text-sm font-medium rounded-lg transition-all
-                  ${isActive
-                    ? 'bg-slate-600 text-white shadow-lg'
-                    : 'text-slate-300 hover:bg-slate-700 hover:text-white'
-                  }`
-                }
-              >
-                <item.icon className="h-5 w-5 flex-shrink-0" />
-                <span>{item.name}</span>
-              </NavLink>
-            ))}
+            {filteredNavigation.map((item) => {
+              // Render dropdown
+              if (item.isDropdown) {
+                return (
+                  <div key={item.name}>
+                    {/* Dropdown Header */}
+                    <button
+                      onClick={toggleProgramsDropdown}
+                      className="w-full flex items-center justify-between gap-4 px-4 py-3 text-sm font-medium rounded-lg transition-all text-slate-300 hover:bg-slate-700 hover:text-white"
+                    >
+                      <div className="flex items-center gap-4">
+                        <item.icon className="h-5 w-5 flex-shrink-0" />
+                        <span>{item.name}</span>
+                      </div>
+                      {isProgramsOpen ? (
+                        <ChevronDownIcon className="h-4 w-4" />
+                      ) : (
+                        <ChevronRightIcon className="h-4 w-4" />
+                      )}
+                    </button>
+
+                    {/* Dropdown Items */}
+                    {isProgramsOpen && (
+                      <div className="ml-4 mt-2 space-y-1">
+                        {item.children.map((child) => (
+                          <NavLink
+                            key={child.name}
+                            to={child.href}
+                            onClick={() => onClose()}
+                            className={({ isActive }) =>
+                              `flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg transition-all
+                              ${isActive
+                                ? 'bg-slate-600 text-white shadow-lg'
+                                : 'text-slate-300 hover:bg-slate-700 hover:text-white'
+                              }`
+                            }
+                          >
+                            <child.icon className="h-4 w-4 flex-shrink-0" />
+                            <span>{child.name}</span>
+                          </NavLink>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
+              // Render normal link
+              return (
+                <NavLink
+                  key={item.name}
+                  to={item.href}
+                  onClick={() => onClose()}
+                  className={({ isActive }) =>
+                    `flex items-center gap-4 px-4 py-3 text-sm font-medium rounded-lg transition-all
+                    ${isActive
+                      ? 'bg-slate-600 text-white shadow-lg'
+                      : 'text-slate-300 hover:bg-slate-700 hover:text-white'
+                    }`
+                  }
+                >
+                  <item.icon className="h-5 w-5 flex-shrink-0" />
+                  <span>{item.name}</span>
+                </NavLink>
+              );
+            })}
           </nav>
 
           {/* Footer */}

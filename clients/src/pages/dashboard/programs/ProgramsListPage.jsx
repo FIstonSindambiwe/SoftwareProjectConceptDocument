@@ -10,11 +10,15 @@ import {
   UsersIcon,
   CheckCircleIcon,
   ClockIcon,
+  XCircleIcon,
 } from '@heroicons/react/24/outline';
 import { toast } from 'react-hot-toast';
 import Layout from '../../../components/layout/Layout';
 import Button from '../../../components/common/Button';
 import Spinner from '../../../components/common/Spinner';
+import Modal from '../../../components/common/Modal';
+import ProgramFilters from '../../../components/programs/ProgramFilters';
+import ProgramStatistics from '../../../components/programs/ProgramStatistics';
 import programService from '../../../services/api/programService';
 
 const ProgramsListPage = () => {
@@ -24,6 +28,21 @@ const ProgramsListPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
+  const [activeFilter, setActiveFilter] = useState('');
+  const [ongoingFilter, setOngoingFilter] = useState('');
+  
+  // Modal states
+  const [showToggleModal, setShowToggleModal] = useState(false);
+  const [selectedProgram, setSelectedProgram] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const statusOptions = [
+    { value: 'planning', label: 'Planning', color: 'gray' },
+    { value: 'active', label: 'Active', color: 'green' },
+    { value: 'completed', label: 'Completed', color: 'blue' },
+    { value: 'on_hold', label: 'On Hold', color: 'yellow' },
+    { value: 'cancelled', label: 'Cancelled', color: 'red' },
+  ];
 
   useEffect(() => {
     loadPrograms();
@@ -36,27 +55,37 @@ const ProgramsListPage = () => {
       if (searchTerm) params.search = searchTerm;
       if (statusFilter) params.status = statusFilter;
       if (locationFilter) params.location = locationFilter;
+      if (activeFilter) params.is_active = activeFilter;
 
       const data = await programService.getPrograms(params);
-      console.log('Programs data received:', data);
-      console.log('Data type:', typeof data);
-      console.log('Is array?', Array.isArray(data));
-      console.log('Has results?', data?.results);
-      console.log('Results is array?', Array.isArray(data?.results));
-      console.log('Data keys:', Object.keys(data));
       
       // Handle both paginated and non-paginated responses
+      let programsList = [];
       if (data && data.results && Array.isArray(data.results)) {
-        console.log('Using data.results, length:', data.results.length);
-        setPrograms(data.results);
+        programsList = data.results;
       } else if (Array.isArray(data)) {
-        console.log('Using data directly, length:', data.length);
-        setPrograms(data);
-      } else {
-        console.error('Unexpected data format:', data);
-        console.error('Setting empty array');
-        setPrograms([]);
+        programsList = data;
       }
+
+      // Apply client-side filters that aren't supported by API
+      if (ongoingFilter) {
+        programsList = programsList.filter(p => {
+          if (ongoingFilter === 'ongoing') return p.is_ongoing;
+          if (ongoingFilter === 'upcoming') {
+            const today = new Date();
+            const startDate = new Date(p.start_date);
+            return startDate > today;
+          }
+          if (ongoingFilter === 'past') {
+            const today = new Date();
+            const endDate = p.end_date ? new Date(p.end_date) : null;
+            return endDate && endDate < today;
+          }
+          return true;
+        });
+      }
+
+      setPrograms(programsList);
     } catch (error) {
       console.error('Error loading programs:', error);
       toast.error('Failed to load programs');
@@ -71,7 +100,59 @@ const ProgramsListPage = () => {
       loadPrograms();
     }, 300);
     return () => clearTimeout(debounceTimer);
-  }, [searchTerm, statusFilter, locationFilter]);
+  }, [searchTerm, statusFilter, locationFilter, activeFilter, ongoingFilter]);
+
+  const handleStatusChange = async (program, newStatus) => {
+    if (newStatus === program.status) return;
+
+    setIsUpdating(true);
+    try {
+      const response = await programService.changeProgramStatus(
+        program.id,
+        newStatus
+      );
+      
+      toast.success(response.message);
+      
+      // Update the program in the list
+      setPrograms(programs.map(p => 
+        p.id === program.id ? response.program : p
+      ));
+    } catch (error) {
+      console.error('Error changing status:', error);
+      toast.error(error.error || 'Failed to change status');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleOpenToggleModal = (program) => {
+    setSelectedProgram(program);
+    setShowToggleModal(true);
+  };
+
+  const handleToggleActive = async () => {
+    if (!selectedProgram) return;
+
+    setIsUpdating(true);
+    try {
+      const response = await programService.toggleProgramActive(selectedProgram.id);
+      
+      toast.success(response.message);
+      
+      // Update the program in the list
+      setPrograms(programs.map(p => 
+        p.id === selectedProgram.id ? response.program : p
+      ));
+      
+      setShowToggleModal(false);
+    } catch (error) {
+      console.error('Error toggling active status:', error);
+      toast.error('Failed to update program');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   const getStatusBadgeColor = (status) => {
     const colors = {
@@ -105,60 +186,22 @@ const ProgramsListPage = () => {
           </Button>
         </div>
 
+        {/* Statistics */}
+        <ProgramStatistics programs={programs} />
+
         {/* Filters */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Search
-              </label>
-              <input
-                type="text"
-                placeholder="Search programs..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Status
-              </label>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              >
-                <option value="">All Status</option>
-                <option value="planning">Planning</option>
-                <option value="active">Active</option>
-                <option value="completed">Completed</option>
-                <option value="on_hold">On Hold</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Actions
-              </label>
-              <div className="flex space-x-2">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setSearchTerm('');
-                    setStatusFilter('');
-                    setLocationFilter('');
-                  }}
-                  className="flex-1"
-                >
-                  Clear Filters
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ProgramFilters
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          statusFilter={statusFilter}
+          setStatusFilter={setStatusFilter}
+          locationFilter={locationFilter}
+          setLocationFilter={setLocationFilter}
+          activeFilter={activeFilter}
+          setActiveFilter={setActiveFilter}
+          ongoingFilter={ongoingFilter}
+          setOngoingFilter={setOngoingFilter}
+        />
 
         {/* Results Count */}
         <div className="flex items-center justify-between bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200">
@@ -200,11 +243,11 @@ const ProgramsListPage = () => {
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">No programs found</h3>
             <p className="text-gray-600 mb-6 max-w-md mx-auto">
-              {searchTerm || statusFilter
+              {searchTerm || statusFilter || locationFilter || activeFilter || ongoingFilter
                 ? 'Try adjusting your filters to find what you\'re looking for.'
                 : 'Get started by creating your first program.'}
             </p>
-            {!searchTerm && !statusFilter && (
+            {!searchTerm && !statusFilter && !locationFilter && !activeFilter && !ongoingFilter && (
               <Button
                 variant="primary"
                 icon={PlusIcon}
@@ -253,12 +296,20 @@ const ProgramsListPage = () => {
                           <div className="text-sm font-semibold text-gray-900">
                             {program.name}
                           </div>
-                          {program.is_ongoing && (
-                            <div className="mt-1 flex items-center text-xs text-green-600">
-                              <ClockIcon className="h-3 w-3 mr-1" />
-                              Ongoing
-                            </div>
-                          )}
+                          <div className="mt-1 flex items-center gap-2">
+                            {program.is_ongoing && (
+                              <span className="inline-flex items-center text-xs text-green-600">
+                                <ClockIcon className="h-3 w-3 mr-1" />
+                                Ongoing
+                              </span>
+                            )}
+                            {!program.is_active && (
+                              <span className="inline-flex items-center text-xs text-gray-500">
+                                <XCircleIcon className="h-3 w-3 mr-1" />
+                                Inactive
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -293,10 +344,19 @@ const ProgramsListPage = () => {
                           <span className="text-gray-600">{program.target_participants}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border ${getStatusBadgeColor(program.status)}`}>
-                          {program.status_display || program.status}
-                        </span>
+                      <td className="px-6 py-4">
+                        <select
+                          value={program.status}
+                          onChange={(e) => handleStatusChange(program, e.target.value)}
+                          disabled={isUpdating}
+                          className={`px-3 py-1 text-xs font-semibold rounded-full border cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 ${getStatusBadgeColor(program.status)}`}
+                        >
+                          {statusOptions.map((option) => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center justify-center space-x-1">
@@ -314,6 +374,21 @@ const ProgramsListPage = () => {
                           >
                             <PencilIcon className="h-5 w-5 group-hover:scale-110 transition-transform" />
                           </button>
+                          {/* <button
+                            onClick={() => handleOpenToggleModal(program)}
+                            className={`p-2.5 ${
+                              program.is_active 
+                                ? 'text-red-600 hover:bg-red-100' 
+                                : 'text-green-600 hover:bg-green-100'
+                            } rounded-lg transition-all duration-200 hover:scale-110 group`}
+                            title={program.is_active ? 'Deactivate' : 'Activate'}
+                          >
+                            {program.is_active ? (
+                              <XCircleIcon className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                            ) : (
+                              <CheckCircleIcon className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                            )}
+                          </button> */}
                         </div>
                       </td>
                     </tr>
@@ -323,6 +398,48 @@ const ProgramsListPage = () => {
             </div>
           </div>
         )}
+{/* 
+        Toggle Active/Inactive Modal
+        <Modal
+          isOpen={showToggleModal}
+          onClose={() => setShowToggleModal(false)}
+          title={`${selectedProgram?.is_active ? 'Deactivate' : 'Activate'} Program`}
+        >
+          <div className="space-y-4">
+            <p className="text-sm text-gray-600">
+              {selectedProgram?.is_active ? (
+                <>
+                  Are you sure you want to deactivate <strong>{selectedProgram?.name}</strong>?
+                  <br /><br />
+                  This will prevent new enrollments and hide the program from active listings.
+                </>
+              ) : (
+                <>
+                  Are you sure you want to activate <strong>{selectedProgram?.name}</strong>?
+                  <br /><br />
+                  This will make the program visible and allow new enrollments.
+                </>
+              )}
+            </p>
+
+            <div className="flex justify-end gap-3 pt-4">
+              <Button
+                variant="outline"
+                onClick={() => setShowToggleModal(false)}
+                disabled={isUpdating}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant={selectedProgram?.is_active ? 'danger' : 'primary'}
+                onClick={handleToggleActive}
+                isLoading={isUpdating}
+              >
+                {selectedProgram?.is_active ? 'Deactivate' : 'Activate'}
+              </Button>
+            </div>
+          </div>
+        </Modal> */}
       </div>
     </Layout>
   );

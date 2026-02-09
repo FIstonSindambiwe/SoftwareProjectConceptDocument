@@ -27,6 +27,12 @@ import ProgramDetailPage from './pages/dashboard/programs/ProgramDetailPage';
 import CreateProgramPage from './pages/dashboard/programs/CreateProgramPage';
 import EditProgramPage from './pages/dashboard/programs/EditProgramPage';
 
+// Milestones
+import MilestonesListPage from './pages/dashboard/milestones/MilestonesListPage';
+import MilestoneDetailPage from './pages/dashboard/milestones/MilestoneDetailPage';
+import CreateMilestonePage from './pages/dashboard/milestones/CreateMilestonePage';
+import EditMilestonePage from './pages/dashboard/milestones/EditMilestonePage';
+
 // Profile
 import ProfilePage from './pages/dashboard/profile/ProfilePage';
 import ChangePasswordPage from './pages/dashboard/profile/ChangePasswordPage';
@@ -195,6 +201,40 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        
+       {/* Milestone Routes (Admin, Teacher, Program Manager) */}
+          <Route
+            path="/milestones"
+            element={
+              <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']}>
+                <MilestonesListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/milestones/create"
+            element={
+              <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']}>
+                <CreateMilestonePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/milestones/:id"
+            element={
+              <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']}>
+                <MilestoneDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/milestones/:id/edit"
+            element={
+              <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']}>
+                <EditMilestonePage />
+              </ProtectedRoute>
+            }
+          />
 
         {/* Protected Routes - Participants (Admin, Teacher, Program Manager) */}
         <Route 

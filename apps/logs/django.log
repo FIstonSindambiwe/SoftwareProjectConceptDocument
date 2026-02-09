@@ -1147,3 +1147,439 @@ INFO 2026-02-09 09:02:46,104 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 6
 INFO 2026-02-09 09:02:46,408 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
 INFO 2026-02-09 09:22:05,867 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/programs/views.py changed, reloading.
 INFO 2026-02-09 09:22:06,371 autoreload Watching for file changes with StatReloader
+INFO 2026-02-09 09:31:48,136 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/programs/views.py changed, reloading.
+INFO 2026-02-09 09:31:48,624 autoreload Watching for file changes with StatReloader
+WARNING 2026-02-09 09:34:03,114 log Unauthorized: /api/v1/programs/programs/
+WARNING 2026-02-09 09:34:03,115 log "GET /api/v1/programs/programs/ HTTP/1.1" 401 172
+INFO 2026-02-09 09:34:03,119 log "OPTIONS /api/v1/auth/refresh/ HTTP/1.1" 200 0
+WARNING 2026-02-09 09:34:03,165 log Unauthorized: /api/v1/auth/refresh/
+WARNING 2026-02-09 09:34:03,166 log "POST /api/v1/auth/refresh/ HTTP/1.1" 401 54
+INFO 2026-02-09 09:34:11,164 log "OPTIONS /api/v1/auth/login/ HTTP/1.1" 200 0
+WARNING 2026-02-09 09:34:11,636 log Bad Request: /api/v1/auth/login/
+WARNING 2026-02-09 09:34:11,637 log "POST /api/v1/auth/login/ HTTP/1.1" 400 54
+WARNING 2026-02-09 09:34:21,375 log Bad Request: /api/v1/auth/login/
+WARNING 2026-02-09 09:34:21,375 log "POST /api/v1/auth/login/ HTTP/1.1" 400 54
+WARNING 2026-02-09 09:34:29,213 log Bad Request: /api/v1/auth/login/
+WARNING 2026-02-09 09:34:29,213 log "POST /api/v1/auth/login/ HTTP/1.1" 400 54
+WARNING 2026-02-09 09:34:39,848 log Bad Request: /api/v1/auth/login/
+WARNING 2026-02-09 09:34:39,848 log "POST /api/v1/auth/login/ HTTP/1.1" 400 54
+WARNING 2026-02-09 09:36:22,978 log Bad Request: /api/v1/auth/login/
+WARNING 2026-02-09 09:36:22,978 log "POST /api/v1/auth/login/ HTTP/1.1" 400 54
+WARNING 2026-02-09 09:36:27,371 log Bad Request: /api/v1/auth/login/
+WARNING 2026-02-09 09:36:27,371 log "POST /api/v1/auth/login/ HTTP/1.1" 400 54
+INFO 2026-02-09 09:37:12,581 log "POST /api/v1/auth/login/ HTTP/1.1" 200 909
+INFO 2026-02-09 09:39:01,848 log "OPTIONS /api/v1/auth/logout/ HTTP/1.1" 200 0
+WARNING 2026-02-09 09:39:01,856 log Bad Request: /api/v1/auth/logout/
+WARNING 2026-02-09 09:39:01,857 log "POST /api/v1/auth/logout/ HTTP/1.1" 400 42
+INFO 2026-02-09 09:39:16,544 log "POST /api/v1/auth/login/ HTTP/1.1" 200 912
+INFO 2026-02-09 09:39:20,516 log "OPTIONS /api/v1/auth/stats/ HTTP/1.1" 200 0
+INFO 2026-02-09 09:39:20,517 log "OPTIONS /api/v1/auth/ HTTP/1.1" 200 0
+INFO 2026-02-09 09:39:20,518 log "OPTIONS /api/v1/auth/stats/ HTTP/1.1" 200 0
+INFO 2026-02-09 09:39:20,519 log "OPTIONS /api/v1/auth/ HTTP/1.1" 200 0
+INFO 2026-02-09 09:39:20,533 log "GET /api/v1/auth/stats/ HTTP/1.1" 200 158
+INFO 2026-02-09 09:39:20,538 log "GET /api/v1/auth/ HTTP/1.1" 200 863
+INFO 2026-02-09 09:39:20,588 log "GET /api/v1/auth/stats/ HTTP/1.1" 200 158
+INFO 2026-02-09 09:39:20,589 log "GET /api/v1/auth/ HTTP/1.1" 200 863
+INFO 2026-02-09 09:39:20,822 log "GET /api/v1/auth/ HTTP/1.1" 200 863
+INFO 2026-02-09 09:39:25,420 log "OPTIONS /api/v1/programs/locations/ HTTP/1.1" 200 0
+INFO 2026-02-09 09:39:25,420 log "OPTIONS /api/v1/programs/locations/ HTTP/1.1" 200 0
+INFO 2026-02-09 09:39:25,439 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 09:39:25,499 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 09:39:25,729 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 09:39:29,833 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+INFO 2026-02-09 09:39:29,847 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+INFO 2026-02-09 09:39:30,126 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+INFO 2026-02-09 09:41:06,039 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+INFO 2026-02-09 09:41:06,337 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+INFO 2026-02-09 09:43:56,101 log "OPTIONS /api/v1/programs/stats/ HTTP/1.1" 200 0
+WARNING 2026-02-09 09:43:56,112 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 09:43:56,117 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+INFO 2026-02-09 09:43:56,123 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 09:43:56,125 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+INFO 2026-02-09 09:43:57,087 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+INFO 2026-02-09 09:45:44,800 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 09:45:44,814 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 09:45:45,101 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+WARNING 2026-02-09 09:45:47,790 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 09:45:47,800 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+WARNING 2026-02-09 09:45:47,823 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 09:45:47,829 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+INFO 2026-02-09 09:45:47,829 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 09:45:47,834 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+INFO 2026-02-09 09:45:47,856 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 09:45:47,861 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+INFO 2026-02-09 09:45:48,091 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+INFO 2026-02-09 09:45:54,953 log "GET /api/v1/programs/programs/1/ HTTP/1.1" 200 578
+INFO 2026-02-09 09:45:54,957 log "GET /api/v1/programs/programs/1/summary/ HTTP/1.1" 200 306
+INFO 2026-02-09 09:45:54,969 log "GET /api/v1/programs/programs/1/ HTTP/1.1" 200 578
+INFO 2026-02-09 09:45:54,975 log "GET /api/v1/programs/programs/1/summary/ HTTP/1.1" 200 306
+WARNING 2026-02-09 09:51:05,373 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 09:51:05,377 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+WARNING 2026-02-09 09:51:05,388 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 09:51:05,391 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+INFO 2026-02-09 09:51:05,402 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 09:51:05,402 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+INFO 2026-02-09 09:51:05,420 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 09:51:05,424 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+INFO 2026-02-09 09:51:05,663 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+INFO 2026-02-09 09:58:07,702 log "OPTIONS /api/v1/programs/programs/?location=1 HTTP/1.1" 200 0
+INFO 2026-02-09 09:58:07,726 log "GET /api/v1/programs/programs/?location=1 HTTP/1.1" 200 645
+INFO 2026-02-09 09:58:11,771 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+INFO 2026-02-09 09:58:15,085 log "OPTIONS /api/v1/programs/programs/?is_active=false HTTP/1.1" 200 0
+INFO 2026-02-09 09:58:15,099 log "GET /api/v1/programs/programs/?is_active=false HTTP/1.1" 200 52
+INFO 2026-02-09 09:58:18,944 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+INFO 2026-02-09 09:58:25,963 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+INFO 2026-02-09 09:58:29,199 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+WARNING 2026-02-09 10:04:16,121 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 10:04:16,124 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+INFO 2026-02-09 10:04:16,138 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 10:04:16,140 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+INFO 2026-02-09 10:04:17,089 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+INFO 2026-02-09 10:16:40,472 log "OPTIONS /api/v1/programs/locations/active/ HTTP/1.1" 200 0
+INFO 2026-02-09 10:16:40,473 log "OPTIONS /api/v1/programs/locations/active/ HTTP/1.1" 200 0
+INFO 2026-02-09 10:16:40,481 log "GET /api/v1/programs/programs/1/ HTTP/1.1" 200 578
+INFO 2026-02-09 10:16:40,481 log "GET /api/v1/programs/locations/active/ HTTP/1.1" 200 124
+INFO 2026-02-09 10:16:40,488 log "GET /api/v1/programs/programs/1/ HTTP/1.1" 200 578
+INFO 2026-02-09 10:16:40,533 log "GET /api/v1/programs/locations/active/ HTTP/1.1" 200 124
+INFO 2026-02-09 10:16:47,219 log "PUT /api/v1/programs/programs/1/ HTTP/1.1" 200 333
+INFO 2026-02-09 10:16:48,185 log "GET /api/v1/programs/programs/1/ HTTP/1.1" 200 578
+INFO 2026-02-09 10:16:48,186 log "GET /api/v1/programs/programs/1/summary/ HTTP/1.1" 200 306
+INFO 2026-02-09 10:16:48,198 log "GET /api/v1/programs/programs/1/ HTTP/1.1" 200 578
+INFO 2026-02-09 10:16:48,199 log "GET /api/v1/programs/programs/1/summary/ HTTP/1.1" 200 306
+WARNING 2026-02-09 10:16:50,803 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 10:16:50,804 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+WARNING 2026-02-09 10:16:50,812 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 10:16:50,813 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+INFO 2026-02-09 10:16:50,816 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 10:16:50,818 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+INFO 2026-02-09 10:16:50,823 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 10:16:50,829 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+INFO 2026-02-09 10:16:51,110 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+WARNING 2026-02-09 10:17:18,360 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 10:17:18,360 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+WARNING 2026-02-09 10:17:18,370 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 10:17:18,372 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+INFO 2026-02-09 10:17:18,376 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 10:17:18,376 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+INFO 2026-02-09 10:17:18,386 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 10:17:18,390 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+INFO 2026-02-09 10:17:18,670 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+WARNING 2026-02-09 10:17:26,302 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 10:17:26,304 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+WARNING 2026-02-09 10:17:26,311 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 10:17:26,313 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+INFO 2026-02-09 10:17:26,313 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 10:17:26,317 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+INFO 2026-02-09 10:17:26,349 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 10:17:26,351 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+INFO 2026-02-09 10:17:26,614 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 645
+INFO 2026-02-09 10:17:32,153 log "GET /api/v1/programs/locations/active/ HTTP/1.1" 200 124
+INFO 2026-02-09 10:17:32,154 log "GET /api/v1/programs/programs/1/ HTTP/1.1" 200 578
+INFO 2026-02-09 10:17:32,163 log "GET /api/v1/programs/locations/active/ HTTP/1.1" 200 124
+INFO 2026-02-09 10:17:32,164 log "GET /api/v1/programs/programs/1/ HTTP/1.1" 200 578
+INFO 2026-02-09 10:17:41,301 log "PUT /api/v1/programs/programs/1/ HTTP/1.1" 200 331
+INFO 2026-02-09 10:17:42,334 log "GET /api/v1/programs/programs/1/ HTTP/1.1" 200 574
+INFO 2026-02-09 10:17:42,337 log "GET /api/v1/programs/programs/1/summary/ HTTP/1.1" 200 304
+INFO 2026-02-09 10:17:42,347 log "GET /api/v1/programs/programs/1/ HTTP/1.1" 200 574
+INFO 2026-02-09 10:17:42,350 log "GET /api/v1/programs/programs/1/summary/ HTTP/1.1" 200 304
+WARNING 2026-02-09 10:17:44,387 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 10:17:44,388 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+WARNING 2026-02-09 10:17:44,397 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 10:17:44,399 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+INFO 2026-02-09 10:17:44,399 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 10:17:44,404 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 10:17:44,407 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 10:17:44,412 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 10:17:44,698 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+WARNING 2026-02-09 10:31:12,939 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 10:31:12,939 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+WARNING 2026-02-09 10:31:12,946 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 10:31:12,949 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+INFO 2026-02-09 10:31:12,952 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 10:31:12,956 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 10:31:12,960 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 10:31:12,966 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 10:31:13,251 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 10:31:31,529 log "GET /api/v1/programs/locations/active/ HTTP/1.1" 200 124
+INFO 2026-02-09 10:31:31,534 log "GET /api/v1/programs/locations/active/ HTTP/1.1" 200 124
+WARNING 2026-02-09 10:31:47,843 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 10:31:47,844 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+WARNING 2026-02-09 10:31:47,852 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 10:31:47,854 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+INFO 2026-02-09 10:31:47,854 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 10:31:47,859 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 10:31:47,864 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 10:31:47,868 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 10:31:48,151 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+WARNING 2026-02-09 10:32:06,466 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 10:32:06,467 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+WARNING 2026-02-09 10:32:06,474 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 10:32:06,475 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+INFO 2026-02-09 10:32:06,480 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 10:32:06,480 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 10:32:06,491 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 10:32:06,492 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 10:32:06,766 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+WARNING 2026-02-09 10:34:32,095 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 10:34:32,097 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+INFO 2026-02-09 10:34:32,104 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 10:34:32,104 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 10:34:33,086 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 10:34:42,249 log "GET /api/v1/programs/locations/active/ HTTP/1.1" 200 124
+INFO 2026-02-09 10:34:42,253 log "GET /api/v1/programs/locations/active/ HTTP/1.1" 200 124
+WARNING 2026-02-09 10:34:44,809 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 10:34:44,809 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+WARNING 2026-02-09 10:34:44,816 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 10:34:44,818 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+INFO 2026-02-09 10:34:44,821 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 10:34:44,824 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 10:34:44,829 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 10:34:44,832 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 10:34:45,125 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 10:34:53,675 log "OPTIONS /api/v1/programs/programs/1/change_status/ HTTP/1.1" 200 0
+INFO 2026-02-09 10:34:53,692 log "POST /api/v1/programs/programs/1/change_status/ HTTP/1.1" 200 660
+INFO 2026-02-09 10:34:59,439 log "POST /api/v1/programs/programs/1/change_status/ HTTP/1.1" 200 654
+WARNING 2026-02-09 11:21:10,376 log Unauthorized: /api/v1/programs/locations/
+INFO 2026-02-09 11:21:10,377 log "OPTIONS /api/v1/programs/programs/ HTTP/1.1" 200 0
+INFO 2026-02-09 11:21:10,377 log "OPTIONS /api/v1/programs/programs/ HTTP/1.1" 200 0
+WARNING 2026-02-09 11:21:10,384 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 11:21:10,386 log Unauthorized: /api/v1/programs/programs/
+WARNING 2026-02-09 11:21:10,386 log "GET /api/v1/programs/locations/ HTTP/1.1" 401 172
+WARNING 2026-02-09 11:21:10,387 log "GET /api/v1/programs/programs/ HTTP/1.1" 401 172
+WARNING 2026-02-09 11:21:10,387 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+WARNING 2026-02-09 11:21:10,389 log Unauthorized: /api/v1/programs/locations/
+WARNING 2026-02-09 11:21:10,389 log "GET /api/v1/programs/locations/ HTTP/1.1" 401 172
+WARNING 2026-02-09 11:21:10,396 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 11:21:10,398 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+INFO 2026-02-09 11:21:10,401 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+WARNING 2026-02-09 11:21:10,430 log Unauthorized: /api/v1/programs/programs/
+WARNING 2026-02-09 11:21:10,431 log "GET /api/v1/programs/programs/ HTTP/1.1" 401 172
+INFO 2026-02-09 11:21:10,435 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-09 11:21:10,438 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-09 11:21:10,463 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 11:21:10,489 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-09 11:21:10,497 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 11:21:10,519 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 11:21:10,564 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 11:21:10,695 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+WARNING 2026-02-09 11:27:28,930 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 11:27:28,931 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+WARNING 2026-02-09 11:27:28,947 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 11:27:28,950 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+INFO 2026-02-09 11:27:28,952 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 11:27:28,959 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 11:27:28,973 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 11:27:28,985 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 11:27:29,239 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+WARNING 2026-02-09 11:37:57,182 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 11:37:57,182 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+WARNING 2026-02-09 11:37:57,201 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 11:37:57,204 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+INFO 2026-02-09 11:37:57,206 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 11:37:57,215 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 11:37:57,231 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 11:37:57,239 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 11:38:00,333 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+WARNING 2026-02-09 12:49:44,506 log Unauthorized: /api/v1/programs/programs/
+INFO 2026-02-09 12:49:44,506 log "OPTIONS /api/v1/programs/stats/ HTTP/1.1" 200 0
+INFO 2026-02-09 12:49:44,507 log "OPTIONS /api/v1/programs/locations/ HTTP/1.1" 200 0
+INFO 2026-02-09 12:49:44,509 log "OPTIONS /api/v1/programs/stats/ HTTP/1.1" 200 0
+WARNING 2026-02-09 12:49:44,509 log "GET /api/v1/programs/programs/ HTTP/1.1" 401 172
+INFO 2026-02-09 12:49:44,509 log "OPTIONS /api/v1/programs/locations/ HTTP/1.1" 200 0
+WARNING 2026-02-09 12:49:44,518 log Unauthorized: /api/v1/programs/programs/
+INFO 2026-02-09 12:49:44,519 log "OPTIONS /api/v1/auth/refresh/ HTTP/1.1" 200 0
+WARNING 2026-02-09 12:49:44,527 log Unauthorized: /api/v1/programs/locations/
+WARNING 2026-02-09 12:49:44,528 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 12:49:44,528 log "GET /api/v1/programs/programs/ HTTP/1.1" 401 172
+WARNING 2026-02-09 12:49:44,529 log "GET /api/v1/programs/locations/ HTTP/1.1" 401 172
+WARNING 2026-02-09 12:49:44,530 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+INFO 2026-02-09 12:49:44,568 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+WARNING 2026-02-09 12:49:44,575 log Unauthorized: /api/v1/programs/locations/
+WARNING 2026-02-09 12:49:44,596 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 12:49:44,600 log "GET /api/v1/programs/locations/ HTTP/1.1" 401 172
+WARNING 2026-02-09 12:49:44,600 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+INFO 2026-02-09 12:49:44,604 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-09 12:49:44,606 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-09 12:49:44,627 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-09 12:49:44,638 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 12:49:44,660 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 12:49:44,699 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 12:49:44,714 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 12:49:45,423 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+WARNING 2026-02-09 13:07:10,156 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 13:07:10,157 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+WARNING 2026-02-09 13:07:10,172 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 13:07:10,176 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+INFO 2026-02-09 13:07:10,178 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 13:07:10,184 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 13:07:10,194 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 13:07:10,198 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 13:07:10,640 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 15:30:46,218 log "OPTIONS /api/v1/programs/programs/1/ HTTP/1.1" 200 0
+INFO 2026-02-09 15:30:46,218 log "OPTIONS /api/v1/programs/programs/1/summary/ HTTP/1.1" 200 0
+INFO 2026-02-09 15:30:46,218 log "OPTIONS /api/v1/programs/programs/1/ HTTP/1.1" 200 0
+INFO 2026-02-09 15:30:46,218 log "OPTIONS /api/v1/programs/programs/1/summary/ HTTP/1.1" 200 0
+WARNING 2026-02-09 15:30:46,221 log Unauthorized: /api/v1/programs/programs/1/
+WARNING 2026-02-09 15:30:46,222 log Unauthorized: /api/v1/programs/programs/1/summary/
+WARNING 2026-02-09 15:30:46,222 log "GET /api/v1/programs/programs/1/ HTTP/1.1" 401 172
+WARNING 2026-02-09 15:30:46,222 log "GET /api/v1/programs/programs/1/summary/ HTTP/1.1" 401 172
+WARNING 2026-02-09 15:30:46,269 log Unauthorized: /api/v1/programs/programs/1/summary/
+WARNING 2026-02-09 15:30:46,272 log Unauthorized: /api/v1/programs/programs/1/
+WARNING 2026-02-09 15:30:46,279 log "GET /api/v1/programs/programs/1/summary/ HTTP/1.1" 401 172
+WARNING 2026-02-09 15:30:46,280 log "GET /api/v1/programs/programs/1/ HTTP/1.1" 401 172
+INFO 2026-02-09 15:30:46,283 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-09 15:30:46,285 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-09 15:30:46,292 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-09 15:30:46,292 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-09 15:30:46,351 log "GET /api/v1/programs/programs/1/ HTTP/1.1" 200 574
+INFO 2026-02-09 15:30:46,353 log "GET /api/v1/programs/programs/1/summary/ HTTP/1.1" 200 304
+INFO 2026-02-09 15:30:46,407 log "GET /api/v1/programs/programs/1/ HTTP/1.1" 200 574
+INFO 2026-02-09 15:30:46,411 log "GET /api/v1/programs/programs/1/summary/ HTTP/1.1" 200 304
+WARNING 2026-02-09 15:30:54,684 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 15:30:54,684 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+WARNING 2026-02-09 15:30:54,690 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 15:30:54,693 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+INFO 2026-02-09 15:30:54,696 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 15:30:54,700 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 15:30:54,705 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 15:30:54,712 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 15:30:54,992 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+WARNING 2026-02-09 15:42:09,558 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 15:42:09,559 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+WARNING 2026-02-09 15:42:09,568 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 15:42:09,571 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+INFO 2026-02-09 15:42:09,574 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 15:42:09,575 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 15:42:09,586 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 15:42:09,587 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 15:42:10,379 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 15:56:10,360 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 15:56:10,374 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 15:56:10,665 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 15:56:13,724 log "OPTIONS /api/v1/milestones/ HTTP/1.1" 200 0
+INFO 2026-02-09 15:56:13,726 log "OPTIONS /api/v1/milestones/ HTTP/1.1" 200 0
+WARNING 2026-02-09 15:56:13,739 log Not Found: /api/v1/milestones/
+WARNING 2026-02-09 15:56:13,739 log "GET /api/v1/milestones/ HTTP/1.1" 404 4562
+INFO 2026-02-09 15:56:13,745 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 15:56:13,761 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+WARNING 2026-02-09 15:56:13,794 log Not Found: /api/v1/milestones/
+WARNING 2026-02-09 15:56:13,795 log "GET /api/v1/milestones/ HTTP/1.1" 404 4562
+WARNING 2026-02-09 15:56:14,028 log Not Found: /api/v1/milestones/
+WARNING 2026-02-09 15:56:14,028 log "GET /api/v1/milestones/ HTTP/1.1" 404 4562
+INFO 2026-02-09 15:56:16,718 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 15:56:16,734 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 15:56:17,015 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+WARNING 2026-02-09 15:56:26,069 log Not Found: /api/v1/milestones/
+WARNING 2026-02-09 15:56:26,070 log "GET /api/v1/milestones/ HTTP/1.1" 404 4562
+WARNING 2026-02-09 15:56:26,087 log Not Found: /api/v1/milestones/
+WARNING 2026-02-09 15:56:26,088 log "GET /api/v1/milestones/ HTTP/1.1" 404 4562
+INFO 2026-02-09 15:56:26,097 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 15:56:26,118 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+WARNING 2026-02-09 15:56:26,360 log Not Found: /api/v1/milestones/
+WARNING 2026-02-09 15:56:26,360 log "GET /api/v1/milestones/ HTTP/1.1" 404 4562
+INFO 2026-02-09 15:56:33,515 log "OPTIONS /api/v1/programs/active/ HTTP/1.1" 200 0
+INFO 2026-02-09 15:56:33,516 log "OPTIONS /api/v1/programs/active/ HTTP/1.1" 200 0
+WARNING 2026-02-09 15:56:33,533 log Not Found: /api/v1/programs/active/
+WARNING 2026-02-09 15:56:33,533 log "GET /api/v1/programs/active/ HTTP/1.1" 404 26234
+WARNING 2026-02-09 15:56:33,591 log Not Found: /api/v1/programs/active/
+WARNING 2026-02-09 15:56:33,591 log "GET /api/v1/programs/active/ HTTP/1.1" 404 26234
+WARNING 2026-02-09 15:57:47,674 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 15:57:47,675 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+WARNING 2026-02-09 15:57:47,686 log Not Found: /api/v1/programs/stats/
+INFO 2026-02-09 15:57:47,691 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+WARNING 2026-02-09 15:57:47,692 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+INFO 2026-02-09 15:57:47,703 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 15:57:47,729 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 15:57:47,752 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 15:57:47,972 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 641
+INFO 2026-02-09 15:57:58,392 log "OPTIONS /api/v1/programs/locations/active/ HTTP/1.1" 200 0
+INFO 2026-02-09 15:57:58,393 log "OPTIONS /api/v1/programs/locations/active/ HTTP/1.1" 200 0
+INFO 2026-02-09 15:57:58,415 log "GET /api/v1/programs/programs/1/ HTTP/1.1" 200 574
+INFO 2026-02-09 15:57:58,423 log "GET /api/v1/programs/locations/active/ HTTP/1.1" 200 124
+INFO 2026-02-09 15:57:58,451 log "GET /api/v1/programs/programs/1/ HTTP/1.1" 200 574
+INFO 2026-02-09 15:57:58,480 log "GET /api/v1/programs/locations/active/ HTTP/1.1" 200 124
+INFO 2026-02-09 15:58:09,087 log "PUT /api/v1/programs/programs/1/ HTTP/1.1" 200 331
+INFO 2026-02-09 15:58:10,163 log "GET /api/v1/programs/programs/1/ HTTP/1.1" 200 573
+INFO 2026-02-09 15:58:10,170 log "GET /api/v1/programs/programs/1/summary/ HTTP/1.1" 200 304
+INFO 2026-02-09 15:58:10,205 log "GET /api/v1/programs/programs/1/ HTTP/1.1" 200 573
+INFO 2026-02-09 15:58:10,219 log "GET /api/v1/programs/programs/1/summary/ HTTP/1.1" 200 304
+WARNING 2026-02-09 15:58:12,113 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 15:58:12,114 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+WARNING 2026-02-09 15:58:12,143 log Not Found: /api/v1/programs/stats/
+WARNING 2026-02-09 15:58:12,149 log "GET /api/v1/programs/stats/ HTTP/1.1" 404 26231
+INFO 2026-02-09 15:58:12,154 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 15:58:12,168 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 15:58:12,179 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 15:58:12,201 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 15:58:12,405 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+WARNING 2026-02-09 15:58:16,551 log Not Found: /api/v1/milestones/
+WARNING 2026-02-09 15:58:16,552 log "GET /api/v1/milestones/ HTTP/1.1" 404 4562
+WARNING 2026-02-09 15:58:16,568 log Not Found: /api/v1/milestones/
+WARNING 2026-02-09 15:58:16,571 log "GET /api/v1/milestones/ HTTP/1.1" 404 4562
+INFO 2026-02-09 15:58:16,579 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 15:58:16,607 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+WARNING 2026-02-09 15:58:16,849 log Not Found: /api/v1/milestones/
+WARNING 2026-02-09 15:58:16,849 log "GET /api/v1/milestones/ HTTP/1.1" 404 4562
+WARNING 2026-02-09 15:58:34,002 log Not Found: /api/v1/programs/active/
+WARNING 2026-02-09 15:58:34,002 log "GET /api/v1/programs/active/ HTTP/1.1" 404 26234
+WARNING 2026-02-09 15:58:34,013 log Not Found: /api/v1/programs/active/
+WARNING 2026-02-09 15:58:34,014 log "GET /api/v1/programs/active/ HTTP/1.1" 404 26234
+INFO 2026-02-09 16:00:03,951 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/programs/views.py changed, reloading.
+INFO 2026-02-09 16:00:04,676 autoreload Watching for file changes with StatReloader
+INFO 2026-02-09 16:04:55,075 log "OPTIONS /api/v1/programs/milestones/ HTTP/1.1" 200 0
+INFO 2026-02-09 16:04:55,076 log "OPTIONS /api/v1/programs/milestones/ HTTP/1.1" 200 0
+INFO 2026-02-09 16:04:55,103 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 52
+INFO 2026-02-09 16:04:55,108 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:04:55,119 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:04:55,157 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 52
+INFO 2026-02-09 16:04:55,379 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 52
+INFO 2026-02-09 16:04:56,801 log "OPTIONS /api/v1/programs/programs/active/ HTTP/1.1" 200 0
+INFO 2026-02-09 16:04:56,801 log "OPTIONS /api/v1/programs/programs/active/ HTTP/1.1" 200 0
+INFO 2026-02-09 16:04:56,820 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 590
+INFO 2026-02-09 16:04:56,879 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 590
+INFO 2026-02-09 16:05:31,855 log "POST /api/v1/programs/milestones/ HTTP/1.1" 201 229
+INFO 2026-02-09 16:05:31,914 log "OPTIONS /api/v1/programs/milestones/1/ HTTP/1.1" 200 0
+INFO 2026-02-09 16:05:31,914 log "OPTIONS /api/v1/programs/milestones/1/ HTTP/1.1" 200 0
+INFO 2026-02-09 16:05:31,922 log "GET /api/v1/programs/milestones/1/ HTTP/1.1" 200 229
+INFO 2026-02-09 16:05:31,977 log "GET /api/v1/programs/milestones/1/ HTTP/1.1" 200 229
+INFO 2026-02-09 16:05:39,454 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 16:05:39,461 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:05:39,475 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 16:05:39,496 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:05:39,763 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 16:05:55,057 log "OPTIONS /api/v1/programs/programs/stats/ HTTP/1.1" 200 0
+INFO 2026-02-09 16:05:55,058 log "OPTIONS /api/v1/programs/programs/stats/ HTTP/1.1" 200 0
+INFO 2026-02-09 16:05:55,093 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:05:55,098 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:05:55,104 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-02-09 16:05:55,124 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:05:55,133 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:05:55,154 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-02-09 16:05:55,369 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:06:06,399 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:06:06,414 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:06:06,699 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:06:58,285 log "OPTIONS /api/v1/programs/locations/1/ HTTP/1.1" 200 0
+INFO 2026-02-09 16:06:58,285 log "OPTIONS /api/v1/programs/locations/1/programs/ HTTP/1.1" 200 0
+INFO 2026-02-09 16:06:58,286 log "OPTIONS /api/v1/programs/locations/1/ HTTP/1.1" 200 0
+INFO 2026-02-09 16:06:58,286 log "OPTIONS /api/v1/programs/locations/1/programs/ HTTP/1.1" 200 0
+INFO 2026-02-09 16:06:58,313 log "GET /api/v1/programs/locations/1/ HTTP/1.1" 200 382
+INFO 2026-02-09 16:06:58,320 log "GET /api/v1/programs/locations/1/programs/ HTTP/1.1" 200 590
+INFO 2026-02-09 16:06:58,370 log "GET /api/v1/programs/locations/1/ HTTP/1.1" 200 382
+INFO 2026-02-09 16:06:58,385 log "GET /api/v1/programs/locations/1/programs/ HTTP/1.1" 200 590
+INFO 2026-02-09 16:07:04,380 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:07:04,394 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:07:04,681 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:10:57,365 log "GET /api/v1/programs/locations/1/ HTTP/1.1" 200 382
+INFO 2026-02-09 16:10:57,376 log "GET /api/v1/programs/locations/1/programs/ HTTP/1.1" 200 590
+INFO 2026-02-09 16:10:57,390 log "GET /api/v1/programs/locations/1/ HTTP/1.1" 200 382
+INFO 2026-02-09 16:10:57,409 log "GET /api/v1/programs/locations/1/programs/ HTTP/1.1" 200 590
+INFO 2026-02-09 16:10:59,759 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:10:59,774 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:11:00,059 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:13:55,258 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/programs/views.py changed, reloading.
+INFO 2026-02-09 16:13:56,088 autoreload Watching for file changes with StatReloader
+INFO 2026-02-09 16:16:33,299 log "OPTIONS /api/v1/programs/locations/stats/ HTTP/1.1" 200 0
+INFO 2026-02-09 16:16:33,320 log "GET /api/v1/programs/locations/stats/ HTTP/1.1" 200 265
+INFO 2026-02-09 16:16:33,324 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:16:34,287 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174

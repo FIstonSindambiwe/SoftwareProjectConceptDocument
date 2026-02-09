@@ -6,15 +6,17 @@ import {
   EyeIcon,
   PencilIcon,
   MapPinIcon,
-  BuildingOfficeIcon,
-  GlobeAltIcon,
-  PhoneIcon,
-  EnvelopeIcon,
+  CheckCircleIcon,
+  XCircleIcon,
 } from '@heroicons/react/24/outline';
 import { toast } from 'react-hot-toast';
 import Layout from '../../../components/layout/Layout';
 import Button from '../../../components/common/Button';
 import Spinner from '../../../components/common/Spinner';
+import Modal from '../../../components/common/Modal';
+import Badge from '../../../components/common/Badge';
+import LocationStatistics from '../../../components/locations/LocationStatistics';
+import LocationFilters from '../../../components/locations/LocationFilters';
 import programService from '../../../services/api/programService';
 
 const LocationsListPage = () => {
@@ -24,6 +26,11 @@ const LocationsListPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [countryFilter, setCountryFilter] = useState('');
   const [activeFilter, setActiveFilter] = useState('');
+  
+  // Modal states
+  const [showToggleModal, setShowToggleModal] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
     loadLocations();
@@ -42,6 +49,7 @@ const LocationsListPage = () => {
     } catch (error) {
       console.error('Error loading locations:', error);
       toast.error('Failed to load locations');
+      setLocations([]);
     } finally {
       setIsLoading(false);
     }
@@ -53,6 +61,40 @@ const LocationsListPage = () => {
     }, 300);
     return () => clearTimeout(debounceTimer);
   }, [searchTerm, countryFilter, activeFilter]);
+
+  const handleOpenToggleModal = (location) => {
+    setSelectedLocation(location);
+    setShowToggleModal(true);
+  };
+
+  const handleToggleActive = async () => {
+    if (!selectedLocation) return;
+
+    setIsUpdating(true);
+    try {
+      const response = await programService.toggleLocationActive(selectedLocation.id);
+      const updatedLocation = response.location || response;
+      
+      toast.success(
+        `Location ${updatedLocation.is_active ? 'activated' : 'deactivated'} successfully`
+      );
+      
+      // Update the location in state
+      setLocations(locations.map(loc => 
+        loc.id === selectedLocation.id ? updatedLocation : loc
+      ));
+      
+      setShowToggleModal(false);
+    } catch (error) {
+      console.error('Error toggling location:', error);
+      toast.error('Failed to update location status');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  // Get unique countries for filter
+  const uniqueCountries = [...new Set(locations.map(loc => loc.country))].sort();
 
   return (
     <Layout>
@@ -75,55 +117,19 @@ const LocationsListPage = () => {
           </Button>
         </div>
 
+        {/* Statistics */}
+        <LocationStatistics locations={locations} />
+
         {/* Filters */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Search
-              </label>
-              <input
-                type="text"
-                placeholder="Search locations..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Status
-              </label>
-              <select
-                value={activeFilter}
-                onChange={(e) => setActiveFilter(e.target.value)}
-                className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              >
-                <option value="">All Status</option>
-                <option value="true">Active</option>
-                <option value="false">Inactive</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Actions
-              </label>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setSearchTerm('');
-                  setCountryFilter('');
-                  setActiveFilter('');
-                }}
-                className="w-full"
-              >
-                Clear Filters
-              </Button>
-            </div>
-          </div>
-        </div>
+        <LocationFilters
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          countryFilter={countryFilter}
+          setCountryFilter={setCountryFilter}
+          activeFilter={activeFilter}
+          setActiveFilter={setActiveFilter}
+          countries={uniqueCountries}
+        />
 
         {/* Results Count */}
         <div className="flex items-center justify-between bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200">
@@ -141,15 +147,17 @@ const LocationsListPage = () => {
           </div>
         </div>
 
-        {/* Locations Grid */}
+        {/* Locations Table */}
         {isLoading ? (
           <div className="flex justify-center items-center py-20 bg-white rounded-lg shadow">
             <Spinner size="lg" />
           </div>
         ) : locations.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-lg shadow-lg border border-gray-200">
-            <MapPinIcon className="mx-auto h-20 w-20 text-gray-400" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2 mt-4">No locations found</h3>
+            <div className="text-gray-400 mb-4">
+              <MapPinIcon className="mx-auto h-20 w-20" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">No locations found</h3>
             <p className="text-gray-600 mb-6 max-w-md mx-auto">
               {searchTerm || countryFilter || activeFilter
                 ? 'Try adjusting your filters to find what you\'re looking for.'
@@ -166,87 +174,170 @@ const LocationsListPage = () => {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {locations.map((location) => (
-              <div
-                key={location.id}
-                className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-6"
-              >
-                {/* Header */}
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                      {location.name}
-                    </h3>
-                    <div className="flex items-center text-sm text-gray-600">
-                      <GlobeAltIcon className="h-4 w-4 mr-1" />
-                      {location.city}, {location.country}
-                    </div>
-                  </div>
-                  <span
-                    className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                      location.is_active
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-gray-100 text-gray-600'
-                    }`}
-                  >
-                    {location.is_active ? 'Active' : 'Inactive'}
-                  </span>
-                </div>
-
-                {/* Details */}
-                <div className="space-y-2 mb-4">
-                  {location.contact_person && (
-                    <div className="flex items-center text-sm text-gray-600">
-                      <BuildingOfficeIcon className="h-4 w-4 mr-2 text-gray-400" />
-                      {location.contact_person}
-                    </div>
-                  )}
-                  {location.contact_email && (
-                    <div className="flex items-center text-sm text-gray-600">
-                      <EnvelopeIcon className="h-4 w-4 mr-2 text-gray-400" />
-                      {location.contact_email}
-                    </div>
-                  )}
-                  {location.contact_phone && (
-                    <div className="flex items-center text-sm text-gray-600">
-                      <PhoneIcon className="h-4 w-4 mr-2 text-gray-400" />
-                      {location.contact_phone}
-                    </div>
-                  )}
-                </div>
-
-                {/* Programs Count */}
-                <div className="pt-4 border-t border-gray-200">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Active Programs:</span>
-                    <span className="font-semibold text-gray-900">
-                      {location.active_programs_count || 0}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div className="mt-4 flex space-x-2">
-                  <button
-                    onClick={() => navigate(`/locations/${location.id}`)}
-                    className="flex-1 py-2 px-4 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors flex items-center justify-center"
-                  >
-                    <EyeIcon className="h-4 w-4 mr-1" />
-                    View
-                  </button>
-                  <button
-                    onClick={() => navigate(`/locations/${location.id}/edit`)}
-                    className="flex-1 py-2 px-4 bg-amber-50 text-amber-600 hover:bg-amber-100 rounded-lg transition-colors flex items-center justify-center"
-                  >
-                    <PencilIcon className="h-4 w-4 mr-1" />
-                    Edit
-                  </button>
-                </div>
-              </div>
-            ))}
+          <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead>
+                  <tr className="bg-gradient-to-r from-gray-50 to-gray-100">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      Location
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      Address
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      Contact
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      Programs
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {locations.map((location, index) => (
+                    <tr 
+                      key={location.id} 
+                      className={`transition-all duration-200 hover:bg-blue-50 hover:shadow-md ${
+                        index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                      }`}
+                    >
+                      <td className="px-6 py-4">
+                        <div>
+                          <div className="text-sm font-semibold text-gray-900">
+                            {location.name}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {location.city}, {location.country}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-sm text-gray-900">
+                          {location.address || <span className="text-gray-400">N/A</span>}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-sm">
+                          {location.contact_person && (
+                            <div className="text-gray-900 font-medium">
+                              {location.contact_person}
+                            </div>
+                          )}
+                          {location.contact_email && (
+                            <div className="text-gray-500 text-xs truncate">
+                              {location.contact_email}
+                            </div>
+                          )}
+                          {location.contact_phone && (
+                            <div className="text-gray-500 text-xs">
+                              {location.contact_phone}
+                            </div>
+                          )}
+                          {!location.contact_person && !location.contact_email && !location.contact_phone && (
+                            <span className="text-gray-400">N/A</span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-sm font-semibold text-blue-600">
+                          {location.active_programs_count || 0}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <Badge variant={location.is_active ? 'success' : 'default'}>
+                          {location.is_active ? 'Active' : 'Inactive'}
+                        </Badge>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center justify-center space-x-1">
+                          <button
+                            onClick={() => navigate(`/locations/${location.id}`)}
+                            className="p-2.5 text-blue-600 hover:bg-blue-100 rounded-lg transition-all duration-200 hover:scale-110 group"
+                            title="View Details"
+                          >
+                            <EyeIcon className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                          </button>
+                          <button
+                            onClick={() => navigate(`/locations/${location.id}/edit`)}
+                            className="p-2.5 text-amber-600 hover:bg-amber-100 rounded-lg transition-all duration-200 hover:scale-110 group"
+                            title="Edit Location"
+                          >
+                            <PencilIcon className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                          </button>
+                          <button
+                            onClick={() => handleOpenToggleModal(location)}
+                            className={`p-2.5 rounded-lg transition-all duration-200 hover:scale-110 group ${
+                              location.is_active
+                                ? 'text-red-600 hover:bg-red-100'
+                                : 'text-green-600 hover:bg-green-100'
+                            }`}
+                            title={location.is_active ? 'Deactivate' : 'Activate'}
+                          >
+                            {location.is_active ? (
+                              <XCircleIcon className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                            ) : (
+                              <CheckCircleIcon className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                            )}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
+
+        {/* Toggle Active Modal */}
+        <Modal
+          isOpen={showToggleModal}
+          onClose={() => setShowToggleModal(false)}
+          title={selectedLocation?.is_active ? 'Deactivate Location' : 'Activate Location'}
+        >
+          <div className="space-y-4">
+            <p className="text-sm text-gray-600">
+              Are you sure you want to {selectedLocation?.is_active ? 'deactivate' : 'activate'}{' '}
+              <strong>{selectedLocation?.name}</strong>?
+              <br /><br />
+              {selectedLocation?.is_active ? (
+                <>
+                  This location will be marked as inactive. 
+                  {selectedLocation?.active_programs_count > 0 && (
+                    <span className="text-orange-600 font-medium">
+                      <br />Note: This location has {selectedLocation.active_programs_count} active program(s).
+                    </span>
+                  )}
+                </>
+              ) : (
+                'This location will be marked as active and available for programs.'
+              )}
+            </p>
+
+            <div className="flex justify-end gap-3 pt-4">
+              <Button
+                variant="outline"
+                onClick={() => setShowToggleModal(false)}
+                disabled={isUpdating}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant={selectedLocation?.is_active ? 'danger' : 'primary'}
+                onClick={handleToggleActive}
+                isLoading={isUpdating}
+              >
+                {selectedLocation?.is_active ? 'Deactivate' : 'Activate'}
+              </Button>
+            </div>
+          </div>
+        </Modal>
       </div>
     </Layout>
   );

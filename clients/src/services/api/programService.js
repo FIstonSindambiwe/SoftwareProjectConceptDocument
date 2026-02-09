@@ -108,12 +108,12 @@ const programService = {
 
   /**
    * Get active programs
-   * GET /api/v1/programs/active/
+   * GET /api/v1/programs/programs/active/
    */
   async getActivePrograms() {
     try {
       console.log('Fetching active programs');
-      const response = await api.get('/programs/active/');
+      const response = await api.get('/programs/programs/active/');
       console.log('Active programs fetched:', response.data);
       return response.data;
     } catch (error) {
@@ -123,86 +123,14 @@ const programService = {
     }
   },
 
-  // Add these methods to programService.js after the existing program methods
-
-  /**
-   * Deactivate program
-   * POST /api/v1/programs/programs/{id}/deactivate/
-   */
-  async deactivateProgram(id) {
-    try {
-      console.log('Deactivating program:', id);
-      const response = await api.post(`/programs/programs/${id}/deactivate/`);
-      console.log('Program deactivated successfully:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error('Error deactivating program:', error);
-      console.error('Error response:', error.response?.data);
-      throw error.response?.data || error;
-    }
-  },
-
-  /**
-   * Activate program
-   * POST /api/v1/programs/programs/{id}/activate/
-   */
-  async activateProgram(id) {
-    try {
-      console.log('Activating program:', id);
-      const response = await api.post(`/programs/programs/${id}/activate/`);
-      console.log('Program activated successfully:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error('Error activating program:', error);
-      console.error('Error response:', error.response?.data);
-      throw error.response?.data || error;
-    }
-  },
-
-  /**
-   * Toggle program active status
-   * POST /api/v1/programs/programs/{id}/toggle_active/
-   */
-  async toggleProgramActive(id) {
-    try {
-      console.log('Toggling program active status:', id);
-      const response = await api.post(`/programs/programs/${id}/toggle_active/`);
-      console.log('Program status toggled:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error('Error toggling program status:', error);
-      console.error('Error response:', error.response?.data);
-      throw error.response?.data || error;
-    }
-  },
-
-  /**
-   * Change program status
-   * POST /api/v1/programs/programs/{id}/change_status/
-   */
-  async changeProgramStatus(id, newStatus) {
-    try {
-      console.log('Changing program status:', id, newStatus);
-      const response = await api.post(`/programs/programs/${id}/change_status/`, {
-        status: newStatus
-      });
-      console.log('Program status changed successfully:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error('Error changing program status:', error);
-      console.error('Error response:', error.response?.data);
-      throw error.response?.data || error;
-    }
-  },
-
   /**
    * Get ongoing programs
-   * GET /api/v1/programs/ongoing/
+   * GET /api/v1/programs/programs/ongoing/
    */
   async getOngoingPrograms() {
     try {
       console.log('Fetching ongoing programs');
-      const response = await api.get('/programs/ongoing/');
+      const response = await api.get('/programs/programs/ongoing/');
       console.log('Ongoing programs fetched:', response.data);
       return response.data;
     } catch (error) {
@@ -248,12 +176,12 @@ const programService = {
 
   /**
    * Get program statistics
-   * GET /api/v1/programs/stats/
+   * GET /api/v1/programs/programs/stats/
    */
   async getProgramStats() {
     try {
       console.log('Fetching program statistics');
-      const response = await api.get('/programs/stats/');
+      const response = await api.get('/programs/programs/stats/');
       console.log('Program stats fetched:', response.data);
       return response.data;
     } catch (error) {
@@ -435,16 +363,86 @@ const programService = {
     }
   },
 
+  /**
+   * Deactivate program
+   * POST /api/v1/programs/programs/{id}/deactivate/
+   */
+  async deactivateProgram(id) {
+    try {
+      console.log('Deactivating program:', id);
+      const response = await api.post(`/programs/programs/${id}/deactivate/`);
+      console.log('Program deactivated successfully:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error deactivating program:', error);
+      console.error('Error response:', error.response?.data);
+      throw error.response?.data || error;
+    }
+  },
+
+  /**
+   * Activate program
+   * POST /api/v1/programs/programs/{id}/activate/
+   */
+  async activateProgram(id) {
+    try {
+      console.log('Activating program:', id);
+      const response = await api.post(`/programs/programs/${id}/activate/`);
+      console.log('Program activated successfully:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error activating program:', error);
+      console.error('Error response:', error.response?.data);
+      throw error.response?.data || error;
+    }
+  },
+
+  /**
+   * Toggle program active status
+   * POST /api/v1/programs/programs/{id}/toggle_active/
+   */
+  async toggleProgramActive(id) {
+    try {
+      console.log('Toggling program active status:', id);
+      const response = await api.post(`/programs/programs/${id}/toggle_active/`);
+      console.log('Program status toggled:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error toggling program status:', error);
+      console.error('Error response:', error.response?.data);
+      throw error.response?.data || error;
+    }
+  },
+
+  /**
+   * Change program status
+   * POST /api/v1/programs/programs/{id}/change_status/
+   */
+  async changeProgramStatus(id, newStatus) {
+    try {
+      console.log('Changing program status:', id, newStatus);
+      const response = await api.post(`/programs/programs/${id}/change_status/`, {
+        status: newStatus
+      });
+      console.log('Program status changed successfully:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error changing program status:', error);
+      console.error('Error response:', error.response?.data);
+      throw error.response?.data || error;
+    }
+  },
+
   // ==================== MILESTONES ====================
 
   /**
    * Get list of all milestones
-   * GET /api/v1/milestones/
+   * GET /api/v1/programs/milestones/
    */
   async getMilestones(params = {}) {
     try {
       console.log('Fetching milestones with params:', params);
-      const response = await api.get('/milestones/', { params });
+      const response = await api.get('/programs/milestones/', { params });
       console.log('Milestones fetched successfully:', response.data);
       return response.data;
     } catch (error) {
@@ -456,12 +454,12 @@ const programService = {
 
   /**
    * Get single milestone by ID
-   * GET /api/v1/milestones/{id}/
+   * GET /api/v1/programs/milestones/{id}/
    */
   async getMilestone(id) {
     try {
       console.log('Fetching milestone:', id);
-      const response = await api.get(`/milestones/${id}/`);
+      const response = await api.get(`/programs/milestones/${id}/`);
       console.log('Milestone fetched successfully:', response.data);
       return response.data;
     } catch (error) {
@@ -473,12 +471,12 @@ const programService = {
 
   /**
    * Create new milestone
-   * POST /api/v1/milestones/
+   * POST /api/v1/programs/milestones/
    */
   async createMilestone(milestoneData) {
     try {
       console.log('Creating milestone with data:', milestoneData);
-      const response = await api.post('/milestones/', milestoneData);
+      const response = await api.post('/programs/milestones/', milestoneData);
       console.log('Milestone created successfully:', response.data);
       return response.data;
     } catch (error) {
@@ -490,12 +488,12 @@ const programService = {
 
   /**
    * Update milestone - Full update
-   * PUT /api/v1/milestones/{id}/
+   * PUT /api/v1/programs/milestones/{id}/
    */
   async updateMilestone(id, milestoneData) {
     try {
       console.log('Updating milestone (PUT):', id, milestoneData);
-      const response = await api.put(`/milestones/${id}/`, milestoneData);
+      const response = await api.put(`/programs/milestones/${id}/`, milestoneData);
       console.log('Milestone updated successfully:', response.data);
       return response.data;
     } catch (error) {
@@ -507,12 +505,12 @@ const programService = {
 
   /**
    * Partial update milestone
-   * PATCH /api/v1/milestones/{id}/
+   * PATCH /api/v1/programs/milestones/{id}/
    */
   async patchMilestone(id, milestoneData) {
     try {
       console.log('Patching milestone:', id, milestoneData);
-      const response = await api.patch(`/milestones/${id}/`, milestoneData);
+      const response = await api.patch(`/programs/milestones/${id}/`, milestoneData);
       console.log('Milestone patched successfully:', response.data);
       return response.data;
     } catch (error) {
@@ -524,12 +522,12 @@ const programService = {
 
   /**
    * Delete milestone
-   * DELETE /api/v1/milestones/{id}/
+   * DELETE /api/v1/programs/milestones/{id}/
    */
   async deleteMilestone(id) {
     try {
       console.log('Deleting milestone:', id);
-      const response = await api.delete(`/milestones/${id}/`);
+      const response = await api.delete(`/programs/milestones/${id}/`);
       console.log('Milestone deleted successfully');
       return response.data;
     } catch (error) {
@@ -541,12 +539,12 @@ const programService = {
 
   /**
    * Mark milestone as completed
-   * POST /api/v1/milestones/{id}/complete/
+   * POST /api/v1/programs/milestones/{id}/complete/
    */
   async completeMilestone(id) {
     try {
       console.log('Completing milestone:', id);
-      const response = await api.post(`/milestones/${id}/complete/`);
+      const response = await api.post(`/programs/milestones/${id}/complete/`);
       console.log('Milestone completed successfully:', response.data);
       return response.data;
     } catch (error) {
@@ -558,12 +556,12 @@ const programService = {
 
   /**
    * Get overdue milestones
-   * GET /api/v1/milestones/overdue/
+   * GET /api/v1/programs/milestones/overdue/
    */
   async getOverdueMilestones() {
     try {
       console.log('Fetching overdue milestones');
-      const response = await api.get('/milestones/overdue/');
+      const response = await api.get('/programs/milestones/overdue/');
       console.log('Overdue milestones fetched:', response.data);
       return response.data;
     } catch (error) {
@@ -575,3 +573,5 @@ const programService = {
 };
 
 export default programService;
+
+  

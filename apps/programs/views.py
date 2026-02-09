@@ -25,6 +25,11 @@ class LocationViewSet(viewsets.ModelViewSet):
     - PUT/PATCH /locations/{id}/ - Update location
     - DELETE /locations/{id}/ - Delete location
     - GET /locations/active/ - List only active locations
+    - POST /locations/{id}/deactivate/ - Deactivate location
+    - POST /locations/{id}/activate/ - Activate location
+    - POST /locations/{id}/toggle_active/ - Toggle active status
+    - GET /locations/{id}/programs/ - Get programs for location
+    - GET /locations/stats/ - Get location statistics
     """
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
@@ -62,6 +67,56 @@ class LocationViewSet(viewsets.ModelViewSet):
         serializer = LocationListSerializer(active_locations, many=True)
         return Response(serializer.data)
     
+    @action(detail=True, methods=['post'])
+    def deactivate(self, request, pk=None):
+        """
+        Deactivate a location
+        POST /locations/{id}/deactivate/
+        """
+        location = self.get_object()
+        location.is_active = False
+        location.save()
+        
+        serializer = self.get_serializer(location)
+        return Response({
+            'message': f'Location "{location.name}" has been deactivated',
+            'location': serializer.data
+        })
+    
+    @action(detail=True, methods=['post'])
+    def activate(self, request, pk=None):
+        """
+        Activate a location
+        POST /locations/{id}/activate/
+        """
+        location = self.get_object()
+        location.is_active = True
+        location.save()
+        
+        serializer = self.get_serializer(location)
+        return Response({
+            'message': f'Location "{location.name}" has been activated',
+            'location': serializer.data
+        })
+    
+    @action(detail=True, methods=['post'])
+    def toggle_active(self, request, pk=None):
+        """
+        Toggle location active status
+        POST /locations/{id}/toggle_active/
+        """
+        location = self.get_object()
+        location.is_active = not location.is_active
+        location.save()
+        
+        status_text = 'activated' if location.is_active else 'deactivated'
+        serializer = self.get_serializer(location)
+        
+        return Response({
+            'message': f'Location "{location.name}" has been {status_text}',
+            'location': serializer.data
+        })
+    
     @action(detail=True, methods=['get'])
     def programs(self, request, pk=None):
         """
@@ -88,6 +143,7 @@ class LocationViewSet(viewsets.ModelViewSet):
         stats = {
             'total_locations': Location.objects.count(),
             'active_locations': Location.objects.filter(is_active=True).count(),
+            'inactive_locations': Location.objects.filter(is_active=False).count(),
             'locations_by_country': list(
                 Location.objects.values('country')
                 .annotate(count=Count('id'))
@@ -95,7 +151,13 @@ class LocationViewSet(viewsets.ModelViewSet):
             ),
             'locations_with_programs': Location.objects.filter(
                 programs__isnull=False
-            ).distinct().count()
+            ).distinct().count(),
+            'top_locations': list(
+                Location.objects.annotate(
+                    program_count=Count('programs')
+                ).order_by('-program_count')[:5]
+                .values('id', 'name', 'city', 'country', 'program_count')
+            )
         }
         return Response(stats)
 
