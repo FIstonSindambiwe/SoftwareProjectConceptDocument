@@ -55,15 +55,17 @@ class ParticipantCreateSerializer(serializers.ModelSerializer):
     Note: participant_id is auto-generated
     """
     participant_id = serializers.CharField(read_only=True)
+    id = serializers.IntegerField(read_only=True)  # Add the id field
     
     class Meta:
         model = Participant
         fields = [
+            'id',  # Add this field
             'participant_id', 'age', 'gender', 'photo',
             'photo_consent_given', 'data_sharing_consent',
             'education_level', 'special_needs', 'enrollment_date', 'notes'
         ]
-        read_only_fields = ['participant_id']
+        read_only_fields = ['id', 'participant_id']  # Add 'id' to read-only fields
     
     def validate(self, attrs):
         """Validate participant data"""

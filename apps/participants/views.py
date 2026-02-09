@@ -5,14 +5,9 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Count, Avg, Q
-from .models import Participant, Enrollment, ParticipantNote
-from .serializers import (
-    ParticipantSerializer, ParticipantListSerializer, ParticipantCreateSerializer,
-    EnrollmentSerializer, EnrollmentListSerializer, EnrollmentCreateUpdateSerializer,
-    ParticipantNoteSerializer, ParticipantProgressSerializer
-)
-from users.permissions import CanEditData, IsDonorReadOnly
-
+from .models import *
+from .serializers import *
+from users.permissions import *
 
 class ParticipantViewSet(viewsets.ModelViewSet):
     """

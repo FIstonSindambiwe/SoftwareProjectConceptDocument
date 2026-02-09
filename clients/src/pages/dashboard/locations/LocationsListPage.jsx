@@ -13,7 +13,6 @@ import { toast } from 'react-hot-toast';
 import Layout from '../../../components/layout/Layout';
 import Button from '../../../components/common/Button';
 import Spinner from '../../../components/common/Spinner';
-import Modal from '../../../components/common/Modal';
 import Badge from '../../../components/common/Badge';
 import LocationStatistics from '../../../components/locations/LocationStatistics';
 import LocationFilters from '../../../components/locations/LocationFilters';
@@ -26,11 +25,6 @@ const LocationsListPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [countryFilter, setCountryFilter] = useState('');
   const [activeFilter, setActiveFilter] = useState('');
-  
-  // Modal states
-  const [showToggleModal, setShowToggleModal] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState(null);
-  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
     loadLocations();
@@ -62,34 +56,22 @@ const LocationsListPage = () => {
     return () => clearTimeout(debounceTimer);
   }, [searchTerm, countryFilter, activeFilter]);
 
-  const handleOpenToggleModal = (location) => {
-    setSelectedLocation(location);
-    setShowToggleModal(true);
-  };
-
-  const handleToggleActive = async () => {
-    if (!selectedLocation) return;
-
-    setIsUpdating(true);
+  const handleToggleActive = async (location) => {
     try {
-      const response = await programService.toggleLocationActive(selectedLocation.id);
+      const response = await programService.toggleLocationActive(location.id);
       const updatedLocation = response.location || response;
       
       toast.success(
-        `Location ${updatedLocation.is_active ? 'activated' : 'deactivated'} successfully`
+        `${location.name} ${updatedLocation.is_active ? 'activated' : 'deactivated'} successfully`
       );
       
       // Update the location in state
       setLocations(locations.map(loc => 
-        loc.id === selectedLocation.id ? updatedLocation : loc
+        loc.id === location.id ? updatedLocation : loc
       ));
-      
-      setShowToggleModal(false);
     } catch (error) {
       console.error('Error toggling location:', error);
       toast.error('Failed to update location status');
-    } finally {
-      setIsUpdating(false);
     }
   };
 
@@ -271,7 +253,7 @@ const LocationsListPage = () => {
                             <PencilIcon className="h-5 w-5 group-hover:scale-110 transition-transform" />
                           </button>
                           <button
-                            onClick={() => handleOpenToggleModal(location)}
+                            onClick={() => handleToggleActive(location)}
                             className={`p-2.5 rounded-lg transition-all duration-200 hover:scale-110 group ${
                               location.is_active
                                 ? 'text-red-600 hover:bg-red-100'
@@ -294,50 +276,6 @@ const LocationsListPage = () => {
             </div>
           </div>
         )}
-
-        {/* Toggle Active Modal */}
-        <Modal
-          isOpen={showToggleModal}
-          onClose={() => setShowToggleModal(false)}
-          title={selectedLocation?.is_active ? 'Deactivate Location' : 'Activate Location'}
-        >
-          <div className="space-y-4">
-            <p className="text-sm text-gray-600">
-              Are you sure you want to {selectedLocation?.is_active ? 'deactivate' : 'activate'}{' '}
-              <strong>{selectedLocation?.name}</strong>?
-              <br /><br />
-              {selectedLocation?.is_active ? (
-                <>
-                  This location will be marked as inactive. 
-                  {selectedLocation?.active_programs_count > 0 && (
-                    <span className="text-orange-600 font-medium">
-                      <br />Note: This location has {selectedLocation.active_programs_count} active program(s).
-                    </span>
-                  )}
-                </>
-              ) : (
-                'This location will be marked as active and available for programs.'
-              )}
-            </p>
-
-            <div className="flex justify-end gap-3 pt-4">
-              <Button
-                variant="outline"
-                onClick={() => setShowToggleModal(false)}
-                disabled={isUpdating}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant={selectedLocation?.is_active ? 'danger' : 'primary'}
-                onClick={handleToggleActive}
-                isLoading={isUpdating}
-              >
-                {selectedLocation?.is_active ? 'Deactivate' : 'Activate'}
-              </Button>
-            </div>
-          </div>
-        </Modal>
       </div>
     </Layout>
   );

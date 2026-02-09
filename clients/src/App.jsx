@@ -27,6 +27,12 @@ import ProgramDetailPage from './pages/dashboard/programs/ProgramDetailPage';
 import CreateProgramPage from './pages/dashboard/programs/CreateProgramPage';
 import EditProgramPage from './pages/dashboard/programs/EditProgramPage';
 
+// Participants
+import ParticipantsListPage from './pages/dashboard/participants/ParticipantsListPage';
+import ParticipantDetailPage from './pages/dashboard/participants/ParticipantDetailPage';
+import CreateParticipantPage from './pages/dashboard/participants/CreateParticipantPage';
+import EditParticipantPage from './pages/dashboard/participants/EditParticipantPage';
+
 // Milestones
 import MilestonesListPage from './pages/dashboard/milestones/MilestonesListPage';
 import MilestoneDetailPage from './pages/dashboard/milestones/MilestoneDetailPage';
@@ -102,7 +108,7 @@ function App() {
 
         {/* Protected Routes - Users (Admin only) */}
         <Route 
-          path="/users" 
+          path="/dashboard/users" 
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <UsersListPage />
@@ -110,7 +116,7 @@ function App() {
           } 
         />
         <Route 
-          path="/users/create" 
+          path="/dashboard/users/create" 
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <CreateUserPage />
@@ -118,7 +124,7 @@ function App() {
           } 
         />
         <Route 
-          path="/users/:id" 
+          path="/dashboard/users/:id" 
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <UserDetailPage />
@@ -126,7 +132,7 @@ function App() {
           } 
         />
         <Route 
-          path="/users/:id/edit" 
+          path="/dashboard/users/:id/edit" 
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <EditUserPage />
@@ -136,7 +142,7 @@ function App() {
 
         {/* Protected Routes - Locations (Admin, Program Manager) */}
         <Route 
-          path="/locations" 
+          path="/dashboard/locations" 
           element={
             <ProtectedRoute allowedRoles={['admin', 'program_manager']}>
               <LocationsListPage />
@@ -144,7 +150,7 @@ function App() {
           } 
         />
         <Route 
-          path="/locations/create" 
+          path="/dashboard/locations/create" 
           element={
             <ProtectedRoute allowedRoles={['admin', 'program_manager']}>
               <CreateLocationPage />
@@ -152,7 +158,7 @@ function App() {
           } 
         />
         <Route 
-          path="/locations/:id" 
+          path="/dashboard/locations/:id" 
           element={
             <ProtectedRoute allowedRoles={['admin', 'program_manager']}>
               <LocationDetailPage />
@@ -160,7 +166,7 @@ function App() {
           } 
         />
         <Route 
-          path="/locations/:id/edit" 
+          path="/dashboard/locations/:id/edit" 
           element={
             <ProtectedRoute allowedRoles={['admin', 'program_manager']}>
               <EditLocationPage />
@@ -170,7 +176,7 @@ function App() {
 
         {/* Protected Routes - Programs (All authenticated users can view, Admin/PM can edit) */}
         <Route 
-          path="/programs" 
+          path="/dashboard/programs" 
           element={
             <ProtectedRoute>
               <ProgramsListPage />
@@ -178,7 +184,7 @@ function App() {
           } 
         />
         <Route 
-          path="/programs/create" 
+          path="/dashboard/programs/create" 
           element={
             <ProtectedRoute allowedRoles={['admin', 'program_manager']}>
               <CreateProgramPage />
@@ -186,7 +192,7 @@ function App() {
           } 
         />
         <Route 
-          path="/programs/:id" 
+          path="/dashboard/programs/:id" 
           element={
             <ProtectedRoute>
               <ProgramDetailPage />
@@ -194,7 +200,7 @@ function App() {
           } 
         />
         <Route 
-          path="/programs/:id/edit" 
+          path="/dashboard/programs/:id/edit" 
           element={
             <ProtectedRoute allowedRoles={['admin', 'program_manager']}>
               <EditProgramPage />
@@ -202,55 +208,79 @@ function App() {
           } 
         />
         
-       {/* Milestone Routes (Admin, Teacher, Program Manager) */}
-          <Route
-            path="/milestones"
-            element={
-              <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']}>
-                <MilestonesListPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/milestones/create"
-            element={
-              <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']}>
-                <CreateMilestonePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/milestones/:id"
-            element={
-              <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']}>
-                <MilestoneDetailPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/milestones/:id/edit"
-            element={
-              <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']}>
-                <EditMilestonePage />
-              </ProtectedRoute>
-            }
-          />
-
-        {/* Protected Routes - Participants (Admin, Teacher, Program Manager) */}
-        <Route 
-          path="/participants" 
+        {/* Milestone Routes (Admin, Teacher, Program Manager) */}
+        <Route
+          path="/dashboard/milestones"
           element={
             <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']}>
-              <ComingSoonPage pageName="Participants" />
+              <MilestonesListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/milestones/create"
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']}>
+              <CreateMilestonePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/milestones/:id"
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']}>
+              <MilestoneDetailPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/milestones/:id/edit"
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']}>
+              <EditMilestonePage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Protected Routes - Participants (All authenticated users can view, Admin/Teacher/PM can edit) */}
+        <Route 
+          path="/dashboard/participants" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff', 'donor']}>
+              <ParticipantsListPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard/participants/create" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff']}>
+              <CreateParticipantPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard/participants/:id" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff', 'donor']}>
+              <ParticipantDetailPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard/participants/:id/edit" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff']}>
+              <EditParticipantPage />
             </ProtectedRoute>
           } 
         />
 
-        {/* Protected Routes - Attendance (Admin, Teacher, Program Manager) */}
+        {/* Protected Routes - Attendance (Admin, Teacher, Program Manager, Staff) */}
         <Route 
-          path="/attendance" 
+          path="/dashboard/attendance" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']}>
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff']}>
               <ComingSoonPage pageName="Attendance" />
             </ProtectedRoute>
           } 
@@ -258,7 +288,7 @@ function App() {
 
         {/* Protected Routes - Assessments (Admin, Teacher, Program Manager) */}
         <Route 
-          path="/assessments" 
+          path="/dashboard/assessments" 
           element={
             <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']}>
               <ComingSoonPage pageName="Assessments" />
@@ -268,7 +298,7 @@ function App() {
 
         {/* Protected Routes - Reports (All authenticated users) */}
         <Route 
-          path="/reports" 
+          path="/dashboard/reports" 
           element={
             <ProtectedRoute>
               <ComingSoonPage pageName="Reports" />
@@ -278,7 +308,7 @@ function App() {
 
         {/* Protected Routes - Profile (All authenticated users) */}
         <Route 
-          path="/profile" 
+          path="/dashboard/profile" 
           element={
             <ProtectedRoute>
               <ProfilePage />
@@ -286,7 +316,7 @@ function App() {
           } 
         />
         <Route 
-          path="/profile/change-password" 
+          path="/dashboard/profile/change-password" 
           element={
             <ProtectedRoute>
               <ChangePasswordPage />

@@ -21,16 +21,20 @@ const Sidebar = ({ isOpen, onClose }) => {
   const user = authService.getCurrentUser();
   const userRole = authService.getUserRole();
   const [isProgramsOpen, setIsProgramsOpen] = useState(false);
+  const [isManagementOpen, setIsManagementOpen] = useState(false);
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, roles: ['all'] },
+    
+    // Users Management
     { 
       name: 'Users', 
-      href: '/users', 
+      href: '/dashboard/users', // Updated path
       icon: UserGroupIcon, 
       roles: ['admin'] 
     },
-    // Programs dropdown
+    
+    // Programs Management (Dropdown)
     { 
       name: 'Programs', 
       icon: AcademicCapIcon, 
@@ -39,45 +43,57 @@ const Sidebar = ({ isOpen, onClose }) => {
       children: [
         { 
           name: 'Locations', 
-          href: '/locations', 
+          href: '/dashboard/locations', // Updated path
           icon: MapPinIcon, 
           roles: ['admin', 'program_manager'] 
         },
         { 
           name: 'Programs', 
-          href: '/programs', 
+          href: '/dashboard/programs', // Updated path
           icon: AcademicCapIcon, 
           roles: ['all'] 
         },
         { 
           name: 'Milestones', 
-          href: '/milestones', 
+          href: '/dashboard/milestones', // Updated path
           icon: FlagIcon, 
           roles: ['admin', 'teacher', 'program_manager'] 
         },
       ]
     },
+    
+    // Youth Management (Dropdown)
     { 
-      name: 'Participants', 
-      href: '/participants', 
+      name: 'Youth Management', 
       icon: UsersIcon, 
-      roles: ['admin', 'teacher', 'program_manager'] 
+      roles: ['admin', 'teacher', 'program_manager', 'staff', 'donor'],
+      isDropdown: true,
+      children: [
+        { 
+          name: 'Participants', 
+          href: '/dashboard/participants', // Updated path
+          icon: UsersIcon, 
+          roles: ['admin', 'teacher', 'program_manager', 'staff', 'donor'] 
+        },
+        { 
+          name: 'Attendance', 
+          href: '/dashboard/attendance', // Updated path
+          icon: ClipboardDocumentCheckIcon, 
+          roles: ['admin', 'teacher', 'program_manager', 'staff'] 
+        },
+        { 
+          name: 'Assessments', 
+          href: '/dashboard/assessments', // Updated path
+          icon: ChartBarIcon, 
+          roles: ['admin', 'teacher', 'program_manager'] 
+        },
+      ]
     },
-    { 
-      name: 'Attendance', 
-      href: '/attendance', 
-      icon: ClipboardDocumentCheckIcon, 
-      roles: ['admin', 'teacher', 'program_manager'] 
-    },
-    { 
-      name: 'Assessments', 
-      href: '/assessments', 
-      icon: ChartBarIcon, 
-      roles: ['admin', 'teacher', 'program_manager'] 
-    },
+    
+    // Reports
     { 
       name: 'Reports', 
-      href: '/reports', 
+      href: '/dashboard/reports', // Updated path
       icon: DocumentTextIcon, 
       roles: ['all'] 
     },
@@ -101,6 +117,10 @@ const Sidebar = ({ isOpen, onClose }) => {
 
   const toggleProgramsDropdown = () => {
     setIsProgramsOpen(!isProgramsOpen);
+  };
+
+  const toggleManagementDropdown = () => {
+    setIsManagementOpen(!isManagementOpen);
   };
 
   return (
@@ -157,8 +177,8 @@ const Sidebar = ({ isOpen, onClose }) => {
           {/* Navigation */}
           <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
             {filteredNavigation.map((item) => {
-              // Render dropdown
-              if (item.isDropdown) {
+              // Render dropdown for Programs
+              if (item.name === 'Programs' && item.isDropdown) {
                 return (
                   <div key={item.name}>
                     {/* Dropdown Header */}
@@ -203,7 +223,53 @@ const Sidebar = ({ isOpen, onClose }) => {
                 );
               }
 
-              // Render normal link
+              // Render dropdown for Youth Management
+              if (item.name === 'Youth Management' && item.isDropdown) {
+                return (
+                  <div key={item.name}>
+                    {/* Dropdown Header */}
+                    <button
+                      onClick={toggleManagementDropdown}
+                      className="w-full flex items-center justify-between gap-4 px-4 py-3 text-sm font-medium rounded-lg transition-all text-slate-300 hover:bg-slate-700 hover:text-white"
+                    >
+                      <div className="flex items-center gap-4">
+                        <item.icon className="h-5 w-5 flex-shrink-0" />
+                        <span>{item.name}</span>
+                      </div>
+                      {isManagementOpen ? (
+                        <ChevronDownIcon className="h-4 w-4" />
+                      ) : (
+                        <ChevronRightIcon className="h-4 w-4" />
+                      )}
+                    </button>
+
+                    {/* Dropdown Items */}
+                    {isManagementOpen && (
+                      <div className="ml-4 mt-2 space-y-1">
+                        {item.children.map((child) => (
+                          <NavLink
+                            key={child.name}
+                            to={child.href}
+                            onClick={() => onClose()}
+                            className={({ isActive }) =>
+                              `flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg transition-all
+                              ${isActive
+                                ? 'bg-slate-600 text-white shadow-lg'
+                                : 'text-slate-300 hover:bg-slate-700 hover:text-white'
+                              }`
+                            }
+                          >
+                            <child.icon className="h-4 w-4 flex-shrink-0" />
+                            <span>{child.name}</span>
+                          </NavLink>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
+              // Render normal link (for non-dropdown items)
               return (
                 <NavLink
                   key={item.name}

@@ -124,6 +124,76 @@ const programService = {
   },
 
   /**
+   * Deactivate program
+   * POST /api/v1/programs/programs/{id}/deactivate/
+   */
+  async deactivateProgram(id) {
+    try {
+      console.log('Deactivating program:', id);
+      const response = await api.post(`/programs/programs/${id}/deactivate/`);
+      console.log('Program deactivated successfully:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error deactivating program:', error);
+      console.error('Error response:', error.response?.data);
+      throw error.response?.data || error;
+    }
+  },
+
+  /**
+   * Activate program
+   * POST /api/v1/programs/programs/{id}/activate/
+   */
+  async activateProgram(id) {
+    try {
+      console.log('Activating program:', id);
+      const response = await api.post(`/programs/programs/${id}/activate/`);
+      console.log('Program activated successfully:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error activating program:', error);
+      console.error('Error response:', error.response?.data);
+      throw error.response?.data || error;
+    }
+  },
+
+  /**
+   * Toggle program active status
+   * POST /api/v1/programs/programs/{id}/toggle_active/
+   */
+  async toggleProgramActive(id) {
+    try {
+      console.log('Toggling program active status:', id);
+      const response = await api.post(`/programs/programs/${id}/toggle_active/`);
+      console.log('Program status toggled:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error toggling program status:', error);
+      console.error('Error response:', error.response?.data);
+      throw error.response?.data || error;
+    }
+  },
+
+  /**
+   * Change program status
+   * POST /api/v1/programs/programs/{id}/change_status/
+   */
+  async changeProgramStatus(id, newStatus) {
+    try {
+      console.log('Changing program status:', id, newStatus);
+      const response = await api.post(`/programs/programs/${id}/change_status/`, {
+        status: newStatus
+      });
+      console.log('Program status changed successfully:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error changing program status:', error);
+      console.error('Error response:', error.response?.data);
+      throw error.response?.data || error;
+    }
+  },
+
+  /**
    * Get ongoing programs
    * GET /api/v1/programs/programs/ongoing/
    */
@@ -364,70 +434,51 @@ const programService = {
   },
 
   /**
-   * Deactivate program
-   * POST /api/v1/programs/programs/{id}/deactivate/
+   * Deactivate location
+   * POST /api/v1/programs/locations/{id}/deactivate/
    */
-  async deactivateProgram(id) {
+  async deactivateLocation(id) {
     try {
-      console.log('Deactivating program:', id);
-      const response = await api.post(`/programs/programs/${id}/deactivate/`);
-      console.log('Program deactivated successfully:', response.data);
+      console.log('Deactivating location:', id);
+      const response = await api.post(`/programs/locations/${id}/deactivate/`);
+      console.log('Location deactivated successfully:', response.data);
       return response.data;
     } catch (error) {
-      console.error('Error deactivating program:', error);
+      console.error('Error deactivating location:', error);
       console.error('Error response:', error.response?.data);
       throw error.response?.data || error;
     }
   },
 
   /**
-   * Activate program
-   * POST /api/v1/programs/programs/{id}/activate/
+   * Activate location
+   * POST /api/v1/programs/locations/{id}/activate/
    */
-  async activateProgram(id) {
+  async activateLocation(id) {
     try {
-      console.log('Activating program:', id);
-      const response = await api.post(`/programs/programs/${id}/activate/`);
-      console.log('Program activated successfully:', response.data);
+      console.log('Activating location:', id);
+      const response = await api.post(`/programs/locations/${id}/activate/`);
+      console.log('Location activated successfully:', response.data);
       return response.data;
     } catch (error) {
-      console.error('Error activating program:', error);
+      console.error('Error activating location:', error);
       console.error('Error response:', error.response?.data);
       throw error.response?.data || error;
     }
   },
 
   /**
-   * Toggle program active status
-   * POST /api/v1/programs/programs/{id}/toggle_active/
+   * Toggle location active status
+   * POST /api/v1/programs/locations/{id}/toggle_active/
    */
-  async toggleProgramActive(id) {
+  async toggleLocationActive(id) {
     try {
-      console.log('Toggling program active status:', id);
-      const response = await api.post(`/programs/programs/${id}/toggle_active/`);
-      console.log('Program status toggled:', response.data);
+      console.log('Toggling location active status:', id);
+      const response = await api.post(`/programs/locations/${id}/toggle_active/`);
+      console.log('Location status toggled:', response.data);
       return response.data;
     } catch (error) {
-      console.error('Error toggling program status:', error);
-      console.error('Error response:', error.response?.data);
-      throw error.response?.data || error;
-    }
-  },
-
-  /**
-   * Change program status
-   * POST /api/v1/programs/programs/{id}/change_status/
-   */
-  async changeProgramStatus(id, newStatus) {
-    try {
-      console.log('Changing program status:', id, newStatus);
-      const response = await api.post(`/programs/programs/${id}/change_status/`, {
-        status: newStatus
-      });
-      console.log('Program status changed successfully:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error('Error changing program status:', error);
+      console.error('Error toggling location status:', error);
       console.error('Error response:', error.response?.data);
       throw error.response?.data || error;
     }
@@ -573,5 +624,3 @@ const programService = {
 };
 
 export default programService;
-
-  

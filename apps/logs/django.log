@@ -1583,3 +1583,317 @@ INFO 2026-02-09 16:16:33,299 log "OPTIONS /api/v1/programs/locations/stats/ HTTP
 INFO 2026-02-09 16:16:33,320 log "GET /api/v1/programs/locations/stats/ HTTP/1.1" 200 265
 INFO 2026-02-09 16:16:33,324 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
 INFO 2026-02-09 16:16:34,287 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:18:27,794 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:18:27,798 log "GET /api/v1/programs/locations/stats/ HTTP/1.1" 200 265
+INFO 2026-02-09 16:18:27,806 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:18:27,811 log "GET /api/v1/programs/locations/stats/ HTTP/1.1" 200 265
+INFO 2026-02-09 16:18:28,096 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:19:08,216 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:19:08,217 log "GET /api/v1/programs/locations/stats/ HTTP/1.1" 200 265
+INFO 2026-02-09 16:19:08,230 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:19:08,236 log "GET /api/v1/programs/locations/stats/ HTTP/1.1" 200 265
+INFO 2026-02-09 16:19:08,518 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:21:47,330 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:21:47,336 log "GET /api/v1/programs/locations/stats/ HTTP/1.1" 200 265
+INFO 2026-02-09 16:21:48,277 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:27:38,036 log "OPTIONS /api/v1/programs/locations/1/toggle_active/ HTTP/1.1" 200 0
+INFO 2026-02-09 16:27:38,056 log "POST /api/v1/programs/locations/1/toggle_active/ HTTP/1.1" 200 469
+INFO 2026-02-09 16:27:41,515 log "POST /api/v1/programs/locations/1/toggle_active/ HTTP/1.1" 200 466
+INFO 2026-02-09 16:27:54,173 log "OPTIONS /api/v1/programs/programs/ HTTP/1.1" 200 0
+INFO 2026-02-09 16:27:54,173 log "OPTIONS /api/v1/programs/programs/ HTTP/1.1" 200 0
+INFO 2026-02-09 16:27:54,195 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:27:54,221 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-02-09 16:27:54,224 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:27:54,235 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:27:54,245 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-02-09 16:27:54,283 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:27:54,481 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:28:00,693 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:28:00,721 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:28:00,722 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-02-09 16:28:00,743 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:28:00,770 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-02-09 16:28:00,771 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:28:00,980 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:28:03,645 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 16:28:03,656 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:28:03,689 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 16:28:03,694 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:28:03,934 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 16:28:21,816 log "GET /api/v1/programs/milestones/1/ HTTP/1.1" 200 229
+INFO 2026-02-09 16:28:21,832 log "GET /api/v1/programs/milestones/1/ HTTP/1.1" 200 229
+INFO 2026-02-09 16:28:24,853 log "OPTIONS /api/v1/programs/programs/2/summary/ HTTP/1.1" 200 0
+INFO 2026-02-09 16:28:24,857 log "OPTIONS /api/v1/programs/programs/2/ HTTP/1.1" 200 0
+INFO 2026-02-09 16:28:24,857 log "OPTIONS /api/v1/programs/programs/2/summary/ HTTP/1.1" 200 0
+INFO 2026-02-09 16:28:24,858 log "OPTIONS /api/v1/programs/programs/2/ HTTP/1.1" 200 0
+INFO 2026-02-09 16:28:24,900 log "GET /api/v1/programs/programs/2/summary/ HTTP/1.1" 200 306
+INFO 2026-02-09 16:28:24,909 log "GET /api/v1/programs/programs/2/ HTTP/1.1" 200 807
+INFO 2026-02-09 16:28:24,977 log "GET /api/v1/programs/programs/2/summary/ HTTP/1.1" 200 306
+INFO 2026-02-09 16:28:24,980 log "GET /api/v1/programs/programs/2/ HTTP/1.1" 200 807
+INFO 2026-02-09 16:28:27,780 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:28:27,805 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-02-09 16:28:27,805 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:28:27,814 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:28:27,853 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:28:27,859 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-02-09 16:28:28,068 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:28:34,772 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 16:28:34,799 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:28:34,801 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 16:28:34,828 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:28:35,063 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 16:28:39,484 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:28:39,494 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:28:39,497 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-02-09 16:28:39,537 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 16:28:39,560 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:28:39,571 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-02-09 16:28:39,762 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:28:43,612 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 16:28:43,626 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:28:43,629 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 16:28:43,648 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:28:43,898 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 16:30:46,207 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/participants/views.py changed, reloading.
+INFO 2026-02-09 16:30:47,000 autoreload Watching for file changes with StatReloader
+INFO 2026-02-09 16:30:53,753 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/participants/views.py changed, reloading.
+INFO 2026-02-09 16:30:54,252 autoreload Watching for file changes with StatReloader
+INFO 2026-02-09 16:31:00,820 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/participants/views.py changed, reloading.
+INFO 2026-02-09 16:31:01,323 autoreload Watching for file changes with StatReloader
+WARNING 2026-02-09 16:41:54,908 log Unauthorized: /api/v1/programs/programs/
+WARNING 2026-02-09 16:41:54,909 log Unauthorized: /api/v1/programs/milestones/
+WARNING 2026-02-09 16:41:54,909 log "GET /api/v1/programs/programs/ HTTP/1.1" 401 172
+WARNING 2026-02-09 16:41:54,909 log "GET /api/v1/programs/milestones/ HTTP/1.1" 401 172
+WARNING 2026-02-09 16:41:54,914 log Unauthorized: /api/v1/programs/programs/
+WARNING 2026-02-09 16:41:54,916 log Unauthorized: /api/v1/programs/milestones/
+WARNING 2026-02-09 16:41:54,917 log "GET /api/v1/programs/programs/ HTTP/1.1" 401 172
+WARNING 2026-02-09 16:41:54,919 log "GET /api/v1/programs/milestones/ HTTP/1.1" 401 172
+INFO 2026-02-09 16:41:54,929 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-09 16:41:54,931 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-09 16:41:54,931 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-09 16:41:54,967 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-09 16:41:54,978 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:41:54,992 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 16:41:55,048 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:41:55,065 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 16:41:55,193 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 16:42:37,219 log "GET /api/v1/programs/milestones/1/ HTTP/1.1" 200 229
+INFO 2026-02-09 16:42:37,233 log "GET /api/v1/programs/milestones/1/ HTTP/1.1" 200 229
+INFO 2026-02-09 16:42:43,698 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 16:42:43,721 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:42:43,722 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 16:42:43,748 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:42:43,990 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 16:42:50,069 log "GET /api/v1/programs/milestones/1/ HTTP/1.1" 200 229
+INFO 2026-02-09 16:42:50,079 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 590
+INFO 2026-02-09 16:42:50,097 log "GET /api/v1/programs/milestones/1/ HTTP/1.1" 200 229
+INFO 2026-02-09 16:42:50,115 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 590
+INFO 2026-02-09 16:42:55,920 log "GET /api/v1/programs/milestones/1/ HTTP/1.1" 200 229
+INFO 2026-02-09 16:42:55,946 log "GET /api/v1/programs/milestones/1/ HTTP/1.1" 200 229
+INFO 2026-02-09 16:42:57,062 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 16:42:57,069 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:42:57,084 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 16:42:57,104 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 16:42:57,348 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 16:49:13,374 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/config/urls.py changed, reloading.
+INFO 2026-02-09 16:49:14,059 autoreload Watching for file changes with StatReloader
+INFO 2026-02-09 17:32:56,352 log "OPTIONS /api/v1/programs/locations/ HTTP/1.1" 200 0
+INFO 2026-02-09 17:32:56,353 log "OPTIONS /api/v1/programs/locations/ HTTP/1.1" 200 0
+INFO 2026-02-09 17:32:56,376 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 17:32:56,378 log "GET /api/v1/programs/locations/stats/ HTTP/1.1" 200 265
+INFO 2026-02-09 17:32:56,385 log "GET /api/v1/programs/locations/stats/ HTTP/1.1" 200 265
+INFO 2026-02-09 17:32:56,424 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 17:32:56,653 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 17:33:00,238 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 17:33:00,240 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 17:33:00,254 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 17:33:00,264 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 17:33:00,536 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 17:33:10,364 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 17:33:10,366 log "GET /api/v1/programs/locations/stats/ HTTP/1.1" 200 265
+INFO 2026-02-09 17:33:10,381 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 17:33:10,392 log "GET /api/v1/programs/locations/stats/ HTTP/1.1" 200 265
+INFO 2026-02-09 17:33:10,655 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 17:33:15,089 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 17:33:15,102 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 17:33:15,104 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-02-09 17:33:15,105 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 17:33:15,121 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 17:33:15,126 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-02-09 17:33:15,403 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 640
+INFO 2026-02-09 17:33:27,039 log "OPTIONS /api/v1/programs/programs/2/change_status/ HTTP/1.1" 200 0
+INFO 2026-02-09 17:33:27,060 log "POST /api/v1/programs/programs/2/change_status/ HTTP/1.1" 200 882
+INFO 2026-02-09 17:33:39,100 log "OPTIONS /api/v1/programs/programs/1/change_status/ HTTP/1.1" 200 0
+INFO 2026-02-09 17:33:39,124 log "POST /api/v1/programs/programs/1/change_status/ HTTP/1.1" 200 653
+INFO 2026-02-09 17:33:49,172 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 17:33:49,178 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 638
+INFO 2026-02-09 17:33:49,190 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 17:33:49,210 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 638
+INFO 2026-02-09 17:33:49,451 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 17:33:53,758 log "GET /api/v1/programs/milestones/1/ HTTP/1.1" 200 229
+INFO 2026-02-09 17:33:53,778 log "GET /api/v1/programs/milestones/1/ HTTP/1.1" 200 229
+INFO 2026-02-09 17:33:58,948 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 17:33:58,963 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 638
+INFO 2026-02-09 17:33:58,975 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 17:33:58,988 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 638
+INFO 2026-02-09 17:33:59,236 log "GET /api/v1/programs/milestones/ HTTP/1.1" 200 281
+INFO 2026-02-09 17:34:03,522 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 17:34:03,533 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-02-09 17:34:03,538 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 638
+INFO 2026-02-09 17:34:03,556 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 17:34:03,576 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-02-09 17:34:03,578 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 638
+INFO 2026-02-09 17:34:03,784 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 638
+WARNING 2026-02-09 18:43:42,499 log Unauthorized: /api/v1/programs/locations/
+INFO 2026-02-09 18:43:42,500 log "OPTIONS /api/v1/programs/locations/stats/ HTTP/1.1" 200 0
+INFO 2026-02-09 18:43:42,501 log "OPTIONS /api/v1/programs/locations/stats/ HTTP/1.1" 200 0
+WARNING 2026-02-09 18:43:42,507 log Unauthorized: /api/v1/programs/locations/stats/
+WARNING 2026-02-09 18:43:42,508 log "GET /api/v1/programs/locations/ HTTP/1.1" 401 172
+WARNING 2026-02-09 18:43:42,508 log "GET /api/v1/programs/locations/stats/ HTTP/1.1" 401 172
+WARNING 2026-02-09 18:43:42,511 log Unauthorized: /api/v1/programs/locations/
+WARNING 2026-02-09 18:43:42,512 log "GET /api/v1/programs/locations/ HTTP/1.1" 401 172
+INFO 2026-02-09 18:43:42,514 log "OPTIONS /api/v1/auth/refresh/ HTTP/1.1" 200 0
+WARNING 2026-02-09 18:43:42,555 log Unauthorized: /api/v1/programs/locations/stats/
+WARNING 2026-02-09 18:43:42,556 log "GET /api/v1/programs/locations/stats/ HTTP/1.1" 401 172
+INFO 2026-02-09 18:43:42,581 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-09 18:43:42,583 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-09 18:43:42,584 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-09 18:43:42,608 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 18:43:42,613 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-09 18:43:42,641 log "GET /api/v1/programs/locations/stats/ HTTP/1.1" 200 265
+INFO 2026-02-09 18:43:42,664 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 18:43:42,700 log "GET /api/v1/programs/locations/stats/ HTTP/1.1" 200 265
+INFO 2026-02-09 18:43:42,800 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-09 18:43:51,389 log "OPTIONS /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 0
+INFO 2026-02-09 18:43:51,389 log "OPTIONS /api/v1/participants/participants/stats/ HTTP/1.1" 200 0
+INFO 2026-02-09 18:43:51,390 log "OPTIONS /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 0
+INFO 2026-02-09 18:43:51,391 log "OPTIONS /api/v1/participants/participants/stats/ HTTP/1.1" 200 0
+INFO 2026-02-09 18:43:51,415 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 52
+INFO 2026-02-09 18:43:51,428 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 288
+INFO 2026-02-09 18:43:51,474 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 52
+INFO 2026-02-09 18:43:51,492 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 288
+INFO 2026-02-09 18:45:57,793 log "OPTIONS /api/v1/participants/participants/ HTTP/1.1" 200 0
+INFO 2026-02-09 18:45:57,816 log "POST /api/v1/participants/participants/ HTTP/1.1" 201 252
+INFO 2026-02-09 18:45:57,864 log "OPTIONS /api/v1/participants/participants/undefined/upload_photo/ HTTP/1.1" 200 0
+WARNING 2026-02-09 18:45:59,475 log Not Found: /api/v1/participants/participants/undefined/upload_photo/
+WARNING 2026-02-09 18:45:59,475 log "POST /api/v1/participants/participants/undefined/upload_photo/ HTTP/1.1" 404 23
+INFO 2026-02-09 18:47:05,723 log "POST /api/v1/participants/participants/ HTTP/1.1" 201 252
+WARNING 2026-02-09 18:47:05,737 log Not Found: /api/v1/participants/participants/undefined/upload_photo/
+WARNING 2026-02-09 18:47:05,738 log "POST /api/v1/participants/participants/undefined/upload_photo/ HTTP/1.1" 404 23
+INFO 2026-02-09 18:48:54,899 log "POST /api/v1/participants/participants/ HTTP/1.1" 201 259
+WARNING 2026-02-09 18:48:54,915 log Not Found: /api/v1/participants/participants/undefined/upload_photo/
+WARNING 2026-02-09 18:48:54,916 log "POST /api/v1/participants/participants/undefined/upload_photo/ HTTP/1.1" 404 23
+INFO 2026-02-09 18:57:24,830 log "POST /api/v1/participants/participants/ HTTP/1.1" 201 249
+INFO 2026-02-09 18:58:09,760 autoreload Watching for file changes with StatReloader
+INFO 2026-02-09 18:58:15,016 log "POST /api/v1/participants/participants/ HTTP/1.1" 201 249
+INFO 2026-02-09 18:58:53,334 log "POST /api/v1/participants/participants/ HTTP/1.1" 201 249
+INFO 2026-02-09 19:05:17,148 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/participants/serializers.py changed, reloading.
+INFO 2026-02-09 19:05:17,469 autoreload Watching for file changes with StatReloader
+INFO 2026-02-09 19:05:22,163 log "POST /api/v1/participants/participants/ HTTP/1.1" 201 256
+INFO 2026-02-09 19:05:22,167 log "OPTIONS /api/v1/participants/participants/7/upload_photo/ HTTP/1.1" 200 0
+WARNING 2026-02-09 19:05:23,518 log Bad Request: /api/v1/participants/participants/7/upload_photo/
+WARNING 2026-02-09 19:05:23,519 log "POST /api/v1/participants/participants/7/upload_photo/ HTTP/1.1" 400 170
+INFO 2026-02-09 19:05:25,100 log "OPTIONS /api/v1/participants/participants/7/ HTTP/1.1" 200 0
+INFO 2026-02-09 19:05:25,102 log "OPTIONS /api/v1/participants/participants/7/enrollments/ HTTP/1.1" 200 0
+INFO 2026-02-09 19:05:25,105 log "OPTIONS /api/v1/participants/participants/7/face_encoding_status/ HTTP/1.1" 200 0
+INFO 2026-02-09 19:05:25,105 log "OPTIONS /api/v1/participants/participants/7/face_encoding_status/ HTTP/1.1" 200 0
+INFO 2026-02-09 19:05:25,105 log "OPTIONS /api/v1/participants/participants/7/progress/ HTTP/1.1" 200 0
+INFO 2026-02-09 19:05:25,106 log "OPTIONS /api/v1/participants/participants/7/ HTTP/1.1" 200 0
+INFO 2026-02-09 19:05:25,106 log "OPTIONS /api/v1/participants/participants/7/enrollments/ HTTP/1.1" 200 0
+INFO 2026-02-09 19:05:25,106 log "OPTIONS /api/v1/participants/participants/7/progress/ HTTP/1.1" 200 0
+INFO 2026-02-09 19:05:25,127 log "GET /api/v1/participants/participants/7/enrollments/ HTTP/1.1" 200 2
+INFO 2026-02-09 19:05:25,128 log "GET /api/v1/participants/participants/7/progress/ HTTP/1.1" 200 179
+INFO 2026-02-09 19:05:25,129 log "GET /api/v1/participants/participants/7/ HTTP/1.1" 200 515
+INFO 2026-02-09 19:05:25,150 log "GET /api/v1/participants/participants/7/face_encoding_status/ HTTP/1.1" 200 155
+INFO 2026-02-09 19:05:25,186 log "GET /api/v1/participants/participants/7/enrollments/ HTTP/1.1" 200 2
+INFO 2026-02-09 19:05:25,189 log "GET /api/v1/participants/participants/7/ HTTP/1.1" 200 515
+INFO 2026-02-09 19:05:25,197 log "GET /api/v1/participants/participants/7/face_encoding_status/ HTTP/1.1" 200 155
+INFO 2026-02-09 19:05:25,198 log "GET /api/v1/participants/participants/7/progress/ HTTP/1.1" 200 179
+INFO 2026-02-09 19:07:37,214 log "GET /api/v1/participants/participants/7/ HTTP/1.1" 200 515
+INFO 2026-02-09 19:07:37,220 log "GET /api/v1/participants/participants/7/ HTTP/1.1" 200 515
+INFO 2026-02-09 19:07:45,833 log "PUT /api/v1/participants/participants/7/ HTTP/1.1" 200 515
+WARNING 2026-02-09 19:07:46,405 log Bad Request: /api/v1/participants/participants/7/upload_photo/
+WARNING 2026-02-09 19:07:46,405 log "POST /api/v1/participants/participants/7/upload_photo/ HTTP/1.1" 400 170
+INFO 2026-02-09 19:07:50,021 log "PUT /api/v1/participants/participants/7/ HTTP/1.1" 200 515
+WARNING 2026-02-09 19:07:50,605 log Bad Request: /api/v1/participants/participants/7/upload_photo/
+WARNING 2026-02-09 19:07:50,605 log "POST /api/v1/participants/participants/7/upload_photo/ HTTP/1.1" 400 170
+INFO 2026-02-09 19:19:42,286 log "GET /api/v1/participants/participants/7/ HTTP/1.1" 200 515
+INFO 2026-02-09 19:21:26,630 log "GET /api/v1/participants/participants/7/ HTTP/1.1" 200 515
+INFO 2026-02-09 19:21:26,636 log "GET /api/v1/participants/participants/7/ HTTP/1.1" 200 515
+INFO 2026-02-09 19:22:51,101 log "GET /api/v1/participants/participants/7/enrollments/ HTTP/1.1" 200 2
+INFO 2026-02-09 19:22:51,103 log "GET /api/v1/participants/participants/7/face_encoding_status/ HTTP/1.1" 200 155
+INFO 2026-02-09 19:22:51,106 log "GET /api/v1/participants/participants/7/ HTTP/1.1" 200 515
+INFO 2026-02-09 19:22:51,109 log "GET /api/v1/participants/participants/7/progress/ HTTP/1.1" 200 179
+INFO 2026-02-09 19:22:51,121 log "GET /api/v1/participants/participants/7/face_encoding_status/ HTTP/1.1" 200 155
+INFO 2026-02-09 19:22:51,122 log "GET /api/v1/participants/participants/7/enrollments/ HTTP/1.1" 200 2
+INFO 2026-02-09 19:22:51,126 log "GET /api/v1/participants/participants/7/ HTTP/1.1" 200 515
+INFO 2026-02-09 19:22:51,130 log "GET /api/v1/participants/participants/7/progress/ HTTP/1.1" 200 179
+INFO 2026-02-09 19:23:05,491 log "OPTIONS /api/v1/auth/logout/ HTTP/1.1" 200 0
+WARNING 2026-02-09 19:23:05,499 log Bad Request: /api/v1/auth/logout/
+WARNING 2026-02-09 19:23:05,500 log "POST /api/v1/auth/logout/ HTTP/1.1" 400 42
+INFO 2026-02-09 19:23:16,420 log "OPTIONS /api/v1/auth/login/ HTTP/1.1" 200 0
+INFO 2026-02-09 19:23:16,755 log "POST /api/v1/auth/login/ HTTP/1.1" 200 912
+INFO 2026-02-09 19:23:24,541 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 1209
+INFO 2026-02-09 19:23:24,542 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 304
+INFO 2026-02-09 19:23:24,552 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 1209
+INFO 2026-02-09 19:23:24,558 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 304
+INFO 2026-02-09 19:23:28,330 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 1209
+INFO 2026-02-09 19:23:28,332 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 304
+INFO 2026-02-09 19:23:28,344 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 1209
+INFO 2026-02-09 19:23:28,350 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 304
+INFO 2026-02-09 19:23:37,046 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 1209
+INFO 2026-02-09 19:23:37,049 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 304
+INFO 2026-02-09 19:23:37,063 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 1209
+INFO 2026-02-09 19:23:37,068 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 304
+INFO 2026-02-09 19:26:40,030 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/participants/serializers.py changed, reloading.
+INFO 2026-02-09 19:26:40,455 autoreload Watching for file changes with StatReloader
+INFO 2026-02-09 19:26:46,160 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 1209
+INFO 2026-02-09 19:26:46,160 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 304
+INFO 2026-02-09 19:26:46,188 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 1209
+INFO 2026-02-09 19:26:46,189 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 304
+INFO 2026-02-09 19:27:04,711 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 304
+INFO 2026-02-09 19:27:04,711 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 1209
+INFO 2026-02-09 19:27:04,745 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 304
+INFO 2026-02-09 19:27:04,747 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 1209
+INFO 2026-02-09 19:27:59,311 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 1209
+INFO 2026-02-09 19:27:59,313 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 304
+INFO 2026-02-09 19:27:59,329 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 1209
+INFO 2026-02-09 19:27:59,336 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 304
+INFO 2026-02-09 19:28:03,652 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 304
+INFO 2026-02-09 19:28:03,652 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 1209
+INFO 2026-02-09 19:28:03,685 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 304
+INFO 2026-02-09 19:28:03,688 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 1209
+INFO 2026-02-09 19:30:10,466 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/participants/serializers.py changed, reloading.
+INFO 2026-02-09 19:30:10,786 autoreload Watching for file changes with StatReloader
+INFO 2026-02-09 19:30:16,690 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 1209
+INFO 2026-02-09 19:30:16,690 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 304
+INFO 2026-02-09 19:30:16,707 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 304
+INFO 2026-02-09 19:30:16,710 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 1209
+INFO 2026-02-09 20:48:37,308 log "OPTIONS /api/v1/participants/participants/stats/ HTTP/1.1" 200 0
+INFO 2026-02-09 20:48:37,308 log "OPTIONS /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 0
+INFO 2026-02-09 20:48:37,308 log "OPTIONS /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 0
+INFO 2026-02-09 20:48:37,308 log "OPTIONS /api/v1/participants/participants/stats/ HTTP/1.1" 200 0
+WARNING 2026-02-09 20:48:37,311 log Unauthorized: /api/v1/participants/participants/stats/
+WARNING 2026-02-09 20:48:37,313 log Unauthorized: /api/v1/participants/participants/
+WARNING 2026-02-09 20:48:37,313 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 401 172
+WARNING 2026-02-09 20:48:37,313 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 401 172
+WARNING 2026-02-09 20:48:37,359 log Unauthorized: /api/v1/participants/participants/stats/
+WARNING 2026-02-09 20:48:37,359 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 401 172
+WARNING 2026-02-09 20:48:37,360 log Unauthorized: /api/v1/participants/participants/
+WARNING 2026-02-09 20:48:37,360 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 401 172
+INFO 2026-02-09 20:48:37,366 log "OPTIONS /api/v1/auth/refresh/ HTTP/1.1" 200 0
+INFO 2026-02-09 20:48:37,368 log "OPTIONS /api/v1/auth/refresh/ HTTP/1.1" 200 0
+INFO 2026-02-09 20:48:37,370 log "OPTIONS /api/v1/auth/refresh/ HTTP/1.1" 200 0
+INFO 2026-02-09 20:48:37,371 log "OPTIONS /api/v1/auth/refresh/ HTTP/1.1" 200 0
+INFO 2026-02-09 20:48:37,421 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-09 20:48:37,423 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-09 20:48:37,424 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-09 20:48:37,425 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-09 20:48:37,493 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 304
+INFO 2026-02-09 20:48:37,494 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 1209
+INFO 2026-02-09 20:48:37,565 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 304
+INFO 2026-02-09 20:48:37,565 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 1209
+INFO 2026-02-09 20:50:12,206 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 1209
+INFO 2026-02-09 20:50:12,206 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 304
+INFO 2026-02-09 20:50:12,226 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 1209
+INFO 2026-02-09 20:50:12,226 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 304
