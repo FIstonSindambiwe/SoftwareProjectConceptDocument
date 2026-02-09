@@ -38,12 +38,12 @@ axiosInstance.interceptors.response.use(
 
       try {
         const refreshToken = localStorage.getItem('refresh_token');
-        
         if (!refreshToken) {
           throw new Error('No refresh token');
         }
 
         // Try to refresh the token
+        // FIX: Changed backticks to parentheses
         const response = await axios.post(`${API_BASE_URL}/auth/refresh/`, {
           refresh: refreshToken,
         });

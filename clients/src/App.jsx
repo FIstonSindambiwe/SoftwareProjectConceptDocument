@@ -15,6 +15,18 @@ import UserDetailPage from './pages/dashboard/users/UserDetailPage';
 import CreateUserPage from './pages/dashboard/users/CreateUserPage';
 import EditUserPage from './pages/dashboard/users/EditUserPage';
 
+// Locations
+import LocationsListPage from './pages/dashboard/locations/LocationsListPage';
+import LocationDetailPage from './pages/dashboard/locations/LocationDetailPage';
+import CreateLocationPage from './pages/dashboard/locations/CreateLocationPage';
+import EditLocationPage from './pages/dashboard/locations/EditLocationPage';
+
+// Programs
+import ProgramsListPage from './pages/dashboard/programs/ProgramsListPage';
+import ProgramDetailPage from './pages/dashboard/programs/ProgramDetailPage';
+import CreateProgramPage from './pages/dashboard/programs/CreateProgramPage';
+import EditProgramPage from './pages/dashboard/programs/EditProgramPage';
+
 // Profile
 import ProfilePage from './pages/dashboard/profile/ProfilePage';
 import ChangePasswordPage from './pages/dashboard/profile/ChangePasswordPage';
@@ -121,17 +133,65 @@ function App() {
           path="/locations" 
           element={
             <ProtectedRoute allowedRoles={['admin', 'program_manager']}>
-              <ComingSoonPage pageName="Locations" />
+              <LocationsListPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/locations/create" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'program_manager']}>
+              <CreateLocationPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/locations/:id" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'program_manager']}>
+              <LocationDetailPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/locations/:id/edit" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'program_manager']}>
+              <EditLocationPage />
             </ProtectedRoute>
           } 
         />
 
-        {/* Protected Routes - Programs (All authenticated users) */}
+        {/* Protected Routes - Programs (All authenticated users can view, Admin/PM can edit) */}
         <Route 
           path="/programs" 
           element={
             <ProtectedRoute>
-              <ComingSoonPage pageName="Programs" />
+              <ProgramsListPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/programs/create" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'program_manager']}>
+              <CreateProgramPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/programs/:id" 
+          element={
+            <ProtectedRoute>
+              <ProgramDetailPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/programs/:id/edit" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'program_manager']}>
+              <EditProgramPage />
             </ProtectedRoute>
           } 
         />

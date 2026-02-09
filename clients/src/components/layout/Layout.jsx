@@ -22,13 +22,18 @@ const Layout = ({ children }) => {
       />
       
       {/* Main content area */}
-      <div className="flex-1 flex flex-col lg:ml-64 overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
         <Header onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
         
-        {/* Page content - scrollable */}
-        <main className="flex-1 overflow-y-auto p-6 bg-gray-50">
-          {children}
+        {/* Page content */}
+        <main className="flex-1 overflow-y-auto bg-gray-50 lg:ml-64">
+          {/* Container with 5 units margin left/right, custom vertical padding */}
+          <div className="mx-25 py-8">
+            <div className="max-w-full">
+              {children}
+            </div>
+          </div>
         </main>
       </div>
     </div>
