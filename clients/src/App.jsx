@@ -33,6 +33,12 @@ import ParticipantDetailPage from './pages/dashboard/participants/ParticipantDet
 import CreateParticipantPage from './pages/dashboard/participants/CreateParticipantPage';
 import EditParticipantPage from './pages/dashboard/participants/EditParticipantPage';
 
+// Attendance
+import AttendanceListPage from './pages/dashboard/attendance/AttendanceListPage';
+import FaceCheckInPage from './pages/dashboard/attendance/FaceCheckInPage';
+import BulkAttendancePage from './pages/dashboard/attendance/BulkAttendancePage';
+import SessionsListPage from './pages/dashboard/attendance/SessionsListPage';
+
 // Milestones
 import MilestonesListPage from './pages/dashboard/milestones/MilestonesListPage';
 import MilestoneDetailPage from './pages/dashboard/milestones/MilestoneDetailPage';
@@ -281,7 +287,31 @@ function App() {
           path="/dashboard/attendance" 
           element={
             <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff']}>
-              <ComingSoonPage pageName="Attendance" />
+              <AttendanceListPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard/attendance/check-in" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff']}>
+              <FaceCheckInPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard/attendance/bulk" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff']}>
+              <BulkAttendancePage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard/attendance/sessions" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff']}>
+              <SessionsListPage />
             </ProtectedRoute>
           } 
         />

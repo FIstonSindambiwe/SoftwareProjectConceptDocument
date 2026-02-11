@@ -14,6 +14,9 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
   FlagIcon,
+  CalendarIcon,
+  CameraIcon,
+  UserPlusIcon,
 } from '@heroicons/react/24/outline';
 import authService from '../../services/api/authService';
 
@@ -21,7 +24,8 @@ const Sidebar = ({ isOpen, onClose }) => {
   const user = authService.getCurrentUser();
   const userRole = authService.getUserRole();
   const [isProgramsOpen, setIsProgramsOpen] = useState(false);
-  const [isManagementOpen, setIsManagementOpen] = useState(false);
+  const [isYouthManagementOpen, setIsYouthManagementOpen] = useState(false);
+  const [isAttendanceOpen, setIsAttendanceOpen] = useState(false);
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, roles: ['all'] },
@@ -29,7 +33,7 @@ const Sidebar = ({ isOpen, onClose }) => {
     // Users Management
     { 
       name: 'Users', 
-      href: '/dashboard/users', // Updated path
+      href: '/dashboard/users',
       icon: UserGroupIcon, 
       roles: ['admin'] 
     },
@@ -43,19 +47,19 @@ const Sidebar = ({ isOpen, onClose }) => {
       children: [
         { 
           name: 'Locations', 
-          href: '/dashboard/locations', // Updated path
+          href: '/dashboard/locations',
           icon: MapPinIcon, 
           roles: ['admin', 'program_manager'] 
         },
         { 
           name: 'Programs', 
-          href: '/dashboard/programs', // Updated path
+          href: '/dashboard/programs',
           icon: AcademicCapIcon, 
           roles: ['all'] 
         },
         { 
           name: 'Milestones', 
-          href: '/dashboard/milestones', // Updated path
+          href: '/dashboard/milestones',
           icon: FlagIcon, 
           roles: ['admin', 'teacher', 'program_manager'] 
         },
@@ -71,29 +75,65 @@ const Sidebar = ({ isOpen, onClose }) => {
       children: [
         { 
           name: 'Participants', 
-          href: '/dashboard/participants', // Updated path
+          href: '/dashboard/participants',
           icon: UsersIcon, 
           roles: ['admin', 'teacher', 'program_manager', 'staff', 'donor'] 
         },
         { 
-          name: 'Attendance', 
-          href: '/dashboard/attendance', // Updated path
-          icon: ClipboardDocumentCheckIcon, 
+          name: 'Enrollments', 
+          href: '/dashboard/enrollments',
+          icon: UserPlusIcon, 
+          roles: ['admin', 'teacher', 'program_manager', 'staff'] 
+        },
+      ]
+    },
+
+    // Attendance Management (Dropdown)
+    { 
+      name: 'Attendance', 
+      icon: ClipboardDocumentCheckIcon, 
+      roles: ['admin', 'teacher', 'program_manager', 'staff'],
+      isDropdown: true,
+      children: [
+        { 
+          name: 'Attendance List', 
+          href: '/dashboard/attendance',
+          icon: CalendarIcon, 
           roles: ['admin', 'teacher', 'program_manager', 'staff'] 
         },
         { 
-          name: 'Assessments', 
-          href: '/dashboard/assessments', // Updated path
-          icon: ChartBarIcon, 
-          roles: ['admin', 'teacher', 'program_manager'] 
+          name: 'Face Check-In', 
+          href: '/dashboard/attendance/check-in',
+          icon: CameraIcon, 
+          roles: ['admin', 'teacher', 'program_manager', 'staff'] 
+        },
+        { 
+          name: 'Bulk Attendance', 
+          href: '/dashboard/attendance/bulk',
+          icon: UserGroupIcon, 
+          roles: ['admin', 'teacher', 'program_manager', 'staff'] 
+        },
+        { 
+          name: 'Sessions', 
+          href: '/dashboard/attendance/sessions',
+          icon: CalendarIcon, 
+          roles: ['admin', 'teacher', 'program_manager', 'staff'] 
         },
       ]
+    },
+    
+    // Assessments
+    { 
+      name: 'Assessments', 
+      href: '/dashboard/assessments',
+      icon: ChartBarIcon, 
+      roles: ['admin', 'teacher', 'program_manager'] 
     },
     
     // Reports
     { 
       name: 'Reports', 
-      href: '/dashboard/reports', // Updated path
+      href: '/dashboard/reports',
       icon: DocumentTextIcon, 
       roles: ['all'] 
     },
@@ -119,8 +159,58 @@ const Sidebar = ({ isOpen, onClose }) => {
     setIsProgramsOpen(!isProgramsOpen);
   };
 
-  const toggleManagementDropdown = () => {
-    setIsManagementOpen(!isManagementOpen);
+  const toggleYouthManagementDropdown = () => {
+    setIsYouthManagementOpen(!isYouthManagementOpen);
+  };
+
+  const toggleAttendanceDropdown = () => {
+    setIsAttendanceOpen(!isAttendanceOpen);
+  };
+
+  const renderDropdown = (item, isOpen, toggleFn) => {
+    return (
+      <div key={item.name}>
+        {/* Dropdown Header */}
+        <button
+          onClick={toggleFn}
+          className="w-full flex items-center justify-between gap-4 px-4 py-3 text-sm font-medium rounded-lg transition-all text-slate-300 hover:bg-slate-700 hover:text-white hover:shadow-md"
+        >
+          <div className="flex items-center gap-4">
+            <item.icon className="h-5 w-5 flex-shrink-0" />
+            <span>{item.name}</span>
+          </div>
+          {isOpen ? (
+            <ChevronDownIcon className="h-4 w-4 transition-transform duration-200" />
+          ) : (
+            <ChevronRightIcon className="h-4 w-4 transition-transform duration-200" />
+          )}
+        </button>
+
+        {/* Dropdown Items */}
+        {isOpen && (
+          <div className="ml-8 mt-1 space-y-1">
+            {item.children.map((child) => (
+              <NavLink
+                key={child.name}
+                to={child.href}
+                onClick={() => onClose()}
+                end={child.href === '/dashboard/attendance'}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all
+                  ${isActive
+                    ? 'bg-slate-600 text-white shadow-inner'
+                    : 'text-slate-300 hover:bg-slate-700 hover:text-white'
+                  }`
+                }
+              >
+                <child.icon className="h-4 w-4 flex-shrink-0 opacity-80" />
+                <span className="text-sm">{child.name}</span>
+              </NavLink>
+            ))}
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -128,7 +218,7 @@ const Sidebar = ({ isOpen, onClose }) => {
       {/* Mobile backdrop */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-gray-900/50 z-40 lg:hidden"
+          className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-40 lg:hidden"
           onClick={onClose}
         />
       )}
@@ -137,9 +227,9 @@ const Sidebar = ({ isOpen, onClose }) => {
       <aside 
         className={`
           fixed top-0 left-0 h-full w-64 
-          bg-gradient-to-b from-slate-700 via-slate-800 to-slate-900
+          bg-gradient-to-b from-slate-800 via-slate-900 to-slate-950
           transform transition-transform duration-300 ease-in-out z-50
-          lg:translate-x-0
+          lg:translate-x-0 shadow-2xl
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
       >
@@ -147,126 +237,56 @@ const Sidebar = ({ isOpen, onClose }) => {
           {/* Close button for mobile */}
           <button
             onClick={onClose}
-            className="lg:hidden absolute top-4 right-4 text-gray-400 hover:text-white z-10"
+            className="lg:hidden absolute top-4 right-4 text-gray-400 hover:text-white z-10 p-2 rounded-full hover:bg-slate-700 transition-colors"
           >
-            <XMarkIcon className="h-6 w-6" />
+            <XMarkIcon className="h-5 w-5" />
           </button>
 
           {/* User Profile Section */}
-          <div className="px-6 py-8 border-b border-slate-600">
+          <div className="px-6 py-8 border-b border-slate-700/50">
             <div className="flex flex-col items-center">
               {/* Avatar */}
-              <div className="w-24 h-24 rounded-full bg-slate-600 flex items-center justify-center mb-4 shadow-xl ring-4 ring-slate-700">
-                <svg className="w-14 h-14 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center mb-4 shadow-xl ring-4 ring-slate-700/50">
+                <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                 </svg>
               </div>
               
               {/* User Name */}
               <h3 className="text-white font-bold text-lg uppercase tracking-wide">
-                {user?.username || 'JOHN DON'}
+                {user?.username || 'ADMIN USER'}
               </h3>
               
               {/* User Email */}
-              <p className="text-slate-400 text-sm mt-1">
-                {user?.email || 'johndon@company.com'}
+              <p className="text-slate-400 text-sm mt-1 truncate max-w-full px-2">
+                {user?.email || 'admin@youthimpact.com'}
               </p>
+              
+              {/* Role Badge */}
+              <div className="mt-2 px-3 py-1 bg-slate-700/50 rounded-full">
+                <span className="text-xs text-slate-300 uppercase font-semibold">
+                  {userRole || 'Admin'}
+                </span>
+              </div>
             </div>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+          <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
             {filteredNavigation.map((item) => {
               // Render dropdown for Programs
               if (item.name === 'Programs' && item.isDropdown) {
-                return (
-                  <div key={item.name}>
-                    {/* Dropdown Header */}
-                    <button
-                      onClick={toggleProgramsDropdown}
-                      className="w-full flex items-center justify-between gap-4 px-4 py-3 text-sm font-medium rounded-lg transition-all text-slate-300 hover:bg-slate-700 hover:text-white"
-                    >
-                      <div className="flex items-center gap-4">
-                        <item.icon className="h-5 w-5 flex-shrink-0" />
-                        <span>{item.name}</span>
-                      </div>
-                      {isProgramsOpen ? (
-                        <ChevronDownIcon className="h-4 w-4" />
-                      ) : (
-                        <ChevronRightIcon className="h-4 w-4" />
-                      )}
-                    </button>
-
-                    {/* Dropdown Items */}
-                    {isProgramsOpen && (
-                      <div className="ml-4 mt-2 space-y-1">
-                        {item.children.map((child) => (
-                          <NavLink
-                            key={child.name}
-                            to={child.href}
-                            onClick={() => onClose()}
-                            className={({ isActive }) =>
-                              `flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg transition-all
-                              ${isActive
-                                ? 'bg-slate-600 text-white shadow-lg'
-                                : 'text-slate-300 hover:bg-slate-700 hover:text-white'
-                              }`
-                            }
-                          >
-                            <child.icon className="h-4 w-4 flex-shrink-0" />
-                            <span>{child.name}</span>
-                          </NavLink>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
+                return renderDropdown(item, isProgramsOpen, toggleProgramsDropdown);
               }
 
               // Render dropdown for Youth Management
               if (item.name === 'Youth Management' && item.isDropdown) {
-                return (
-                  <div key={item.name}>
-                    {/* Dropdown Header */}
-                    <button
-                      onClick={toggleManagementDropdown}
-                      className="w-full flex items-center justify-between gap-4 px-4 py-3 text-sm font-medium rounded-lg transition-all text-slate-300 hover:bg-slate-700 hover:text-white"
-                    >
-                      <div className="flex items-center gap-4">
-                        <item.icon className="h-5 w-5 flex-shrink-0" />
-                        <span>{item.name}</span>
-                      </div>
-                      {isManagementOpen ? (
-                        <ChevronDownIcon className="h-4 w-4" />
-                      ) : (
-                        <ChevronRightIcon className="h-4 w-4" />
-                      )}
-                    </button>
+                return renderDropdown(item, isYouthManagementOpen, toggleYouthManagementDropdown);
+              }
 
-                    {/* Dropdown Items */}
-                    {isManagementOpen && (
-                      <div className="ml-4 mt-2 space-y-1">
-                        {item.children.map((child) => (
-                          <NavLink
-                            key={child.name}
-                            to={child.href}
-                            onClick={() => onClose()}
-                            className={({ isActive }) =>
-                              `flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg transition-all
-                              ${isActive
-                                ? 'bg-slate-600 text-white shadow-lg'
-                                : 'text-slate-300 hover:bg-slate-700 hover:text-white'
-                              }`
-                            }
-                          >
-                            <child.icon className="h-4 w-4 flex-shrink-0" />
-                            <span>{child.name}</span>
-                          </NavLink>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
+              // Render dropdown for Attendance
+              if (item.name === 'Attendance' && item.isDropdown) {
+                return renderDropdown(item, isAttendanceOpen, toggleAttendanceDropdown);
               }
 
               // Render normal link (for non-dropdown items)
@@ -275,11 +295,12 @@ const Sidebar = ({ isOpen, onClose }) => {
                   key={item.name}
                   to={item.href}
                   onClick={() => onClose()}
+                  end={item.href === '/dashboard'}
                   className={({ isActive }) =>
                     `flex items-center gap-4 px-4 py-3 text-sm font-medium rounded-lg transition-all
                     ${isActive
-                      ? 'bg-slate-600 text-white shadow-lg'
-                      : 'text-slate-300 hover:bg-slate-700 hover:text-white'
+                      ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-white shadow-inner border-l-4 border-blue-500'
+                      : 'text-slate-300 hover:bg-slate-700/50 hover:text-white hover:shadow-md'
                     }`
                   }
                 >
@@ -291,9 +312,12 @@ const Sidebar = ({ isOpen, onClose }) => {
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-slate-700">
+          <div className="p-4 border-t border-slate-700/50">
             <p className="text-xs text-slate-400 text-center">
-              © 2024 Youth Impact Visualizer
+              © {new Date().getFullYear()} Youth Empowerment System
+            </p>
+            <p className="text-xs text-slate-500 text-center mt-1">
+              v1.0.0
             </p>
           </div>
         </div>

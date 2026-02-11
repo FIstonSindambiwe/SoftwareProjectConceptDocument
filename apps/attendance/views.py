@@ -12,6 +12,8 @@ from .serializers import (
 )
 from users.permissions import CanEditData, IsDonorReadOnly
 from participants.models import Participant
+from .face_recognition_service import FaceRecognitionService
+        
 
 
 class AttendanceRecordViewSet(viewsets.ModelViewSet):
@@ -169,7 +171,7 @@ class AttendanceRecordViewSet(viewsets.ModelViewSet):
         - image: file (face photo)
         """
         from participants.models import Participant
-        from attendance.face_recognition_service import FaceRecognitionService
+        # from attendance.face_recognition_service import FaceRecognitionService
         
         participant_id = request.data.get('participant_id')
         program_id = request.data.get('program')
@@ -245,7 +247,7 @@ class AttendanceRecordViewSet(viewsets.ModelViewSet):
         - session_name: str (optional)
         - image: file (face photo)
         """
-        from attendance.face_recognition_service import FaceRecognitionService
+        # from attendance.face_recognition_service import FaceRecognitionService
         from programs.models import Program
         
         program_id = request.data.get('program')
