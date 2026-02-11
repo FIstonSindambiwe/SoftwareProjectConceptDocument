@@ -6,7 +6,8 @@ import {
   PhotoIcon,
   VideoCameraIcon,
   XMarkIcon,
-  ExclamationTriangleIcon
+  ExclamationTriangleIcon,
+  UserIcon
 } from '@heroicons/react/24/outline';
 import Layout from '../../../components/layout/Layout';
 import Card from '../../../components/common/Card';
@@ -39,6 +40,8 @@ const CreateParticipantPage = () => {
   const [selectedCamera, setSelectedCamera] = useState('');
   
   const [formData, setFormData] = useState({
+    first_name: '',
+    last_name: '',
     age: '',
     gender: 'M',
     enrollment_date: new Date().toISOString().split('T')[0],
@@ -410,14 +413,30 @@ const CreateParticipantPage = () => {
   const validateForm = () => {
     const newErrors = {};
     
-    if (!formData.age) newErrors.age = 'Age is required';
-    if (formData.age && (formData.age < 5 || formData.age > 25)) {
+    // Validate required fields
+    if (!formData.first_name?.trim()) {
+      newErrors.first_name = 'First name is required';
+    }
+    
+    if (!formData.last_name?.trim()) {
+      newErrors.last_name = 'Last name is required';
+    }
+    
+    if (!formData.age) {
+      newErrors.age = 'Age is required';
+    } else if (formData.age < 5 || formData.age > 25) {
       newErrors.age = 'Age must be between 5 and 25 years';
     }
     
-    if (!formData.gender) newErrors.gender = 'Gender is required';
-    if (!formData.enrollment_date) newErrors.enrollment_date = 'Enrollment date is required';
+    if (!formData.gender) {
+      newErrors.gender = 'Gender is required';
+    }
     
+    if (!formData.enrollment_date) {
+      newErrors.enrollment_date = 'Enrollment date is required';
+    }
+    
+    // Validate consent if photo is provided
     if (photoFile && !formData.photo_consent_given) {
       newErrors.photo_consent_given = 'Photo consent is required when uploading a photo';
     }
@@ -430,6 +449,12 @@ const CreateParticipantPage = () => {
     e.preventDefault();
     
     if (!validateForm()) {
+      // Scroll to first error
+      const firstErrorField = Object.keys(errors)[0];
+      const errorElement = document.querySelector(`[name="${firstErrorField}"]`);
+      if (errorElement) {
+        errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
       return;
     }
     
@@ -438,10 +463,12 @@ const CreateParticipantPage = () => {
     setFormSuccess('');
     
     try {
-      // First, create the participant
+      // Create the participant with all required fields
       const participantData = {
         ...formData,
-        age: parseInt(formData.age)
+        age: parseInt(formData.age, 10),
+        first_name: formData.first_name.trim(),
+        last_name: formData.last_name.trim()
       };
       
       console.log('Creating participant with data:', participantData);
@@ -465,14 +492,13 @@ const CreateParticipantPage = () => {
           
           await participantService.uploadParticipantPhoto(createdParticipant.id, photoFormData);
           console.log('Photo uploaded successfully');
+          setFormSuccess('Participant created successfully! Photo uploaded.');
         } catch (photoError) {
           console.warn('Photo upload failed:', photoError);
           // Continue anyway - participant was created
           setFormSuccess('Participant created successfully! Photo upload failed, but you can upload it later from the participant details page.');
         }
-      }
-      
-      if (!formSuccess) {
+      } else {
         setFormSuccess('Participant created successfully!');
       }
       
@@ -523,7 +549,7 @@ const CreateParticipantPage = () => {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
           <Button
             variant="outline"
@@ -559,24 +585,49 @@ const CreateParticipantPage = () => {
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
+                <ExclamationTriangleIcon className="h-5 w-5 text-red-400" />
               </div>
               <div className="ml-3">
-                <p className="text-sm font-medium text-red-800">{formError}</p>
+                <p className="text-sm font-medium text-red-800 whitespace-pre-line">{formError}</p>
               </div>
             </div>
           </div>
         )}
 
         <Card>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6 p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Basic Information */}
               <div className="md:col-span-2">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h2>
+                <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                  <UserIcon className="h-5 w-5 mr-2 text-gray-600" />
+                  Basic Information
+                </h2>
               </div>
+              
+              <Input
+                label="First Name *"
+                name="first_name"
+                type="text"
+                value={formData.first_name}
+                onChange={handleChange}
+                error={errors.first_name}
+                placeholder="Enter participant's first name"
+                required
+                autoComplete="given-name"
+              />
+              
+              <Input
+                label="Last Name *"
+                name="last_name"
+                type="text"
+                value={formData.last_name}
+                onChange={handleChange}
+                error={errors.last_name}
+                placeholder="Enter participant's last name"
+                required
+                autoComplete="family-name"
+              />
               
               <Input
                 label="Age *"
@@ -587,6 +638,7 @@ const CreateParticipantPage = () => {
                 value={formData.age}
                 onChange={handleChange}
                 error={errors.age}
+                placeholder="5-25"
                 required
               />
               
@@ -601,6 +653,8 @@ const CreateParticipantPage = () => {
                   className={`w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${
                     errors.gender ? 'border-red-300' : 'border-gray-300'
                   }`}
+                  aria-invalid={!!errors.gender}
+                  aria-describedby={errors.gender ? "gender-error" : undefined}
                 >
                   {genderOptions.map(option => (
                     <option key={option.value} value={option.value}>
@@ -609,7 +663,7 @@ const CreateParticipantPage = () => {
                   ))}
                 </select>
                 {errors.gender && (
-                  <p className="mt-1 text-sm text-red-600">{errors.gender}</p>
+                  <p id="gender-error" className="mt-1 text-sm text-red-600">{errors.gender}</p>
                 )}
               </div>
               
@@ -641,51 +695,49 @@ const CreateParticipantPage = () => {
                 </select>
               </div>
 
-              {/* Photo Upload */}
+              {/* Photo & Consent Section */}
               <div className="md:col-span-2">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Photo & Consent</h2>
               </div>
               
-              <div className="space-y-4">
+              <div className="md:col-span-2 space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Participant Photo (Optional)
                   </label>
-                  <div className="mt-1 flex items-center">
+                  <div className="mt-1 flex flex-col sm:flex-row items-start sm:items-center gap-4">
                     {photoPreview ? (
                       <div className="relative">
                         <img
                           src={photoPreview}
                           alt="Preview"
                           className="h-32 w-32 rounded-full object-cover border-4 border-white shadow"
-                          style={{ transform: 'scaleX(-1)' }} // Mirror for consistency
+                          style={{ transform: 'scaleX(-1)' }}
                         />
                         <button
                           type="button"
                           onClick={() => {
                             setPhotoFile(null);
                             setPhotoPreview(null);
-                            // Uncheck photo consent if removing photo
                             setFormData(prev => ({ ...prev, photo_consent_given: false }));
                           }}
-                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                           title="Remove photo"
                         >
                           <XMarkIcon className="h-4 w-4" />
                         </button>
                       </div>
                     ) : (
-                      <div className="flex items-center justify-center h-32 w-32 rounded-full bg-gray-100">
+                      <div className="flex items-center justify-center h-32 w-32 rounded-full bg-gray-100 border-2 border-dashed border-gray-300">
                         <CameraIcon className="h-12 w-12 text-gray-400" />
                       </div>
                     )}
-                    <div className="ml-4 space-y-2">
-                      <div className="flex space-x-2">
-                        {/* Upload from file */}
+                    <div className="flex-1 space-y-3">
+                      <div className="flex flex-wrap gap-2">
                         <label className="cursor-pointer">
                           <input
                             type="file"
-                            accept="image/*"
+                            accept="image/jpeg,image/png,image/jpg"
                             onChange={handleFileChange}
                             className="hidden"
                             id="photo-upload"
@@ -693,14 +745,13 @@ const CreateParticipantPage = () => {
                           <Button
                             type="button"
                             variant="outline"
-                            onClick={() => document.getElementById('photo-upload').click()}
+                            onClick={() => document.getElementById('photo-upload')?.click()}
                           >
                             <PhotoIcon className="h-5 w-5 mr-2" />
                             Upload Photo
                           </Button>
                         </label>
                         
-                        {/* Take photo with camera */}
                         <Button
                           type="button"
                           variant="outline"
@@ -717,42 +768,50 @@ const CreateParticipantPage = () => {
                   </div>
                 </div>
                 
-                <div className="space-y-3">
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id="photo_consent_given"
-                      name="photo_consent_given"
-                      checked={formData.photo_consent_given}
-                      onChange={handleChange}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                      disabled={!photoFile && !photoPreview} // Disable if no photo
-                    />
-                    <label htmlFor="photo_consent_given" className="ml-2 block text-sm text-gray-900">
-                      Photo Consent Given
-                    </label>
+                <div className="space-y-3 bg-gray-50 p-4 rounded-lg">
+                  <div className="flex items-start">
+                    <div className="flex items-center h-5">
+                      <input
+                        type="checkbox"
+                        id="photo_consent_given"
+                        name="photo_consent_given"
+                        checked={formData.photo_consent_given}
+                        onChange={handleChange}
+                        disabled={!photoFile && !photoPreview}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded disabled:opacity-50"
+                      />
+                    </div>
+                    <div className="ml-3">
+                      <label htmlFor="photo_consent_given" className="text-sm font-medium text-gray-700">
+                        Photo Consent Given
+                      </label>
+                      <p className="text-xs text-gray-500">
+                        Guardian consent for photo storage and face recognition
+                        {(!photoFile && !photoPreview) && ' (requires a photo to be selected)'}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-xs text-gray-500 ml-6">
-                    Guardian consent for photo storage and face recognition
-                    {(!photoFile && !photoPreview) && ' (requires a photo to be selected)'}
-                  </p>
                   
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id="data_sharing_consent"
-                      name="data_sharing_consent"
-                      checked={formData.data_sharing_consent}
-                      onChange={handleChange}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                    <label htmlFor="data_sharing_consent" className="ml-2 block text-sm text-gray-900">
-                      Data Sharing Consent
-                    </label>
+                  <div className="flex items-start">
+                    <div className="flex items-center h-5">
+                      <input
+                        type="checkbox"
+                        id="data_sharing_consent"
+                        name="data_sharing_consent"
+                        checked={formData.data_sharing_consent}
+                        onChange={handleChange}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      />
+                    </div>
+                    <div className="ml-3">
+                      <label htmlFor="data_sharing_consent" className="text-sm font-medium text-gray-700">
+                        Data Sharing Consent
+                      </label>
+                      <p className="text-xs text-gray-500">
+                        Consent for sharing anonymized data with donors and partners
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-xs text-gray-500 ml-6">
-                    Consent for sharing anonymized data with donors and partners
-                  </p>
                 </div>
                 
                 {errors.photo_consent_given && (
@@ -822,19 +881,24 @@ const CreateParticipantPage = () => {
         </Card>
 
         <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-          <h3 className="font-medium text-blue-900">Privacy Note</h3>
-          <p className="text-sm text-blue-700 mt-1">
-            Participant IDs are auto-generated to protect privacy. Photos and personal data 
-            require explicit consent. All data is handled according to our privacy policy.
-          </p>
+          <div className="flex">
+            <ExclamationTriangleIcon className="h-5 w-5 text-blue-400 mr-3 flex-shrink-0" />
+            <div>
+              <h3 className="font-medium text-blue-900">Privacy Note</h3>
+              <p className="text-sm text-blue-700 mt-1">
+                Participant IDs are auto-generated to protect privacy. Photos and personal data 
+                require explicit consent. All data is handled according to our privacy policy.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Camera Modal */}
       {showCamera && (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white">
               <h3 className="text-lg font-semibold text-gray-900">Take Photo</h3>
               <button
                 type="button"
@@ -843,7 +907,7 @@ const CreateParticipantPage = () => {
                   setShowCamera(false);
                   setCameraError('');
                 }}
-                className="text-gray-400 hover:text-gray-500"
+                className="text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 rounded-lg"
               >
                 <XMarkIcon className="h-6 w-6" />
               </button>
@@ -894,7 +958,6 @@ const CreateParticipantPage = () => {
 
               {/* Camera Preview */}
               <div className="relative bg-black rounded-lg overflow-hidden aspect-video">
-                {/* Video Element */}
                 <video
                   ref={videoRef}
                   autoPlay
@@ -902,15 +965,13 @@ const CreateParticipantPage = () => {
                   muted
                   className="w-full h-full object-cover"
                   style={{
-                    transform: 'scaleX(-1)', // Mirror for selfie view
+                    transform: 'scaleX(-1)',
                     display: isCameraActive ? 'block' : 'none'
                   }}
                 />
                 
-                {/* Camera Preview (when no video) */}
                 <CameraPreview />
                 
-                {/* Hidden canvas for capturing photo */}
                 <canvas ref={canvasRef} className="hidden" />
               </div>
 
@@ -965,12 +1026,12 @@ const CreateParticipantPage = () => {
               {/* Instructions */}
               <div className="mt-6 p-4 bg-blue-50 rounded-lg">
                 <h4 className="font-medium text-blue-900 mb-2">Instructions</h4>
-                <ul className="text-sm text-blue-700 space-y-1">
-                  <li>• Make sure the participant is well-lit and facing the camera</li>
-                  <li>• Position the participant's face in the center of the frame</li>
-                  <li>• Ensure the face is clearly visible (no hats, sunglasses, etc.)</li>
-                  <li>• Click "Take Photo" when ready</li>
-                  <li>• The photo will be mirrored for natural selfie view</li>
+                <ul className="text-sm text-blue-700 space-y-1 list-disc pl-4">
+                  <li>Make sure the participant is well-lit and facing the camera</li>
+                  <li>Position the participant's face in the center of the frame</li>
+                  <li>Ensure the face is clearly visible (no hats, sunglasses, etc.)</li>
+                  <li>Click "Take Photo" when ready</li>
+                  <li>The photo will be mirrored for natural selfie view</li>
                 </ul>
               </div>
 

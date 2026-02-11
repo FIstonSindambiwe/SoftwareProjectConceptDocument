@@ -10,6 +10,7 @@ import {
   InformationCircleIcon,
   ExclamationCircleIcon
 } from '@heroicons/react/24/outline';
+import { toast } from 'react-hot-toast';
 import Layout from '../../../components/layout/Layout';
 import Card from '../../../components/common/Card';
 import Button from '../../../components/common/Button';
@@ -22,6 +23,9 @@ const FaceCheckInPage = () => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [stream, setStream] = useState(null);
+  
+  // Get today's date for validation
+  const today = new Date().toISOString().split('T')[0];
   
   const [programs, setPrograms] = useState([]);
   const [sessions, setSessions] = useState([]);
@@ -40,7 +44,7 @@ const FaceCheckInPage = () => {
   
   const [formData, setFormData] = useState({
     program: '',
-    date: new Date().toISOString().split('T')[0],
+    date: today, // Fixed to today
     session_name: ''
   });
 
@@ -380,15 +384,39 @@ const FaceCheckInPage = () => {
   };
 
   const handleSubmit = async () => {
-    if (!formData.program || !formData.date) {
-      setError('Please select program and date');
+    // Validate date is today
+    if (formData.date !== today) {
+      const selectedDate = new Date(formData.date);
+      const todayDate = new Date(today);
+      
+      let errorMessage;
+      if (selectedDate < todayDate) {
+        errorMessage = 'Cannot record attendance for past dates. Face check-in is only available for today.';
+      } else if (selectedDate > todayDate) {
+        errorMessage = 'Cannot record attendance for future dates. Please wait until the actual day.';
+      } else {
+        errorMessage = 'Attendance can only be recorded for today\'s date.';
+      }
+      
+      setError(errorMessage);
       setErrorType('validation');
+      toast.error(errorMessage, { duration: 4000 });
+      return;
+    }
+
+    if (!formData.program) {
+      const errorMessage = 'Please select a program before checking in.';
+      setError(errorMessage);
+      setErrorType('validation');
+      toast.error(errorMessage);
       return;
     }
 
     if (!capturedImage) {
-      setError('Please capture a photo');
+      const errorMessage = 'Please capture a photo before submitting.';
+      setError(errorMessage);
       setErrorType('validation');
+      toast.error(errorMessage);
       return;
     }
 
@@ -414,6 +442,11 @@ const FaceCheckInPage = () => {
       setErrorType(null);
       
       if (identifyResult.identified) {
+        toast.success(
+          `Check-in successful! ${identifyResult.participant_id} - ${identifyResult.confidence?.toFixed(1)}% confidence`,
+          { duration: 4000 }
+        );
+        
         // Auto-clear after 3 seconds and reset
         setTimeout(() => {
           resetForm();
@@ -430,14 +463,19 @@ const FaceCheckInPage = () => {
       // Set error type based on error flags
       if (err.isNotImplemented) {
         setErrorType('not-implemented');
+        toast.error('Face recognition is not yet available. Please use manual check-in.', { duration: 5000 });
       } else if (err.isFaceDetectionError) {
         setErrorType('face-detection');
+        toast.error(friendlyMessage, { duration: 5000 });
       } else if (err.isNoEncodingsError) {
         setErrorType('no-encodings');
+        toast.error('No participants are registered for face recognition yet.', { duration: 5000 });
       } else if (err.status === 401 || err.status === 403) {
         setErrorType('permission');
+        toast.error(friendlyMessage, { duration: 5000 });
       } else {
         setErrorType('recognition');
+        toast.error(friendlyMessage, { duration: 5000 });
       }
     } finally {
       setLoading(false);
@@ -458,6 +496,33 @@ const FaceCheckInPage = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    
+    // Prevent changing date from today
+    if (name === 'date' && value !== today) {
+      const selectedDate = new Date(value);
+      const todayDate = new Date(today);
+      
+      let message;
+      if (selectedDate < todayDate) {
+        message = 'Cannot record attendance for past dates. Face check-in is only available for today.';
+      } else if (selectedDate > todayDate) {
+        message = 'Cannot record attendance for future dates. Please wait until the actual day to check in.';
+      } else {
+        message = 'Attendance can only be recorded for today\'s date.';
+      }
+      
+      toast.error(message, { duration: 4000 });
+      setError(message);
+      setErrorType('validation');
+      return;
+    }
+    
+    // Clear validation errors when making valid changes
+    if (errorType === 'validation') {
+      setError('');
+      setErrorType(null);
+    }
+    
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
@@ -484,8 +549,10 @@ const FaceCheckInPage = () => {
       setPrograms(data.results || data || []);
     } catch (error) {
       console.error('Error fetching programs:', error);
-      setError('Failed to load programs');
+      const errorMsg = error?.message || error?.error || 'Failed to load programs';
+      setError(`Unable to load programs: ${errorMsg}. Please refresh the page.`);
       setErrorType('system');
+      toast.error('Failed to load programs');
     }
   };
 
@@ -499,6 +566,7 @@ const FaceCheckInPage = () => {
       setSessions(data.results || data || []);
     } catch (error) {
       console.error('Error fetching sessions:', error);
+      // Don't show error for sessions as they're optional
     }
   };
 
@@ -694,8 +762,21 @@ const FaceCheckInPage = () => {
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Face Recognition Check-in</h1>
             <p className="mt-1 text-sm text-gray-500">
-              Use face recognition to identify and record attendance
+              Use face recognition to identify and record attendance (today only)
             </p>
+          </div>
+        </div>
+
+        {/* Date Restriction Notice */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-start">
+            <InformationCircleIcon className="h-5 w-5 text-blue-600 mr-3 flex-shrink-0 mt-0.5" />
+            <div>
+              <h3 className="text-sm font-medium text-blue-900">Face Check-in Rules</h3>
+              <p className="mt-1 text-sm text-blue-800">
+                Face recognition check-in is only available for <strong>today's date</strong>. For other dates, please use the Bulk Entry feature.
+              </p>
+            </div>
           </div>
         </div>
 
@@ -892,7 +973,7 @@ const FaceCheckInPage = () => {
                 </select>
               </div>
 
-              {/* Date */}
+              {/* Date - Fixed to Today */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Date *
@@ -902,10 +983,15 @@ const FaceCheckInPage = () => {
                   name="date"
                   value={formData.date}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  disabled={loading}
-                  max={new Date().toISOString().split('T')[0]}
+                  min={today}
+                  max={today}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 cursor-not-allowed focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  disabled={true}
+                  title="Face check-in is only available for today"
                 />
+                <p className="mt-1 text-xs text-gray-500">
+                  Fixed to today's date only
+                </p>
               </div>
 
               {/* Session Name */}
@@ -1012,7 +1098,7 @@ const FaceCheckInPage = () => {
             Instructions
           </h3>
           <div className="space-y-2 text-sm text-gray-600">
-            <p>1. Select the program and date for attendance</p>
+            <p>1. Select the program for check-in (date is automatically set to today)</p>
             <p>2. Click "Start Camera" to activate your webcam</p>
             <p>3. Position the participant's face clearly in the camera view</p>
             <p>4. Click "Capture Photo" when ready</p>
@@ -1020,6 +1106,8 @@ const FaceCheckInPage = () => {
             <div className="mt-4 p-3 bg-gray-50 rounded-md">
               <p className="text-xs font-medium text-gray-700 mb-1">Important Notes:</p>
               <ul className="text-xs text-gray-600 space-y-1 list-disc pl-4">
+                <li>Face check-in is <strong>only available for today's date</strong></li>
+                <li>For past or future dates, use the Bulk Entry feature</li>
                 <li>Participants must have face recognition enabled and photo consent given</li>
                 <li>Camera access requires HTTPS connection (except localhost)</li>
                 <li>For best results, use Chrome or Firefox browsers</li>
