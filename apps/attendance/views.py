@@ -3,6 +3,7 @@ from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Count, Q, Avg
 from .models import AttendanceRecord, AttendanceSession
@@ -14,7 +15,6 @@ from users.permissions import CanEditData, IsDonorReadOnly
 from participants.models import Participant
 from .face_recognition_service import FaceRecognitionService
         
-
 
 class AttendanceRecordViewSet(viewsets.ModelViewSet):
     """
@@ -28,10 +28,13 @@ class AttendanceRecordViewSet(viewsets.ModelViewSet):
     - DELETE /attendance/{id}/ - Delete attendance
     - POST /attendance/bulk-record/ - Record attendance for multiple participants
     - GET /attendance/stats/ - Get attendance statistics
+    - POST /attendance/face-verify/ - Verify attendance using face recognition
+    - POST /attendance/identify-and-record/ - Identify participant and record attendance
     """
     queryset = AttendanceRecord.objects.select_related('participant', 'program', 'recorded_by').all()
     serializer_class = AttendanceRecordSerializer
     permission_classes = [IsAuthenticated, CanEditData, IsDonorReadOnly]
+    parser_classes = [JSONParser, MultiPartParser, FormParser]  # Support JSON, file uploads, and form data
     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend]
     search_fields = ['participant__participant_id', 'program__name', 'session_name']
     ordering_fields = ['date', 'recorded_at']
@@ -157,7 +160,13 @@ class AttendanceRecordViewSet(viewsets.ModelViewSet):
         
         return Response(stats)
     
-    @action(detail=False, methods=['post'])
+    @action(
+        detail=False,
+        methods=['POST'],
+        parser_classes=[JSONParser, MultiPartParser, FormParser],
+        url_path='face-verify',
+        url_name='face-verify'
+    )
     def face_verify(self, request):
         """
         Verify attendance using face recognition
@@ -171,7 +180,7 @@ class AttendanceRecordViewSet(viewsets.ModelViewSet):
         - image: file (face photo)
         """
         from participants.models import Participant
-        # from attendance.face_recognition_service import FaceRecognitionService
+        from attendance.face_recognition_service import FaceRecognitionService
         
         participant_id = request.data.get('participant_id')
         program_id = request.data.get('program')
@@ -196,7 +205,7 @@ class AttendanceRecordViewSet(viewsets.ModelViewSet):
             )
         
         # Verify face
-        verification_result = FaceRecognitionService.verify_attendance(participant, image)
+        verification_result = FaceRecognitionService.verify_participant_face(participant, image)
         
         if verification_result['error']:
             return Response(
@@ -235,7 +244,13 @@ class AttendanceRecordViewSet(viewsets.ModelViewSet):
                 'threshold': FaceRecognitionService.RECOGNITION_THRESHOLD
             }, status=status.HTTP_400_BAD_REQUEST)
     
-    @action(detail=False, methods=['post'])
+    @action(
+        detail=False,
+        methods=['POST'],
+        parser_classes=[JSONParser, MultiPartParser, FormParser],
+        url_path='identify-and-record',
+        url_name='identify-and-record'
+    )
     def identify_and_record(self, request):
         """
         Identify participant from photo and record attendance
@@ -247,7 +262,7 @@ class AttendanceRecordViewSet(viewsets.ModelViewSet):
         - session_name: str (optional)
         - image: file (face photo)
         """
-        # from attendance.face_recognition_service import FaceRecognitionService
+        from attendance.face_recognition_service import FaceRecognitionService
         from programs.models import Program
         
         program_id = request.data.get('program')
