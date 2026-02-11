@@ -17,7 +17,11 @@ import {
   EyeIcon,
   PencilIcon,
   InformationCircleIcon,
-  XMarkIcon
+  XMarkIcon,
+  ClockIcon,
+  UserIcon,
+  BuildingOfficeIcon,
+  DocumentTextIcon
 } from '@heroicons/react/24/outline';
 import Layout from '../../../components/layout/Layout';
 import Card from '../../../components/common/Card';
@@ -33,9 +37,9 @@ const AttendanceListPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   
-  // ✅ Match ParticipantsListPage permission pattern
+  // Permission checks matching route patterns
   const userRole = user?.role;
-  const canEdit = ['admin', 'teacher', 'program_manager'].includes(userRole);
+  const canEdit = ['admin', 'teacher', 'program_manager', 'staff'].includes(userRole);
   const isReadOnly = userRole === 'donor';
   
   // State Management
@@ -96,7 +100,6 @@ const AttendanceListPage = () => {
       setPrograms(response.results || response || []);
     } catch (err) {
       console.error('Error fetching programs:', err);
-      setError('Failed to load programs');
     }
   };
 
@@ -121,16 +124,11 @@ const AttendanceListPage = () => {
       
       const response = await attendanceService.getAttendanceRecords(params);
       
-      // Handle the API response structure (same pattern as ParticipantsListPage)
+      // Handle the API response structure
       const attendanceList = response.results || response || [];
       
-      // Check for missing IDs
+      // Filter valid records
       const validRecords = attendanceList.filter(r => r && r.id);
-      const invalidRecords = attendanceList.filter(r => !r || !r.id);
-      
-      if (invalidRecords.length > 0) {
-        console.warn('Some attendance records are missing IDs:', invalidRecords);
-      }
       
       setAttendance(validRecords);
       setPagination({
@@ -184,7 +182,6 @@ const AttendanceListPage = () => {
   const handleActionMenuClick = (record, event) => {
     event.stopPropagation();
     
-    // Calculate position for the action menu
     const rect = event.currentTarget.getBoundingClientRect();
     setActionMenuPosition({
       x: rect.left + window.scrollX,
@@ -216,7 +213,7 @@ const AttendanceListPage = () => {
     }
   };
 
-  // ✅ Action Menu Component - Matches ParticipantsListPage pattern
+  // Action Menu Component
   const ActionMenu = () => {
     if (!selectedRecord || !showActionMenu) return null;
 
@@ -225,7 +222,7 @@ const AttendanceListPage = () => {
         label: 'View Details',
         icon: <EyeIcon className="h-4 w-4 mr-2" />,
         onClick: () => {
-          navigate(`/dashboard/attendance/records/${selectedRecord.id}`);
+          navigate(`/dashboard/attendance/${selectedRecord.id}`);
           setShowActionMenu(false);
         }
       },
@@ -234,7 +231,7 @@ const AttendanceListPage = () => {
           label: 'Edit',
           icon: <PencilIcon className="h-4 w-4 mr-2" />,
           onClick: () => {
-            navigate(`/dashboard/attendance/records/${selectedRecord.id}/edit`);
+            navigate(`/dashboard/attendance/${selectedRecord.id}/edit`);
             setShowActionMenu(false);
           }
         },
@@ -249,7 +246,6 @@ const AttendanceListPage = () => {
 
     return (
       <>
-        {/* Overlay to close menu when clicking outside */}
         <div 
           className="fixed inset-0 z-40"
           onClick={() => {
@@ -258,7 +254,6 @@ const AttendanceListPage = () => {
           }}
         />
         
-        {/* Action Menu */}
         <div 
           className="fixed z-50 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 animate-slideDown"
           style={{
@@ -270,7 +265,7 @@ const AttendanceListPage = () => {
         >
           <div className="py-1" role="menu">
             <div className="px-4 py-2 text-xs text-gray-500 border-b border-gray-100">
-              {selectedRecord.participant_name || selectedRecord.participant_id || 'Attendance Record'}
+              Record #{selectedRecord.id}
             </div>
             {menuItems.map((item, index) => (
               <button
@@ -289,106 +284,118 @@ const AttendanceListPage = () => {
     );
   };
 
-  // Status Badge Component
+  // Status Badge Component - Exact match from DetailPage
   const StatusBadge = ({ present }) => {
     if (present) {
       return (
-        <Badge 
-          color="green" 
-          className="flex items-center gap-1 px-2.5 py-1 w-fit"
-          size="md"
-        >
+        <Badge color="green" size="md" className="flex items-center gap-1 px-2.5 py-1">
           <CheckCircleIcon className="h-4 w-4" />
           <span>Present</span>
         </Badge>
       );
     }
     return (
-      <Badge 
-        color="red" 
-        className="flex items-center gap-1 px-2.5 py-1 w-fit"
-        size="md"
-      >
+      <Badge color="red" size="md" className="flex items-center gap-1 px-2.5 py-1">
         <XCircleIcon className="h-4 w-4" />
         <span>Absent</span>
       </Badge>
     );
   };
 
-  // Verification Badge Component
+  // Verification Badge Component - Exact match from DetailPage
   const VerificationBadge = ({ record }) => {
     if (record.verified_by_face) {
-      const confidenceLevel = record.confidence_score >= 80 ? 'High' :
-                            record.confidence_score >= 60 ? 'Medium' : 'Low';
+      const quality = attendanceService.getConfidenceLevel?.(record.confidence_score || 0) || 
+                     (record.confidence_score >= 80 ? 'Good' : 
+                      record.confidence_score >= 60 ? 'Fair' : 'Low');
       
-      const color = record.confidence_score >= 80 ? 'green' :
-                   record.confidence_score >= 60 ? 'yellow' : 'orange';
+      const confidenceColor = 
+        quality === 'Excellent' || quality === 'Good' ? 'green' :
+        quality === 'Fair' || quality === 'Acceptable' ? 'yellow' : 'red';
       
       return (
-        <Badge 
-          color={color} 
-          size="sm"
-          className="flex items-center gap-1 w-fit cursor-help"
-          title={`Face Recognition - ${confidenceLevel} Confidence (${record.confidence_score}%)`}
-        >
+        <Badge color={confidenceColor} size="sm" className="flex items-center gap-1">
           <CameraIcon className="h-3 w-3" />
-          <span>Face</span>
-          {record.confidence_score && (
-            <span className="ml-0.5 font-semibold">{record.confidence_score}%</span>
-          )}
+          <span>Face ({record.confidence_score?.toFixed(1)}%)</span>
         </Badge>
       );
     }
+
+    // Get verification method display - matches DetailPage
+    const getMethodDisplay = (method) => {
+      if (!method) return 'Manual Entry';
+      
+      const methodMap = {
+        'manual': 'Manual Entry',
+        'face': 'Face Recognition',
+        'qr': 'QR Code',
+        'rfid': 'RFID',
+        'biometric': 'Biometric'
+      };
+      
+      return methodMap[method.toLowerCase()] || method;
+    };
+
+    const methodDisplay = getMethodDisplay(record.verification_method);
     
     return (
-      <Badge 
-        color="gray" 
-        size="sm" 
-        className="flex items-center gap-1 w-fit cursor-help"
-        title="Manually verified by staff"
-      >
-        <span className="text-xs">Manual</span>
+      <Badge color="gray" size="sm" className="flex items-center gap-1">
+        <span className="text-xs">{methodDisplay}</span>
       </Badge>
     );
   };
 
-  // ✅ Table Columns - Matches ParticipantsListPage pattern
+  // Format Date - Exact match from DetailPage
+  const formatDate = (dateString) => {
+    if (!dateString) return null;
+    
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }); // "Wednesday, February 11, 2026"
+    } catch {
+      return dateString;
+    }
+  };
+
+  // Format Date for table (compact version)
+  const formatDateCompact = (dateString) => {
+    if (!dateString) return null;
+    
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      }); // "Wed, Feb 11, 2026"
+    } catch {
+      return dateString;
+    }
+  };
+
+  // Table Columns - Updated without Record ID, Recorded At, and Recorded By
   const columns = [
     {
       key: 'date',
       header: 'Date',
-      render: (value, record) => {
-        if (!record || !record.id) {
-          return (
-            <div className="flex items-center gap-2">
-              <CalendarIcon className="h-4 w-4 text-gray-400" />
-              <span className="text-gray-700 font-medium">
-                {new Date(value).toLocaleDateString('en-US', {
-                  month: 'short',
-                  day: 'numeric',
-                  year: 'numeric'
-                })}
-              </span>
-            </div>
-          );
-        }
-        
-        return (
-          <div className="flex items-center gap-2">
-            <CalendarIcon className="h-4 w-4 text-gray-400" />
-            <Link 
-              to={`/dashboard/attendance/records/${record.id}`}
-              className="text-blue-600 hover:text-blue-800 font-medium hover:underline"
-            >
-              {new Date(value).toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric'
-              })}
-            </Link>
-          </div>
-        );
-      }
+      render: (value, record) => (
+        <div className="flex items-center gap-2">
+          <CalendarIcon className="h-4 w-4 text-gray-400 flex-shrink-0" />
+          <Link 
+            to={`/dashboard/attendance/${record.id}`}
+            className="text-gray-700 hover:text-blue-600 hover:underline"
+            title={formatDate(value)}
+          >
+            {formatDateCompact(value)}
+          </Link>
+        </div>
+      )
     },
     {
       key: 'participant',
@@ -396,15 +403,22 @@ const AttendanceListPage = () => {
       render: (_, record) => (
         <div className="flex items-center gap-3">
           <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold">
-            {record.participant_name?.charAt(0) || record.participant_id?.charAt(0) || 'P'}
+            {record.participant_id?.charAt(0) || 'P'}
           </div>
           <div>
-            <div className="font-medium text-gray-900">
-              {record.participant_name || 'Unknown Participant'}
-            </div>
-            <div className="text-xs text-gray-500">
-              ID: {record.participant_id}
-            </div>
+            {/* Link to Participant Detail Page */}
+            <Link 
+              to={`/dashboard/participants/${record.participant}`}
+              className="font-medium text-gray-900 hover:text-blue-600 hover:underline"
+              title="View participant details"
+            >
+              {record.participant_id}
+            </Link>
+            {record.participant_name && (
+              <div className="text-xs text-gray-500">
+                {record.participant_name}
+              </div>
+            )}
           </div>
         </div>
       )
@@ -413,13 +427,17 @@ const AttendanceListPage = () => {
       key: 'program',
       header: 'Program',
       render: (_, record) => (
-        <div>
-          <div className="font-medium text-gray-900">{record.program_name}</div>
-          {record.session_name && (
-            <div className="text-xs text-gray-500 mt-0.5">
-              Session: {record.session_name}
-            </div>
-          )}
+        <div className="flex items-start gap-2">
+          <BuildingOfficeIcon className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
+          <div>
+            <div className="font-medium text-gray-900">{record.program_name}</div>
+            {record.session_name && (
+              <div className="flex items-center gap-1 text-xs text-gray-500 mt-0.5">
+                <DocumentTextIcon className="h-3 w-3" />
+                <span>{record.session_name}</span>
+              </div>
+            )}
+          </div>
         </div>
       )
     },
@@ -434,46 +452,18 @@ const AttendanceListPage = () => {
       render: (_, record) => <VerificationBadge record={record} />
     },
     {
-      key: 'time',
-      header: 'Time',
-      render: (_, record) => (
-        <div className="text-sm">
-          {record.arrival_time ? (
-            <>
-              <div className="text-gray-900 font-medium">
-                {record.arrival_time}
-              </div>
-              {record.departure_time && (
-                <div className="text-gray-500 text-xs">
-                  → {record.departure_time}
-                </div>
-              )}
-            </>
-          ) : (
-            <span className="text-gray-400">—</span>
-          )}
-        </div>
-      )
-    },
-    {
       key: 'actions',
       header: '',
       width: '60px',
-      render: (_, record) => {
-        if (!record || !record.id) {
-          return <span className="text-gray-300">—</span>;
-        }
-        
-        return (
-          <button
-            onClick={(e) => handleActionMenuClick(record, e)}
-            className="p-1.5 rounded-md hover:bg-gray-100 transition-colors"
-            title="Actions"
-          >
-            <EllipsisVerticalIcon className="h-5 w-5 text-gray-500" />
-          </button>
-        );
-      }
+      render: (_, record) => (
+        <button
+          onClick={(e) => handleActionMenuClick(record, e)}
+          className="p-1.5 rounded-md hover:bg-gray-100 transition-colors"
+          title="Actions"
+        >
+          <EllipsisVerticalIcon className="h-5 w-5 text-gray-500" />
+        </button>
+      )
     }
   ];
 
@@ -528,7 +518,7 @@ const AttendanceListPage = () => {
       {showActionMenu && <ActionMenu />}
       
       <div className="space-y-6">
-        {/* Header - Matches ParticipantsListPage */}
+        {/* Header */}
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Attendance Records</h1>
@@ -546,15 +536,31 @@ const AttendanceListPage = () => {
               Refresh
             </Button>
             {canEdit && (
-              <Button onClick={() => navigate('/dashboard/attendance/create')}>
-                <PlusIcon className="h-5 w-5 mr-2" />
-                Add Record
-              </Button>
+              <>
+                <Button
+                  variant="outline"
+                  onClick={() => navigate('/dashboard/attendance/check-in')}
+                >
+                  <CameraIcon className="h-5 w-5 mr-2" />
+                  Face Check-in
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => navigate('/dashboard/attendance/bulk')}
+                >
+                  <UserGroupIcon className="h-5 w-5 mr-2" />
+                  Bulk Entry
+                </Button>
+                <Button onClick={() => navigate('/dashboard/attendance/check-in')}>
+                  <PlusIcon className="h-5 w-5 mr-2" />
+                  Add Record
+                </Button>
+              </>
             )}
           </div>
         </div>
 
-        {/* Success Message - Matches ParticipantsListPage */}
+        {/* Success Message */}
         {success && (
           <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
             <div className="flex items-center">
@@ -579,7 +585,7 @@ const AttendanceListPage = () => {
           </div>
         )}
 
-        {/* Error Message - Matches ParticipantsListPage */}
+        {/* Error Message */}
         {error && (
           <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
             <div className="flex items-center">
@@ -626,7 +632,7 @@ const AttendanceListPage = () => {
           </div>
         )}
 
-        {/* Filters Section - Matches ParticipantsListPage */}
+        {/* Filters Section */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -736,7 +742,7 @@ const AttendanceListPage = () => {
                   >
                     <option value="">All Methods</option>
                     <option value="yes">Face Recognition</option>
-                    <option value="no">Manual</option>
+                    <option value="no">Manual Entry</option>
                   </select>
                 </div>
               </div>
@@ -744,13 +750,13 @@ const AttendanceListPage = () => {
           )}
         </div>
 
-        {/* Attendance Table - Matches ParticipantsListPage pattern */}
+        {/* Attendance Table */}
         <Card className="overflow-hidden">
           <div className="overflow-x-auto">
             <Table
               columns={columns}
               data={attendance.filter(r => r && r.id)}
-              rowClassName="hover:bg-gray-50 transition-colors"
+              rowClassName="hover:bg-gray-50 transition-colors group"
               emptyMessage={
                 <div className="text-center py-16">
                   <CalendarIcon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
@@ -758,8 +764,7 @@ const AttendanceListPage = () => {
                   <p className="text-gray-500 mb-6 max-w-md mx-auto">
                     {Object.values(filters).some(value => value !== '' && value !== 'true')
                       ? 'No records match your current filters. Try adjusting your search criteria.'
-                      : 'Start tracking attendance by recording your first check-in.'
-                    }
+                      : 'Start tracking attendance by recording your first check-in.'}
                   </p>
                   <div className="space-x-3">
                     {Object.values(filters).some(value => value !== '' && value !== 'true') && (
@@ -773,7 +778,7 @@ const AttendanceListPage = () => {
                     )}
                     {canEdit && !Object.values(filters).some(value => value !== '' && value !== 'true') && (
                       <Button
-                        onClick={() => navigate('/dashboard/attendance/face-check-in')}
+                        onClick={() => navigate('/dashboard/attendance/check-in')}
                       >
                         <CameraIcon className="h-5 w-5 mr-2" />
                         Face Check-in
@@ -785,7 +790,7 @@ const AttendanceListPage = () => {
             />
           </div>
           
-          {/* Table Footer - Matches ParticipantsListPage */}
+          {/* Table Footer */}
           {attendance.length > 0 && (
             <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 bg-gray-50">
               <div className="text-sm text-gray-700">
@@ -817,7 +822,7 @@ const AttendanceListPage = () => {
               
               <div className="flex items-center text-sm text-gray-500">
                 <InformationCircleIcon className="h-4 w-4 mr-1" />
-                Click on date to view details
+                Click date to view details
               </div>
             </div>
           )}

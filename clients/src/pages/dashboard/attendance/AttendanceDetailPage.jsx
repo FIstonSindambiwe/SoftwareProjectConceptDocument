@@ -285,17 +285,17 @@ const AttendanceDetailPage = () => {
             Time Details
           </h2>
           <div className="space-y-0">
-            <InfoRow
+            {/* <InfoRow
               icon={ClockIcon}
               label="Arrival Time"
               value={record.arrival_time}
-            />
-
+            /> */}
+{/* 
             <InfoRow
               icon={ClockIcon}
               label="Departure Time"
               value={record.departure_time}
-            />
+            /> */}
 
             {record.arrival_time && record.departure_time && (
               <InfoRow

@@ -3900,3 +3900,602 @@ INFO 2026-02-11 19:31:00,987 autoreload /home/roger/Project/YouthProgramImpactVi
 INFO 2026-02-11 19:31:01,344 autoreload Watching for file changes with StatReloader
 INFO 2026-02-11 19:31:29,206 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/participants/views.py changed, reloading.
 INFO 2026-02-11 19:31:29,647 autoreload Watching for file changes with StatReloader
+INFO 2026-02-11 19:35:20,269 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 19:35:20,281 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+ERROR 2026-02-11 19:35:20,346 log Internal Server Error: /api/v1/attendance/records/
+Traceback (most recent call last):
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 359, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such column: participants.first_name
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/mixins.py", line 40, in list
+    page = self.paginate_queryset(queryset)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/generics.py", line 175, in paginate_queryset
+    return self.paginator.paginate_queryset(queryset, self.request, view=self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/pagination.py", line 222, in paginate_queryset
+    return list(self.page)
+           ^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/core/paginator.py", line 319, in __len__
+    return len(self.object_list)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/models/query.py", line 372, in __len__
+    self._fetch_all()
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/models/query.py", line 2000, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/models/query.py", line 95, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 1624, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/utils.py", line 94, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 359, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: no such column: participants.first_name
+ERROR 2026-02-11 19:35:20,352 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 500 28728
+ERROR 2026-02-11 19:35:20,412 log Internal Server Error: /api/v1/attendance/records/
+Traceback (most recent call last):
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 359, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such column: participants.first_name
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/mixins.py", line 40, in list
+    page = self.paginate_queryset(queryset)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/generics.py", line 175, in paginate_queryset
+    return self.paginator.paginate_queryset(queryset, self.request, view=self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/pagination.py", line 222, in paginate_queryset
+    return list(self.page)
+           ^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/core/paginator.py", line 319, in __len__
+    return len(self.object_list)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/models/query.py", line 372, in __len__
+    self._fetch_all()
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/models/query.py", line 2000, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/models/query.py", line 95, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 1624, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/utils.py", line 94, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 359, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: no such column: participants.first_name
+ERROR 2026-02-11 19:35:20,414 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 500 28728
+INFO 2026-02-11 19:36:23,020 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+ERROR 2026-02-11 19:36:23,066 log Internal Server Error: /api/v1/attendance/records/
+Traceback (most recent call last):
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 359, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such column: participants.first_name
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/mixins.py", line 40, in list
+    page = self.paginate_queryset(queryset)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/generics.py", line 175, in paginate_queryset
+    return self.paginator.paginate_queryset(queryset, self.request, view=self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/pagination.py", line 222, in paginate_queryset
+    return list(self.page)
+           ^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/core/paginator.py", line 319, in __len__
+    return len(self.object_list)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/models/query.py", line 372, in __len__
+    self._fetch_all()
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/models/query.py", line 2000, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/models/query.py", line 95, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 1624, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/utils.py", line 94, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 359, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: no such column: participants.first_name
+ERROR 2026-02-11 19:36:23,071 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 500 28728
+INFO 2026-02-11 19:36:23,070 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+ERROR 2026-02-11 19:36:23,122 log Internal Server Error: /api/v1/attendance/records/
+Traceback (most recent call last):
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 359, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such column: participants.first_name
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/mixins.py", line 40, in list
+    page = self.paginate_queryset(queryset)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/generics.py", line 175, in paginate_queryset
+    return self.paginator.paginate_queryset(queryset, self.request, view=self)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/rest_framework/pagination.py", line 222, in paginate_queryset
+    return list(self.page)
+           ^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/core/paginator.py", line 319, in __len__
+    return len(self.object_list)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/models/query.py", line 372, in __len__
+    self._fetch_all()
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/models/query.py", line 2000, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/models/query.py", line 95, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 1624, in execute_sql
+    cursor.execute(sql, params)
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/utils.py", line 94, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roger/Project/YouthProgramImpactVirsualizer/apps/venv/lib/python3.12/site-packages/django/db/backends/sqlite3/base.py", line 359, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: no such column: participants.first_name
+ERROR 2026-02-11 19:36:23,126 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 500 28728
+INFO 2026-02-11 19:38:34,787 autoreload Watching for file changes with StatReloader
+INFO 2026-02-11 19:38:43,527 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 19:38:43,530 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 19:38:43,547 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 19:38:43,556 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 19:38:43,606 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 19:38:43,656 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 19:38:58,185 log "GET /api/v1/attendance/records/7/ HTTP/1.1" 200 540
+INFO 2026-02-11 19:38:58,196 log "GET /api/v1/attendance/records/7/ HTTP/1.1" 200 540
+INFO 2026-02-11 19:39:06,704 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 19:39:06,707 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 19:39:06,735 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 19:39:06,742 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 19:39:06,742 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 19:39:06,805 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 19:47:26,201 log "GET /api/v1/attendance/records/7/ HTTP/1.1" 200 540
+INFO 2026-02-11 19:47:26,220 log "GET /api/v1/attendance/records/7/ HTTP/1.1" 200 540
+INFO 2026-02-11 19:49:20,537 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 19:49:20,539 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 19:49:20,567 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 19:49:20,574 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 19:49:20,577 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 19:49:20,628 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 19:49:23,556 log "OPTIONS /api/v1/participants/participants/undefined/enrollments/ HTTP/1.1" 200 0
+INFO 2026-02-11 19:49:23,557 log "OPTIONS /api/v1/participants/participants/undefined/progress/ HTTP/1.1" 200 0
+INFO 2026-02-11 19:49:23,559 log "OPTIONS /api/v1/participants/participants/undefined/face_encoding_status/ HTTP/1.1" 200 0
+INFO 2026-02-11 19:49:23,559 log "OPTIONS /api/v1/participants/participants/undefined/ HTTP/1.1" 200 0
+INFO 2026-02-11 19:49:23,561 log "OPTIONS /api/v1/participants/notes/?participant=undefined HTTP/1.1" 200 0
+INFO 2026-02-11 19:49:23,562 log "OPTIONS /api/v1/participants/participants/undefined/ HTTP/1.1" 200 0
+INFO 2026-02-11 19:49:23,570 log "OPTIONS /api/v1/participants/participants/undefined/enrollments/ HTTP/1.1" 200 0
+INFO 2026-02-11 19:49:23,579 log "OPTIONS /api/v1/participants/notes/?participant=undefined HTTP/1.1" 200 0
+INFO 2026-02-11 19:49:23,582 log "OPTIONS /api/v1/participants/participants/undefined/face_encoding_status/ HTTP/1.1" 200 0
+INFO 2026-02-11 19:49:23,583 log "OPTIONS /api/v1/participants/participants/undefined/progress/ HTTP/1.1" 200 0
+WARNING 2026-02-11 19:49:23,587 log Not Found: /api/v1/participants/participants/undefined/face_encoding_status/
+WARNING 2026-02-11 19:49:23,588 log "GET /api/v1/participants/participants/undefined/face_encoding_status/ HTTP/1.1" 404 23
+WARNING 2026-02-11 19:49:23,590 log Not Found: /api/v1/participants/participants/undefined/enrollments/
+WARNING 2026-02-11 19:49:23,590 log "GET /api/v1/participants/participants/undefined/enrollments/ HTTP/1.1" 404 23
+WARNING 2026-02-11 19:49:23,624 log Not Found: /api/v1/participants/participants/undefined/progress/
+WARNING 2026-02-11 19:49:23,634 log "GET /api/v1/participants/participants/undefined/progress/ HTTP/1.1" 404 23
+WARNING 2026-02-11 19:49:23,648 log Not Found: /api/v1/participants/participants/undefined/
+WARNING 2026-02-11 19:49:23,650 log "GET /api/v1/participants/participants/undefined/ HTTP/1.1" 404 23
+WARNING 2026-02-11 19:49:23,652 log Bad Request: /api/v1/participants/notes/
+WARNING 2026-02-11 19:49:23,653 log "GET /api/v1/participants/notes/?participant=undefined HTTP/1.1" 400 91
+WARNING 2026-02-11 19:49:23,655 log Not Found: /api/v1/participants/participants/undefined/face_encoding_status/
+WARNING 2026-02-11 19:49:23,658 log Not Found: /api/v1/participants/participants/undefined/enrollments/
+WARNING 2026-02-11 19:49:23,658 log "GET /api/v1/participants/participants/undefined/face_encoding_status/ HTTP/1.1" 404 23
+WARNING 2026-02-11 19:49:23,659 log "GET /api/v1/participants/participants/undefined/enrollments/ HTTP/1.1" 404 23
+WARNING 2026-02-11 19:49:23,686 log Not Found: /api/v1/participants/participants/undefined/progress/
+WARNING 2026-02-11 19:49:23,687 log "GET /api/v1/participants/participants/undefined/progress/ HTTP/1.1" 404 23
+WARNING 2026-02-11 19:49:23,702 log Not Found: /api/v1/participants/participants/undefined/
+WARNING 2026-02-11 19:49:23,703 log "GET /api/v1/participants/participants/undefined/ HTTP/1.1" 404 23
+WARNING 2026-02-11 19:49:23,709 log Bad Request: /api/v1/participants/notes/
+WARNING 2026-02-11 19:49:23,710 log "GET /api/v1/participants/notes/?participant=undefined HTTP/1.1" 400 91
+INFO 2026-02-11 19:49:28,228 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 921
+INFO 2026-02-11 19:49:28,233 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 292
+INFO 2026-02-11 19:49:28,248 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 921
+INFO 2026-02-11 19:49:28,255 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 292
+INFO 2026-02-11 19:49:30,421 log "GET /api/v1/participants/participants/10/face_encoding_status/ HTTP/1.1" 200 173
+INFO 2026-02-11 19:49:30,421 log "GET /api/v1/participants/participants/10/enrollments/ HTTP/1.1" 200 218
+INFO 2026-02-11 19:49:30,429 log "GET /api/v1/participants/notes/?participant=10 HTTP/1.1" 200 52
+INFO 2026-02-11 19:49:30,439 log "GET /api/v1/participants/participants/10/ HTTP/1.1" 200 590
+INFO 2026-02-11 19:49:30,446 log "GET /api/v1/participants/participants/10/progress/ HTTP/1.1" 200 451
+INFO 2026-02-11 19:49:30,458 log "GET /api/v1/participants/participants/10/face_encoding_status/ HTTP/1.1" 200 173
+INFO 2026-02-11 19:49:30,459 log "GET /api/v1/participants/participants/10/enrollments/ HTTP/1.1" 200 218
+INFO 2026-02-11 19:49:30,461 log "GET /api/v1/participants/notes/?participant=10 HTTP/1.1" 200 52
+INFO 2026-02-11 19:49:30,477 log "GET /api/v1/participants/participants/10/ HTTP/1.1" 200 590
+INFO 2026-02-11 19:49:30,480 log "GET /api/v1/participants/participants/10/progress/ HTTP/1.1" 200 451
+INFO 2026-02-11 19:49:38,317 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 921
+INFO 2026-02-11 19:49:38,335 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 292
+INFO 2026-02-11 19:49:38,349 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 921
+INFO 2026-02-11 19:49:38,364 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 292
+INFO 2026-02-11 19:49:56,068 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 19:49:56,069 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 19:49:56,106 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 19:49:56,116 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 19:49:56,117 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 19:49:56,169 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+WARNING 2026-02-11 19:54:16,603 log Not Found: /api/v1/participants/participants/undefined/face_encoding_status/
+WARNING 2026-02-11 19:54:16,604 log "GET /api/v1/participants/participants/undefined/face_encoding_status/ HTTP/1.1" 404 23
+WARNING 2026-02-11 19:54:16,606 log Not Found: /api/v1/participants/participants/undefined/
+WARNING 2026-02-11 19:54:16,608 log Not Found: /api/v1/participants/participants/undefined/progress/
+WARNING 2026-02-11 19:54:16,611 log Bad Request: /api/v1/participants/notes/
+WARNING 2026-02-11 19:54:16,614 log "GET /api/v1/participants/participants/undefined/ HTTP/1.1" 404 23
+WARNING 2026-02-11 19:54:16,616 log Not Found: /api/v1/participants/participants/undefined/enrollments/
+WARNING 2026-02-11 19:54:16,617 log "GET /api/v1/participants/participants/undefined/progress/ HTTP/1.1" 404 23
+WARNING 2026-02-11 19:54:16,619 log "GET /api/v1/participants/notes/?participant=undefined HTTP/1.1" 400 91
+WARNING 2026-02-11 19:54:16,620 log "GET /api/v1/participants/participants/undefined/enrollments/ HTTP/1.1" 404 23
+WARNING 2026-02-11 19:54:16,627 log Not Found: /api/v1/participants/participants/undefined/
+WARNING 2026-02-11 19:54:16,633 log Not Found: /api/v1/participants/participants/undefined/face_encoding_status/
+WARNING 2026-02-11 19:54:16,633 log "GET /api/v1/participants/participants/undefined/ HTTP/1.1" 404 23
+WARNING 2026-02-11 19:54:16,636 log Not Found: /api/v1/participants/participants/undefined/progress/
+WARNING 2026-02-11 19:54:16,636 log "GET /api/v1/participants/participants/undefined/face_encoding_status/ HTTP/1.1" 404 23
+WARNING 2026-02-11 19:54:16,639 log Bad Request: /api/v1/participants/notes/
+WARNING 2026-02-11 19:54:16,642 log "GET /api/v1/participants/participants/undefined/progress/ HTTP/1.1" 404 23
+WARNING 2026-02-11 19:54:16,641 log Not Found: /api/v1/participants/participants/undefined/enrollments/
+WARNING 2026-02-11 19:54:16,642 log "GET /api/v1/participants/notes/?participant=undefined HTTP/1.1" 400 91
+WARNING 2026-02-11 19:54:16,643 log "GET /api/v1/participants/participants/undefined/enrollments/ HTTP/1.1" 404 23
+INFO 2026-02-11 19:54:18,681 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 921
+INFO 2026-02-11 19:54:18,688 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 292
+INFO 2026-02-11 19:54:18,711 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 921
+INFO 2026-02-11 19:54:18,728 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 292
+INFO 2026-02-11 19:54:25,597 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 19:54:25,609 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 19:54:25,633 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 19:54:25,642 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 19:54:25,645 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 19:54:25,724 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 19:54:50,586 log "GET /api/v1/attendance/records/7/ HTTP/1.1" 200 540
+INFO 2026-02-11 19:54:50,596 log "GET /api/v1/attendance/records/7/ HTTP/1.1" 200 540
+INFO 2026-02-11 19:54:57,019 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 19:54:57,028 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 19:54:57,052 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 19:54:57,064 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 19:54:57,067 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 19:54:57,125 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 19:55:00,872 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 19:55:00,887 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 19:59:35,429 log "GET /api/v1/attendance/records/7/ HTTP/1.1" 200 540
+INFO 2026-02-11 19:59:35,443 log "GET /api/v1/attendance/records/7/ HTTP/1.1" 200 540
+INFO 2026-02-11 20:00:10,759 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:00:10,788 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:00:10,790 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:00:10,795 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:00:10,805 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:00:10,865 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:04:34,528 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:04:34,531 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:04:34,559 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:04:34,559 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:04:34,563 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:04:34,648 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:08:16,425 log "OPTIONS /api/v1/attendance/records/create/ HTTP/1.1" 200 0
+INFO 2026-02-11 20:08:16,425 log "OPTIONS /api/v1/attendance/records/create/ HTTP/1.1" 200 0
+WARNING 2026-02-11 20:08:16,432 log Unauthorized: /api/v1/attendance/records/create/
+WARNING 2026-02-11 20:08:16,433 log "GET /api/v1/attendance/records/create/ HTTP/1.1" 401 172
+WARNING 2026-02-11 20:08:16,478 log Unauthorized: /api/v1/attendance/records/create/
+WARNING 2026-02-11 20:08:16,479 log "GET /api/v1/attendance/records/create/ HTTP/1.1" 401 172
+INFO 2026-02-11 20:08:16,483 log "OPTIONS /api/v1/auth/refresh/ HTTP/1.1" 200 0
+INFO 2026-02-11 20:08:16,485 log "OPTIONS /api/v1/auth/refresh/ HTTP/1.1" 200 0
+INFO 2026-02-11 20:08:16,541 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-11 20:08:16,542 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+WARNING 2026-02-11 20:08:16,598 log Not Found: /api/v1/attendance/records/create/
+WARNING 2026-02-11 20:08:16,599 log "GET /api/v1/attendance/records/create/ HTTP/1.1" 404 23
+WARNING 2026-02-11 20:08:16,652 log Not Found: /api/v1/attendance/records/create/
+WARNING 2026-02-11 20:08:16,653 log "GET /api/v1/attendance/records/create/ HTTP/1.1" 404 23
+INFO 2026-02-11 20:08:18,455 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:08:18,456 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:08:18,495 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:08:18,506 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:08:18,510 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:08:18,573 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:08:21,901 log "OPTIONS /api/v1/programs/programs/active/ HTTP/1.1" 200 0
+INFO 2026-02-11 20:08:21,920 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 20:08:21,979 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 20:08:24,676 log "GET /api/v1/attendance/sessions/?program=2&session_date=2026-02-11&is_cancelled=false HTTP/1.1" 200 52
+INFO 2026-02-11 20:08:41,094 log "OPTIONS /api/v1/attendance/records/identify-and-record/ HTTP/1.1" 200 0
+INFO 2026-02-11 20:08:42,762 log "POST /api/v1/attendance/records/identify-and-record/ HTTP/1.1" 200 713
+INFO 2026-02-11 20:08:49,125 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:08:49,125 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:08:49,166 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:08:49,177 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:08:49,178 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:08:49,230 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:08:59,548 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:08:59,548 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:08:59,572 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:08:59,580 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:08:59,585 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:08:59,704 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:10:45,821 log "GET /api/v1/attendance/records/7/ HTTP/1.1" 200 540
+INFO 2026-02-11 20:10:45,836 log "GET /api/v1/attendance/records/7/ HTTP/1.1" 200 540
+INFO 2026-02-11 20:16:14,545 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:16:14,549 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:16:14,587 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:16:14,592 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:16:14,595 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:16:14,649 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:16:18,911 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:16:18,912 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:16:18,933 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:16:18,940 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:16:18,942 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:16:19,004 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:17:06,025 log "GET /api/v1/attendance/records/7/ HTTP/1.1" 200 540
+INFO 2026-02-11 20:17:06,035 log "GET /api/v1/attendance/records/7/ HTTP/1.1" 200 540
+INFO 2026-02-11 20:20:01,593 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:20:01,602 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:20:01,634 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:20:01,634 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:20:01,637 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:20:01,702 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:21:30,578 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 20:21:30,594 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 20:21:32,781 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:21:32,787 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:21:32,825 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:21:32,834 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:21:32,837 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:21:32,908 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:21:34,541 log "OPTIONS /api/v1/attendance/records/face-check-in/ HTTP/1.1" 200 0
+INFO 2026-02-11 20:21:34,542 log "OPTIONS /api/v1/attendance/records/face-check-in/ HTTP/1.1" 200 0
+WARNING 2026-02-11 20:21:34,556 log Not Found: /api/v1/attendance/records/face-check-in/
+WARNING 2026-02-11 20:21:34,557 log "GET /api/v1/attendance/records/face-check-in/ HTTP/1.1" 404 23
+WARNING 2026-02-11 20:21:34,609 log Not Found: /api/v1/attendance/records/face-check-in/
+WARNING 2026-02-11 20:21:34,609 log "GET /api/v1/attendance/records/face-check-in/ HTTP/1.1" 404 23
+INFO 2026-02-11 20:21:42,485 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 20:21:42,503 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+WARNING 2026-02-11 20:21:51,971 log Not Found: /api/v1/attendance/records/face-check-in/
+WARNING 2026-02-11 20:21:51,972 log "GET /api/v1/attendance/records/face-check-in/ HTTP/1.1" 404 23
+WARNING 2026-02-11 20:21:51,985 log Not Found: /api/v1/attendance/records/face-check-in/
+WARNING 2026-02-11 20:21:51,985 log "GET /api/v1/attendance/records/face-check-in/ HTTP/1.1" 404 23
+INFO 2026-02-11 20:21:53,347 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:21:53,358 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:21:53,396 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:21:53,402 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:21:53,405 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:21:53,452 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+WARNING 2026-02-11 20:22:01,668 log Not Found: /api/v1/attendance/records/face-check-in/
+WARNING 2026-02-11 20:22:01,669 log "GET /api/v1/attendance/records/face-check-in/ HTTP/1.1" 404 23
+WARNING 2026-02-11 20:22:01,680 log Not Found: /api/v1/attendance/records/face-check-in/
+WARNING 2026-02-11 20:22:01,681 log "GET /api/v1/attendance/records/face-check-in/ HTTP/1.1" 404 23
+INFO 2026-02-11 20:22:06,360 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:22:06,369 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:22:06,400 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:22:06,403 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:22:06,408 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:22:06,487 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:22:09,402 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 20:22:09,421 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 20:22:16,941 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:22:16,947 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:22:16,987 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:22:16,996 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:22:16,996 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:22:17,046 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:22:21,937 log "OPTIONS /api/v1/attendance/records/7/ HTTP/1.1" 200 0
+INFO 2026-02-11 20:22:21,937 log "OPTIONS /api/v1/attendance/records/7/ HTTP/1.1" 200 0
+INFO 2026-02-11 20:22:21,947 log "GET /api/v1/attendance/records/7/ HTTP/1.1" 200 540
+INFO 2026-02-11 20:22:22,006 log "GET /api/v1/attendance/records/7/ HTTP/1.1" 200 540
+INFO 2026-02-11 20:22:32,997 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:22:33,004 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:22:33,039 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:22:33,040 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:22:33,043 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:22:33,116 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+WARNING 2026-02-11 20:22:41,692 log Not Found: /api/v1/attendance/records/face-check-in/
+WARNING 2026-02-11 20:22:41,692 log "GET /api/v1/attendance/records/face-check-in/ HTTP/1.1" 404 23
+WARNING 2026-02-11 20:22:41,704 log Not Found: /api/v1/attendance/records/face-check-in/
+WARNING 2026-02-11 20:22:41,705 log "GET /api/v1/attendance/records/face-check-in/ HTTP/1.1" 404 23
+INFO 2026-02-11 20:23:33,287 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 20:23:33,299 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 20:23:39,388 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:23:39,392 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:23:39,415 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:23:39,417 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:23:39,423 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:23:39,490 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:23:41,958 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 20:23:41,977 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 20:23:43,924 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:23:43,929 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:23:43,966 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:23:43,968 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:23:43,973 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:23:44,047 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+WARNING 2026-02-11 20:23:49,928 log Not Found: /api/v1/attendance/records/create/
+WARNING 2026-02-11 20:23:49,929 log "GET /api/v1/attendance/records/create/ HTTP/1.1" 404 23
+WARNING 2026-02-11 20:23:49,940 log Not Found: /api/v1/attendance/records/create/
+WARNING 2026-02-11 20:23:49,941 log "GET /api/v1/attendance/records/create/ HTTP/1.1" 404 23
+INFO 2026-02-11 20:23:53,388 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:23:53,397 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:23:53,430 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:23:53,433 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:23:53,438 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:23:53,494 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:24:50,739 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 20:24:50,754 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 20:24:52,266 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:24:52,276 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:24:52,307 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 20:24:52,308 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 20:24:52,311 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 20:24:52,392 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
