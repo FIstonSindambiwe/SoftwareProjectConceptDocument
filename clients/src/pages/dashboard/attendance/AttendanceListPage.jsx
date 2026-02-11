@@ -59,8 +59,7 @@ const AttendanceListPage = () => {
   const [pagination, setPagination] = useState({
     page: 1,
     total_pages: 1,
-    total_count: 0,
-    page_size: 7 // 7 records per page
+    total_count: 0
   });
 
   // Filter State
@@ -92,7 +91,7 @@ const AttendanceListPage = () => {
   // Fetch attendance when filters, page, or debounced search changes
   useEffect(() => {
     fetchAttendance();
-  }, [filters.program, filters.date_from, filters.date_to, filters.status, filters.verified_by_face, pagination.page, pagination.page_size, debouncedSearch]);
+  }, [filters.program, filters.date_from, filters.date_to, filters.status, filters.verified_by_face, pagination.page, debouncedSearch]);
 
   const fetchPrograms = async () => {
     try {
@@ -113,7 +112,7 @@ const AttendanceListPage = () => {
       
       const params = {
         page: pagination.page,
-        page_size: pagination.page_size // Use 7 records per page
+        page_size: 10
       };
       
       if (filters.program) params.program_id = filters.program;
@@ -133,35 +132,12 @@ const AttendanceListPage = () => {
       // Filter valid records
       const validRecords = attendanceList.filter(r => r && r.id);
       
-      // Debug: Check what fields are available in the first record
-      if (validRecords.length > 0) {
-        console.log('=== ATTENDANCE RECORD DEBUG ===');
-        console.log('First record:', validRecords[0]);
-        console.log('Available fields:', Object.keys(validRecords[0]));
-        console.log('Total records received:', validRecords.length);
-        console.log('Expected page_size:', pagination.page_size);
-        console.log('================================');
-      }
-      
-      // IMPORTANT: Slice the records to ensure we only show page_size records
-      // This is a frontend safeguard in case the backend returns more than requested
-      const startIndex = 0; // Backend should handle pagination, but we enforce it here
-      const endIndex = pagination.page_size;
-      const paginatedRecords = validRecords.slice(startIndex, endIndex);
-      
-      console.log(`Displaying ${paginatedRecords.length} of ${validRecords.length} records`);
-      
-      setAttendance(paginatedRecords);
-      
-      // Calculate total pages based on page_size
-      const totalCount = response.count || response.results?.length || 0;
-      const totalPages = Math.ceil(totalCount / pagination.page_size);
-      
-      setPagination(prev => ({
-        ...prev,
-        total_pages: totalPages || 1,
-        total_count: totalCount
-      }));
+      setAttendance(validRecords);
+      setPagination({
+        page: response.page || 1,
+        total_pages: response.total_pages || 1,
+        total_count: response.count || response.results?.length || 0
+      });
       
       if (!debouncedSearch) {
         const statsData = await attendanceService.getAttendanceStats(params);
@@ -415,7 +391,7 @@ const AttendanceListPage = () => {
     }
   };
 
-  // Table Columns
+  // Table Columns - Updated to match reference format
   const columns = [
     {
       key: 'date',
@@ -442,14 +418,17 @@ const AttendanceListPage = () => {
       key: 'participant_id',
       header: 'Participant ID',
       render: (value, record) => {
+        // Get participant details from either direct fields or nested participant_details
         const participant = record.participant_details || record;
         const participantId = participant.participant_id || record.participant_id || value;
         const participantIdFromResponse = record.participant_id || value;
         
+        // Format full name exactly as in reference
         const fullName = participant.first_name || participant.last_name 
           ? `${participant.first_name || ''} ${participant.last_name || ''}`.trim()
           : null;
         
+        // Check if we have a valid participant ID to link to
         const participantIdForLink = participant.id || record.participant;
         
         if (!participantIdForLink) {
@@ -566,34 +545,6 @@ const AttendanceListPage = () => {
       iconColor: 'text-yellow-600'
     }
   ] : [];
-
-  // Generate page numbers for pagination
-  const getPageNumbers = () => {
-    const delta = 2; // Number of pages to show on each side of current page
-    const range = [];
-    const rangeWithDots = [];
-    let l;
-
-    for (let i = 1; i <= pagination.total_pages; i++) {
-      if (i === 1 || i === pagination.total_pages || (i >= pagination.page - delta && i <= pagination.page + delta)) {
-        range.push(i);
-      }
-    }
-
-    range.forEach((i) => {
-      if (l) {
-        if (i - l === 2) {
-          rangeWithDots.push(l + 1);
-        } else if (i - l !== 1) {
-          rangeWithDots.push('...');
-        }
-      }
-      rangeWithDots.push(i);
-      l = i;
-    });
-
-    return rangeWithDots;
-  };
 
   if (loading && attendance.length === 0) {
     return (
@@ -894,15 +845,12 @@ const AttendanceListPage = () => {
             />
           </div>
           
-          {/* Enhanced Pagination Controls */}
+          {/* Table Footer */}
           {attendance.length > 0 && (
             <div className="flex flex-col sm:flex-row items-center justify-between px-6 py-4 border-t border-gray-200 bg-gray-50 gap-4">
               <div className="text-sm text-gray-700">
-                Showing <span className="font-medium">{((pagination.page - 1) * pagination.page_size) + 1}</span> to{' '}
-                <span className="font-medium">
-                  {Math.min(pagination.page * pagination.page_size, pagination.total_count)}
-                </span>{' '}
-                of <span className="font-medium">{pagination.total_count}</span> records
+                Showing <span className="font-medium">{attendance.length}</span> of{' '}
+                <span className="font-medium">{pagination.total_count}</span> records
               </div>
               
               <div className="flex items-center space-x-2">
@@ -911,53 +859,27 @@ const AttendanceListPage = () => {
                   size="sm"
                   onClick={() => handlePageChange(pagination.page - 1)}
                   disabled={pagination.page === 1}
-                  className="px-3 py-2"
                 >
                   <ChevronLeftIcon className="h-4 w-4 mr-1" />
                   Previous
                 </Button>
-                
-                {/* Page Numbers */}
-                <div className="hidden md:flex items-center space-x-1">
-                  {getPageNumbers().map((pageNum, index) => (
-                    <button
-                      key={index}
-                      onClick={() => typeof pageNum === 'number' ? handlePageChange(pageNum) : null}
-                      disabled={pageNum === '...'}
-                      className={`
-                        px-3 py-1.5 text-sm font-medium rounded-md transition-colors
-                        ${pageNum === pagination.page 
-                          ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                          : pageNum === '...'
-                            ? 'text-gray-500 cursor-default'
-                            : 'text-gray-700 hover:bg-gray-200'
-                        }
-                        ${pageNum === '...' ? 'cursor-default' : 'cursor-pointer'}
-                      `}
-                    >
-                      {pageNum}
-                    </button>
-                  ))}
-                </div>
-                
+                <span className="text-sm text-gray-500 mx-2">
+                  Page {pagination.page} of {pagination.total_pages}
+                </span>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => handlePageChange(pagination.page + 1)}
                   disabled={pagination.page === pagination.total_pages}
-                  className="px-3 py-2"
                 >
                   Next
                   <ChevronRightIcon className="h-4 w-4 ml-1" />
                 </Button>
               </div>
               
-              {/* Page Size Info */}
               <div className="flex items-center text-sm text-gray-500">
                 <InformationCircleIcon className="h-4 w-4 mr-1" />
-                <span>{pagination.page_size} records per page</span>
-                <span className="mx-2">•</span>
-                <span>Click date to view details</span>
+                Click date to view details
               </div>
             </div>
           )}

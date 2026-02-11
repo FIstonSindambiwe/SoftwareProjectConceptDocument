@@ -15,7 +15,9 @@ import {
   XMarkIcon,
   ArrowPathIcon,
   InformationCircleIcon,
-  ChevronDownIcon
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon
 } from '@heroicons/react/24/outline';
 import Layout from '../../../components/layout/Layout';
 import Table from '../../../components/common/Table';
@@ -33,6 +35,7 @@ const ParticipantsListPage = () => {
   
   const [participants, setParticipants] = useState([]);
   const [filteredParticipants, setFilteredParticipants] = useState([]);
+  const [paginatedParticipants, setPaginatedParticipants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
@@ -42,6 +45,12 @@ const ParticipantsListPage = () => {
   const [selectedParticipant, setSelectedParticipant] = useState(null);
   const [actionMenuPosition, setActionMenuPosition] = useState({ x: 0, y: 0 });
   const [showActionMenu, setShowActionMenu] = useState(false);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    total_pages: 1,
+    total_count: 0,
+    page_size: 7 // 7 records per page
+  });
   const [filters, setFilters] = useState({
     gender: '',
     is_active: 'true',
@@ -76,6 +85,9 @@ const ParticipantsListPage = () => {
       setFilteredParticipants(validParticipants);
       setStats(statsData);
       
+      // Reset to page 1 when fetching new data
+      setPagination(prev => ({ ...prev, page: 1 }));
+      
     } catch (err) {
       console.error('Error fetching participants:', err);
       setError(err.message || 'Failed to load participants');
@@ -103,6 +115,11 @@ const ParticipantsListPage = () => {
       applyFilters();
     }
   }, [filters, participants]);
+
+  // Apply pagination whenever filtered participants or page changes
+  useEffect(() => {
+    applyPagination();
+  }, [filteredParticipants, pagination.page]);
 
   const handleRefresh = () => {
     setRefreshing(true);
@@ -141,6 +158,30 @@ const ParticipantsListPage = () => {
     }
     
     setFilteredParticipants(filtered);
+    
+    // Reset to page 1 when filters change
+    setPagination(prev => ({ ...prev, page: 1 }));
+  };
+
+  const applyPagination = () => {
+    const totalCount = filteredParticipants.length;
+    const totalPages = Math.ceil(totalCount / pagination.page_size);
+    
+    // Calculate start and end indices for current page
+    const startIndex = (pagination.page - 1) * pagination.page_size;
+    const endIndex = startIndex + pagination.page_size;
+    
+    // Slice the filtered participants for current page
+    const paginated = filteredParticipants.slice(startIndex, endIndex);
+    
+    setPaginatedParticipants(paginated);
+    setPagination(prev => ({
+      ...prev,
+      total_pages: totalPages || 1,
+      total_count: totalCount
+    }));
+    
+    console.log(`Pagination: Page ${pagination.page} of ${totalPages}, showing ${paginated.length} of ${totalCount} participants`);
   };
 
   const handleFilterChange = (newFilters) => {
@@ -155,6 +196,12 @@ const ParticipantsListPage = () => {
       age_max: '',
       search: ''
     });
+    setPagination(prev => ({ ...prev, page: 1 }));
+  };
+
+  const handlePageChange = (newPage) => {
+    setPagination(prev => ({ ...prev, page: newPage }));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleDelete = async (participant) => {
@@ -191,6 +238,34 @@ const ParticipantsListPage = () => {
     
     setSelectedParticipant(participant);
     setShowActionMenu(true);
+  };
+
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const delta = 2; // Number of pages to show on each side of current page
+    const range = [];
+    const rangeWithDots = [];
+    let l;
+
+    for (let i = 1; i <= pagination.total_pages; i++) {
+      if (i === 1 || i === pagination.total_pages || (i >= pagination.page - delta && i <= pagination.page + delta)) {
+        range.push(i);
+      }
+    }
+
+    range.forEach((i) => {
+      if (l) {
+        if (i - l === 2) {
+          rangeWithDots.push(l + 1);
+        } else if (i - l !== 1) {
+          rangeWithDots.push('...');
+        }
+      }
+      rangeWithDots.push(i);
+      l = i;
+    });
+
+    return rangeWithDots;
   };
 
   const ActionMenu = () => {
@@ -588,7 +663,7 @@ const ParticipantsListPage = () => {
             </div>
             
             <div className="text-sm text-gray-500">
-              Showing {filteredParticipants.length} of {participants.length} participants
+              Showing {paginatedParticipants.length} of {filteredParticipants.length} participants
             </div>
           </div>
 
@@ -608,7 +683,7 @@ const ParticipantsListPage = () => {
           <div className="overflow-x-auto">
             <Table
               columns={columns}
-              data={filteredParticipants.filter(p => p && p.id)}
+              data={paginatedParticipants.filter(p => p && p.id)}
               rowClassName="hover:bg-gray-50 transition-colors"
               emptyMessage={
                 <div className="text-center py-16">
@@ -644,37 +719,70 @@ const ParticipantsListPage = () => {
             />
           </div>
           
-          {/* Table Footer */}
-          {filteredParticipants.length > 0 && (
-            <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 bg-gray-50">
+          {/* Enhanced Pagination Controls */}
+          {paginatedParticipants.length > 0 && (
+            <div className="flex flex-col sm:flex-row items-center justify-between px-6 py-4 border-t border-gray-200 bg-gray-50 gap-4">
               <div className="text-sm text-gray-700">
-                Showing <span className="font-medium">{filteredParticipants.length}</span> of{' '}
-                <span className="font-medium">{participants.length}</span> participants
+                Showing <span className="font-medium">{((pagination.page - 1) * pagination.page_size) + 1}</span> to{' '}
+                <span className="font-medium">
+                  {Math.min(pagination.page * pagination.page_size, pagination.total_count)}
+                </span>{' '}
+                of <span className="font-medium">{pagination.total_count}</span> participants
               </div>
               
               <div className="flex items-center space-x-2">
                 <Button
                   variant="ghost"
                   size="sm"
-                  disabled={true}
-                  title="Previous page"
+                  onClick={() => handlePageChange(pagination.page - 1)}
+                  disabled={pagination.page === 1}
+                  className="px-3 py-2"
                 >
-                  ← Previous
+                  <ChevronLeftIcon className="h-4 w-4 mr-1" />
+                  Previous
                 </Button>
-                <span className="text-sm text-gray-500 mx-2">Page 1 of 1</span>
+                
+                {/* Page Numbers */}
+                <div className="hidden md:flex items-center space-x-1">
+                  {getPageNumbers().map((pageNum, index) => (
+                    <button
+                      key={index}
+                      onClick={() => typeof pageNum === 'number' ? handlePageChange(pageNum) : null}
+                      disabled={pageNum === '...'}
+                      className={`
+                        px-3 py-1.5 text-sm font-medium rounded-md transition-colors
+                        ${pageNum === pagination.page 
+                          ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                          : pageNum === '...'
+                            ? 'text-gray-500 cursor-default'
+                            : 'text-gray-700 hover:bg-gray-200'
+                        }
+                        ${pageNum === '...' ? 'cursor-default' : 'cursor-pointer'}
+                      `}
+                    >
+                      {pageNum}
+                    </button>
+                  ))}
+                </div>
+                
                 <Button
                   variant="ghost"
                   size="sm"
-                  disabled={true}
-                  title="Next page"
+                  onClick={() => handlePageChange(pagination.page + 1)}
+                  disabled={pagination.page === pagination.total_pages}
+                  className="px-3 py-2"
                 >
-                  Next →
+                  Next
+                  <ChevronRightIcon className="h-4 w-4 ml-1" />
                 </Button>
               </div>
               
+              {/* Page Size Info */}
               <div className="flex items-center text-sm text-gray-500">
                 <InformationCircleIcon className="h-4 w-4 mr-1" />
-                Click on participant ID to view details
+                <span>{pagination.page_size} records per page</span>
+                <span className="mx-2">•</span>
+                <span>Click ID to view details</span>
               </div>
             </div>
           )}
