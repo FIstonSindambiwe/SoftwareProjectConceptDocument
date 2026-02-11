@@ -3351,3 +3351,552 @@ INFO 2026-02-11 09:16:33,327 autoreload /home/roger/Project/YouthProgramImpactVi
 INFO 2026-02-11 09:16:33,768 autoreload Watching for file changes with StatReloader
 INFO 2026-02-11 09:16:53,537 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/attendance/views.py changed, reloading.
 INFO 2026-02-11 09:16:53,935 autoreload Watching for file changes with StatReloader
+WARNING 2026-02-11 09:17:49,697 log Bad Request: /api/v1/attendance/records/identify-and-record/
+WARNING 2026-02-11 09:17:49,698 log "POST /api/v1/attendance/records/identify-and-record/ HTTP/1.1" 400 73
+INFO 2026-02-11 09:25:50,117 autoreload Watching for file changes with StatReloader
+WARNING 2026-02-11 09:28:12,150 log Bad Request: /api/v1/attendance/records/identify-and-record/
+WARNING 2026-02-11 09:28:12,150 log "POST /api/v1/attendance/records/identify-and-record/ HTTP/1.1" 400 73
+WARNING 2026-02-11 09:28:18,909 log Bad Request: /api/v1/attendance/records/identify-and-record/
+WARNING 2026-02-11 09:28:18,909 log "POST /api/v1/attendance/records/identify-and-record/ HTTP/1.1" 400 73
+INFO 2026-02-11 09:29:51,813 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/attendance/face_recognition_service.py changed, reloading.
+INFO 2026-02-11 09:29:52,372 autoreload Watching for file changes with StatReloader
+INFO 2026-02-11 09:32:11,224 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/attendance/views.py changed, reloading.
+INFO 2026-02-11 09:32:11,796 autoreload Watching for file changes with StatReloader
+WARNING 2026-02-11 09:33:55,198 log Bad Request: /api/v1/attendance/records/identify-and-record/
+WARNING 2026-02-11 09:33:55,198 log "POST /api/v1/attendance/records/identify-and-record/ HTTP/1.1" 400 113
+WARNING 2026-02-11 15:34:07,739 log Unauthorized: /api/v1/attendance/records/identify-and-record/
+WARNING 2026-02-11 15:34:07,740 log "POST /api/v1/attendance/records/identify-and-record/ HTTP/1.1" 401 172
+INFO 2026-02-11 15:34:07,755 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+WARNING 2026-02-11 15:34:08,028 log Bad Request: /api/v1/attendance/records/identify-and-record/
+WARNING 2026-02-11 15:34:08,029 log "POST /api/v1/attendance/records/identify-and-record/ HTTP/1.1" 400 113
+WARNING 2026-02-11 15:37:01,211 log Bad Request: /api/v1/attendance/records/identify-and-record/
+WARNING 2026-02-11 15:37:01,212 log "POST /api/v1/attendance/records/identify-and-record/ HTTP/1.1" 400 113
+INFO 2026-02-11 15:40:46,742 autoreload Watching for file changes with StatReloader
+WARNING 2026-02-11 15:41:56,329 log Bad Request: /api/v1/attendance/records/identify-and-record/
+WARNING 2026-02-11 15:41:56,329 log "POST /api/v1/attendance/records/identify-and-record/ HTTP/1.1" 400 113
+INFO 2026-02-11 15:42:05,189 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 15:42:05,220 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 15:42:12,888 log "GET /api/v1/attendance/sessions/?program=2&session_date=2026-02-11&is_cancelled=false HTTP/1.1" 200 52
+WARNING 2026-02-11 15:42:37,821 log Bad Request: /api/v1/attendance/records/identify-and-record/
+WARNING 2026-02-11 15:42:37,821 log "POST /api/v1/attendance/records/identify-and-record/ HTTP/1.1" 400 113
+WARNING 2026-02-11 15:43:23,666 log Bad Request: /api/v1/attendance/records/identify-and-record/
+WARNING 2026-02-11 15:43:23,667 log "POST /api/v1/attendance/records/identify-and-record/ HTTP/1.1" 400 113
+INFO 2026-02-11 15:43:28,844 log "OPTIONS /api/v1/attendance/records/ HTTP/1.1" 200 0
+INFO 2026-02-11 15:43:28,847 log "OPTIONS /api/v1/programs/programs/ HTTP/1.1" 200 0
+INFO 2026-02-11 15:43:28,855 log "OPTIONS /api/v1/attendance/records/stats/ HTTP/1.1" 200 0
+INFO 2026-02-11 15:43:28,856 log "OPTIONS /api/v1/attendance/records/ HTTP/1.1" 200 0
+INFO 2026-02-11 15:43:28,858 log "OPTIONS /api/v1/attendance/records/stats/ HTTP/1.1" 200 0
+INFO 2026-02-11 15:43:28,859 log "OPTIONS /api/v1/programs/programs/ HTTP/1.1" 200 0
+INFO 2026-02-11 15:43:28,859 log "OPTIONS /api/v1/attendance/records/ HTTP/1.1" 200 0
+INFO 2026-02-11 15:43:28,889 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 15:43:28,895 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1131
+INFO 2026-02-11 15:43:28,898 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 131
+INFO 2026-02-11 15:43:28,940 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1131
+INFO 2026-02-11 15:43:28,960 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 131
+INFO 2026-02-11 15:43:28,964 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 15:43:29,014 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1131
+INFO 2026-02-11 15:43:29,069 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 131
+INFO 2026-02-11 15:43:29,092 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1131
+INFO 2026-02-11 15:43:29,146 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 131
+INFO 2026-02-11 15:43:32,764 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 15:43:32,783 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 15:44:31,753 log "GET /api/v1/attendance/sessions/?program=2&session_date=2026-02-11&is_cancelled=false HTTP/1.1" 200 52
+INFO 2026-02-11 15:44:35,463 log "POST /api/v1/attendance/records/identify-and-record/ HTTP/1.1" 200 713
+INFO 2026-02-11 15:45:31,699 log "POST /api/v1/attendance/records/identify-and-record/ HTTP/1.1" 200 713
+INFO 2026-02-11 15:45:37,980 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 15:45:37,991 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1141
+INFO 2026-02-11 15:45:37,994 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 15:45:38,028 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 15:45:38,034 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1141
+INFO 2026-02-11 15:45:38,040 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 15:45:38,100 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1141
+INFO 2026-02-11 15:45:38,143 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 15:45:38,155 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1141
+INFO 2026-02-11 15:45:38,295 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 15:46:06,966 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 15:46:06,983 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 15:46:11,328 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 15:46:11,336 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1141
+INFO 2026-02-11 15:46:11,339 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 15:46:11,378 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 15:46:11,389 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1141
+INFO 2026-02-11 15:46:11,393 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 15:46:11,452 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1141
+INFO 2026-02-11 15:46:11,456 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 15:46:11,507 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1141
+INFO 2026-02-11 15:46:11,558 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 15:56:45,305 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 15:56:45,328 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 15:56:53,306 log "OPTIONS /api/v1/attendance/sessions/ HTTP/1.1" 200 0
+INFO 2026-02-11 15:56:53,306 log "OPTIONS /api/v1/attendance/sessions/ HTTP/1.1" 200 0
+INFO 2026-02-11 15:56:53,329 log "GET /api/v1/attendance/sessions/ HTTP/1.1" 200 52
+INFO 2026-02-11 15:56:53,332 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 15:56:53,360 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 15:56:53,384 log "GET /api/v1/attendance/sessions/ HTTP/1.1" 200 52
+INFO 2026-02-11 15:56:55,996 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 15:56:56,012 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 15:56:59,217 log "OPTIONS /api/v1/participants/participants/?enrolled_program=2&is_active=true HTTP/1.1" 200 0
+INFO 2026-02-11 15:56:59,235 log "GET /api/v1/attendance/sessions/?program=2&session_date=2026-02-11&is_cancelled=false HTTP/1.1" 200 52
+INFO 2026-02-11 15:56:59,245 log "GET /api/v1/participants/participants/?enrolled_program=2&is_active=true HTTP/1.1" 200 717
+INFO 2026-02-11 15:57:17,995 log "POST /api/v1/attendance/records/ HTTP/1.1" 201 540
+WARNING 2026-02-11 15:57:18,005 log Bad Request: /api/v1/attendance/records/
+WARNING 2026-02-11 15:57:18,005 log "POST /api/v1/attendance/records/ HTTP/1.1" 400 100
+WARNING 2026-02-11 15:57:18,058 log Bad Request: /api/v1/attendance/records/
+WARNING 2026-02-11 15:57:18,059 log "POST /api/v1/attendance/records/ HTTP/1.1" 400 100
+WARNING 2026-02-11 15:57:18,118 log Bad Request: /api/v1/attendance/records/
+WARNING 2026-02-11 15:57:18,118 log "POST /api/v1/attendance/records/ HTTP/1.1" 400 100
+INFO 2026-02-11 15:57:20,201 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 15:57:20,217 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 15:57:20,217 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 15:57:20,227 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 15:57:20,244 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 15:57:20,246 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 15:57:20,314 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 15:57:20,318 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 15:57:20,380 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 15:57:20,429 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 16:23:41,832 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 16:23:41,848 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 16:23:47,699 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 16:23:47,713 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 16:23:47,718 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 16:23:47,736 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 16:23:47,736 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 16:23:47,767 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 16:23:47,771 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 16:23:47,822 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 16:23:47,834 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 16:23:47,900 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 16:23:56,048 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 717
+INFO 2026-02-11 16:23:56,053 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 292
+INFO 2026-02-11 16:23:56,069 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 717
+INFO 2026-02-11 16:23:56,074 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 292
+INFO 2026-02-11 16:24:03,213 log "GET /api/v1/participants/participants/10/face_encoding_status/ HTTP/1.1" 200 155
+INFO 2026-02-11 16:24:03,224 log "GET /api/v1/participants/notes/?participant=10 HTTP/1.1" 200 52
+INFO 2026-02-11 16:24:03,224 log "GET /api/v1/participants/participants/10/enrollments/ HTTP/1.1" 200 193
+INFO 2026-02-11 16:24:03,232 log "GET /api/v1/participants/participants/10/ HTTP/1.1" 200 501
+INFO 2026-02-11 16:24:03,245 log "GET /api/v1/participants/notes/?participant=10 HTTP/1.1" 200 52
+INFO 2026-02-11 16:24:03,247 log "GET /api/v1/participants/participants/10/progress/ HTTP/1.1" 200 375
+INFO 2026-02-11 16:24:03,256 log "GET /api/v1/participants/participants/10/face_encoding_status/ HTTP/1.1" 200 155
+INFO 2026-02-11 16:24:03,273 log "GET /api/v1/participants/participants/10/enrollments/ HTTP/1.1" 200 193
+INFO 2026-02-11 16:24:03,283 log "GET /api/v1/participants/participants/10/ HTTP/1.1" 200 501
+INFO 2026-02-11 16:24:03,289 log "GET /api/v1/participants/participants/10/progress/ HTTP/1.1" 200 375
+INFO 2026-02-11 16:24:05,450 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 717
+INFO 2026-02-11 16:24:05,450 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 292
+INFO 2026-02-11 16:24:05,473 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 717
+INFO 2026-02-11 16:24:05,477 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 292
+INFO 2026-02-11 16:24:08,997 log "OPTIONS /api/v1/participants/participants/4/ HTTP/1.1" 200 0
+INFO 2026-02-11 16:24:08,998 log "OPTIONS /api/v1/participants/notes/?participant=4 HTTP/1.1" 200 0
+INFO 2026-02-11 16:24:08,998 log "OPTIONS /api/v1/participants/participants/4/enrollments/ HTTP/1.1" 200 0
+INFO 2026-02-11 16:24:08,998 log "OPTIONS /api/v1/participants/participants/4/face_encoding_status/ HTTP/1.1" 200 0
+INFO 2026-02-11 16:24:08,998 log "OPTIONS /api/v1/participants/participants/4/ HTTP/1.1" 200 0
+INFO 2026-02-11 16:24:08,998 log "OPTIONS /api/v1/participants/participants/4/progress/ HTTP/1.1" 200 0
+INFO 2026-02-11 16:24:09,008 log "OPTIONS /api/v1/participants/notes/?participant=4 HTTP/1.1" 200 0
+INFO 2026-02-11 16:24:09,010 log "OPTIONS /api/v1/participants/participants/4/enrollments/ HTTP/1.1" 200 0
+INFO 2026-02-11 16:24:09,010 log "OPTIONS /api/v1/participants/participants/4/progress/ HTTP/1.1" 200 0
+INFO 2026-02-11 16:24:09,011 log "OPTIONS /api/v1/participants/participants/4/face_encoding_status/ HTTP/1.1" 200 0
+INFO 2026-02-11 16:24:09,027 log "GET /api/v1/participants/notes/?participant=4 HTTP/1.1" 200 338
+INFO 2026-02-11 16:24:09,029 log "GET /api/v1/participants/participants/4/ HTTP/1.1" 200 515
+INFO 2026-02-11 16:24:09,062 log "GET /api/v1/participants/participants/4/enrollments/ HTTP/1.1" 200 193
+INFO 2026-02-11 16:24:09,070 log "GET /api/v1/participants/participants/4/face_encoding_status/ HTTP/1.1" 200 155
+INFO 2026-02-11 16:24:09,089 log "GET /api/v1/participants/participants/4/progress/ HTTP/1.1" 200 660
+INFO 2026-02-11 16:24:09,102 log "GET /api/v1/participants/notes/?participant=4 HTTP/1.1" 200 338
+INFO 2026-02-11 16:24:09,113 log "GET /api/v1/participants/participants/4/ HTTP/1.1" 200 515
+INFO 2026-02-11 16:24:09,138 log "GET /api/v1/participants/participants/4/face_encoding_status/ HTTP/1.1" 200 155
+INFO 2026-02-11 16:24:09,141 log "GET /api/v1/participants/participants/4/enrollments/ HTTP/1.1" 200 193
+INFO 2026-02-11 16:24:09,155 log "GET /api/v1/participants/participants/4/progress/ HTTP/1.1" 200 660
+INFO 2026-02-11 16:24:11,389 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 717
+INFO 2026-02-11 16:24:11,393 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 292
+INFO 2026-02-11 16:24:11,412 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 717
+INFO 2026-02-11 16:24:11,417 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 292
+INFO 2026-02-11 16:24:14,447 log "OPTIONS /api/v1/participants/participants/8/ HTTP/1.1" 200 0
+INFO 2026-02-11 16:24:14,447 log "OPTIONS /api/v1/participants/participants/8/ HTTP/1.1" 200 0
+INFO 2026-02-11 16:24:14,447 log "OPTIONS /api/v1/participants/participants/8/face_encoding_status/ HTTP/1.1" 200 0
+INFO 2026-02-11 16:24:14,447 log "OPTIONS /api/v1/participants/participants/8/enrollments/ HTTP/1.1" 200 0
+INFO 2026-02-11 16:24:14,447 log "OPTIONS /api/v1/participants/participants/8/progress/ HTTP/1.1" 200 0
+INFO 2026-02-11 16:24:14,448 log "OPTIONS /api/v1/participants/notes/?participant=8 HTTP/1.1" 200 0
+INFO 2026-02-11 16:24:14,458 log "OPTIONS /api/v1/participants/participants/8/face_encoding_status/ HTTP/1.1" 200 0
+INFO 2026-02-11 16:24:14,460 log "OPTIONS /api/v1/participants/participants/8/enrollments/ HTTP/1.1" 200 0
+INFO 2026-02-11 16:24:14,461 log "OPTIONS /api/v1/participants/participants/8/progress/ HTTP/1.1" 200 0
+INFO 2026-02-11 16:24:14,461 log "OPTIONS /api/v1/participants/notes/?participant=8 HTTP/1.1" 200 0
+INFO 2026-02-11 16:24:14,472 log "GET /api/v1/participants/participants/8/face_encoding_status/ HTTP/1.1" 200 177
+INFO 2026-02-11 16:24:14,474 log "GET /api/v1/participants/participants/8/ HTTP/1.1" 200 608
+INFO 2026-02-11 16:24:14,529 log "GET /api/v1/participants/participants/8/enrollments/ HTTP/1.1" 200 193
+INFO 2026-02-11 16:24:14,559 log "GET /api/v1/participants/participants/8/face_encoding_status/ HTTP/1.1" 200 177
+INFO 2026-02-11 16:24:14,563 log "GET /api/v1/participants/notes/?participant=8 HTTP/1.1" 200 339
+INFO 2026-02-11 16:24:14,566 log "GET /api/v1/participants/participants/8/ HTTP/1.1" 200 608
+INFO 2026-02-11 16:24:14,581 log "GET /api/v1/participants/participants/8/enrollments/ HTTP/1.1" 200 193
+INFO 2026-02-11 16:24:14,581 log "GET /api/v1/participants/participants/8/progress/ HTTP/1.1" 200 662
+INFO 2026-02-11 16:24:14,614 log "GET /api/v1/participants/notes/?participant=8 HTTP/1.1" 200 339
+INFO 2026-02-11 16:24:14,635 log "GET /api/v1/participants/participants/8/progress/ HTTP/1.1" 200 662
+INFO 2026-02-11 16:24:14,694 log "GET /media/participants/photos/Screenshot_from_2026-02-09_22-04-05.png HTTP/1.1" 304 0
+INFO 2026-02-11 18:02:34,851 autoreload Watching for file changes with StatReloader
+INFO 2026-02-11 18:03:21,432 log "OPTIONS /api/v1/attendance/records/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:03:21,433 log "OPTIONS /api/v1/programs/programs/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:03:21,434 log "OPTIONS /api/v1/attendance/records/stats/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:03:21,434 log "OPTIONS /api/v1/attendance/records/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:03:21,435 log "OPTIONS /api/v1/attendance/records/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:03:21,436 log "OPTIONS /api/v1/programs/programs/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:03:21,436 log "OPTIONS /api/v1/attendance/records/stats/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:03:21,442 log "OPTIONS /api/v1/attendance/records/ HTTP/1.1" 200 0
+WARNING 2026-02-11 18:03:21,455 log Unauthorized: /api/v1/programs/programs/
+WARNING 2026-02-11 18:03:21,456 log Unauthorized: /api/v1/attendance/records/stats/
+WARNING 2026-02-11 18:03:21,458 log "GET /api/v1/programs/programs/ HTTP/1.1" 401 172
+WARNING 2026-02-11 18:03:21,458 log Unauthorized: /api/v1/attendance/records/
+WARNING 2026-02-11 18:03:21,459 log "GET /api/v1/attendance/records/ HTTP/1.1" 401 172
+WARNING 2026-02-11 18:03:21,460 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 401 172
+WARNING 2026-02-11 18:03:21,502 log Unauthorized: /api/v1/programs/programs/
+WARNING 2026-02-11 18:03:21,503 log "GET /api/v1/programs/programs/ HTTP/1.1" 401 172
+WARNING 2026-02-11 18:03:21,507 log Unauthorized: /api/v1/attendance/records/
+WARNING 2026-02-11 18:03:21,512 log Unauthorized: /api/v1/attendance/records/stats/
+INFO 2026-02-11 18:03:21,518 log "OPTIONS /api/v1/auth/refresh/ HTTP/1.1" 200 0
+WARNING 2026-02-11 18:03:21,520 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 401 172
+INFO 2026-02-11 18:03:21,520 log "OPTIONS /api/v1/auth/refresh/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:03:21,519 log "OPTIONS /api/v1/auth/refresh/ HTTP/1.1" 200 0
+WARNING 2026-02-11 18:03:21,519 log "GET /api/v1/attendance/records/ HTTP/1.1" 401 172
+WARNING 2026-02-11 18:03:21,535 log Unauthorized: /api/v1/auth/refresh/
+WARNING 2026-02-11 18:03:21,536 log "POST /api/v1/auth/refresh/ HTTP/1.1" 401 54
+WARNING 2026-02-11 18:03:21,559 log Unauthorized: /api/v1/attendance/records/
+WARNING 2026-02-11 18:03:21,561 log Unauthorized: /api/v1/auth/refresh/
+WARNING 2026-02-11 18:03:21,566 log Unauthorized: /api/v1/auth/refresh/
+WARNING 2026-02-11 18:03:21,563 log Unauthorized: /api/v1/auth/refresh/
+WARNING 2026-02-11 18:03:21,568 log Unauthorized: /api/v1/auth/refresh/
+WARNING 2026-02-11 18:03:21,568 log "GET /api/v1/attendance/records/ HTTP/1.1" 401 172
+WARNING 2026-02-11 18:03:21,569 log "POST /api/v1/auth/refresh/ HTTP/1.1" 401 54
+WARNING 2026-02-11 18:03:21,570 log "POST /api/v1/auth/refresh/ HTTP/1.1" 401 54
+WARNING 2026-02-11 18:03:21,571 log "POST /api/v1/auth/refresh/ HTTP/1.1" 401 54
+WARNING 2026-02-11 18:03:21,572 log "POST /api/v1/auth/refresh/ HTTP/1.1" 401 54
+WARNING 2026-02-11 18:03:21,585 log Unauthorized: /api/v1/auth/refresh/
+WARNING 2026-02-11 18:03:21,586 log "POST /api/v1/auth/refresh/ HTTP/1.1" 401 54
+WARNING 2026-02-11 18:03:21,631 log Unauthorized: /api/v1/attendance/records/
+WARNING 2026-02-11 18:03:21,632 log "GET /api/v1/attendance/records/ HTTP/1.1" 401 172
+INFO 2026-02-11 18:03:30,877 log "OPTIONS /api/v1/auth/login/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:03:31,397 log "POST /api/v1/auth/login/ HTTP/1.1" 200 912
+INFO 2026-02-11 18:03:45,093 log "OPTIONS /api/v1/programs/programs/active/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:03:45,093 log "OPTIONS /api/v1/programs/programs/active/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:03:45,108 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 18:03:45,163 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 18:03:51,714 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 18:03:51,724 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 18:03:51,729 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 18:03:51,748 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 18:03:51,767 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 18:03:51,769 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 18:03:51,837 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 18:03:51,845 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 18:03:51,900 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 18:03:51,954 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 18:06:12,896 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 18:06:12,899 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 18:06:12,906 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 18:06:12,934 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 18:06:12,935 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 18:06:12,949 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 18:06:13,002 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 18:06:13,003 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 18:06:13,065 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 18:06:13,117 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 18:17:40,910 log "OPTIONS /api/v1/attendance/records/7/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:17:40,910 log "OPTIONS /api/v1/attendance/records/7/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:17:40,933 log "GET /api/v1/attendance/records/7/ HTTP/1.1" 200 540
+INFO 2026-02-11 18:17:40,997 log "GET /api/v1/attendance/records/7/ HTTP/1.1" 200 540
+INFO 2026-02-11 18:18:05,059 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 18:18:05,062 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 18:18:05,069 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 18:18:05,071 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 18:18:05,089 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 18:18:05,112 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 18:18:05,161 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 18:18:05,169 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 18:18:05,226 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 18:18:05,282 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 18:18:07,336 log "OPTIONS /api/v1/participants/participants/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:18:07,337 log "OPTIONS /api/v1/participants/participants/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:18:07,361 log "GET /api/v1/attendance/records/7/ HTTP/1.1" 200 540
+INFO 2026-02-11 18:18:07,415 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 18:18:07,418 log "GET /api/v1/attendance/records/7/ HTTP/1.1" 200 540
+INFO 2026-02-11 18:18:07,432 log "GET /api/v1/participants/participants/ HTTP/1.1" 200 1717
+INFO 2026-02-11 18:18:07,447 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 18:18:07,508 log "GET /api/v1/participants/participants/ HTTP/1.1" 200 1717
+INFO 2026-02-11 18:18:07,535 log "OPTIONS /api/v1/attendance/sessions/?program=2&session_date=2026-02-11&is_cancelled=false HTTP/1.1" 200 0
+INFO 2026-02-11 18:18:07,550 log "GET /api/v1/attendance/sessions/?program=2&session_date=2026-02-11&is_cancelled=false HTTP/1.1" 200 52
+INFO 2026-02-11 18:18:26,510 log "GET /api/v1/attendance/records/7/ HTTP/1.1" 200 540
+INFO 2026-02-11 18:18:26,527 log "GET /api/v1/attendance/records/7/ HTTP/1.1" 200 540
+INFO 2026-02-11 18:22:24,296 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 18:22:24,320 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 18:22:24,321 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 18:22:24,340 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 18:22:24,376 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 18:22:24,380 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 18:22:24,403 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 18:22:24,414 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 18:22:24,419 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 18:22:24,485 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 18:22:28,681 log "OPTIONS /api/v1/attendance/records/4/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:22:28,682 log "OPTIONS /api/v1/attendance/records/4/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:22:28,707 log "GET /api/v1/attendance/records/4/ HTTP/1.1" 200 553
+INFO 2026-02-11 18:22:28,775 log "GET /api/v1/attendance/records/4/ HTTP/1.1" 200 553
+INFO 2026-02-11 18:23:06,397 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 18:23:06,406 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 18:23:06,414 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 18:23:06,453 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 18:23:06,476 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 18:23:06,488 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 18:23:06,512 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 18:23:06,515 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 18:23:06,569 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 18:23:06,627 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 18:23:15,192 log "OPTIONS /api/v1/programs/programs/stats/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:23:15,193 log "OPTIONS /api/v1/programs/programs/stats/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:23:15,194 log "OPTIONS /api/v1/programs/locations/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:23:15,194 log "OPTIONS /api/v1/programs/locations/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:23:15,232 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-11 18:23:15,236 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 18:23:15,243 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-02-11 18:23:15,261 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 18:23:15,282 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-11 18:23:15,296 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-02-11 18:23:15,506 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 18:23:22,238 log "OPTIONS /api/v1/participants/participants/stats/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:23:22,238 log "OPTIONS /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 0
+INFO 2026-02-11 18:23:22,239 log "OPTIONS /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 0
+INFO 2026-02-11 18:23:22,240 log "OPTIONS /api/v1/participants/participants/stats/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:23:22,294 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 717
+INFO 2026-02-11 18:23:22,302 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 292
+INFO 2026-02-11 18:23:22,349 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 717
+INFO 2026-02-11 18:23:22,361 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 292
+INFO 2026-02-11 18:23:40,077 log "OPTIONS /api/v1/participants/participants/9/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:23:40,077 log "OPTIONS /api/v1/participants/participants/9/face_encoding_status/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:23:40,077 log "OPTIONS /api/v1/participants/participants/9/enrollments/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:23:40,078 log "OPTIONS /api/v1/participants/notes/?participant=9 HTTP/1.1" 200 0
+INFO 2026-02-11 18:23:40,078 log "OPTIONS /api/v1/participants/participants/9/progress/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:23:40,078 log "OPTIONS /api/v1/participants/participants/9/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:23:40,108 log "OPTIONS /api/v1/participants/participants/9/face_encoding_status/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:23:40,109 log "OPTIONS /api/v1/participants/notes/?participant=9 HTTP/1.1" 200 0
+INFO 2026-02-11 18:23:40,111 log "OPTIONS /api/v1/participants/participants/9/enrollments/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:23:40,112 log "OPTIONS /api/v1/participants/participants/9/progress/ HTTP/1.1" 200 0
+INFO 2026-02-11 18:23:40,156 log "GET /api/v1/participants/participants/9/enrollments/ HTTP/1.1" 200 193
+INFO 2026-02-11 18:23:40,174 log "GET /api/v1/participants/participants/9/face_encoding_status/ HTTP/1.1" 200 177
+INFO 2026-02-11 18:23:40,190 log "GET /api/v1/participants/participants/9/progress/ HTTP/1.1" 200 377
+INFO 2026-02-11 18:23:40,190 log "GET /api/v1/participants/notes/?participant=9 HTTP/1.1" 200 52
+INFO 2026-02-11 18:23:40,196 log "GET /api/v1/participants/participants/9/ HTTP/1.1" 200 594
+INFO 2026-02-11 18:23:40,202 log "GET /api/v1/participants/participants/9/enrollments/ HTTP/1.1" 200 193
+INFO 2026-02-11 18:23:40,225 log "GET /api/v1/participants/participants/9/face_encoding_status/ HTTP/1.1" 200 177
+INFO 2026-02-11 18:23:40,245 log "GET /api/v1/participants/notes/?participant=9 HTTP/1.1" 200 52
+INFO 2026-02-11 18:23:40,267 log "GET /api/v1/participants/participants/9/ HTTP/1.1" 200 594
+INFO 2026-02-11 18:23:40,276 log "GET /api/v1/participants/participants/9/progress/ HTTP/1.1" 200 377
+INFO 2026-02-11 18:23:40,335 log "GET /media/participants/photos/participant-photo-1770674655627.jpg HTTP/1.1" 304 0
+INFO 2026-02-11 18:24:16,866 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 717
+INFO 2026-02-11 18:24:16,875 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 292
+INFO 2026-02-11 18:24:16,959 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 717
+INFO 2026-02-11 18:24:16,965 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 292
+INFO 2026-02-11 18:24:42,795 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 18:24:42,797 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 18:24:42,804 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 18:24:42,821 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 18:24:42,843 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 18:24:42,844 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 18:24:42,912 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 18:24:42,920 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 18:24:42,981 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 18:24:43,039 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 18:24:46,079 log "GET /api/v1/attendance/records/7/ HTTP/1.1" 200 540
+INFO 2026-02-11 18:24:46,097 log "GET /api/v1/attendance/records/7/ HTTP/1.1" 200 540
+INFO 2026-02-11 19:01:04,671 log "GET /api/v1/attendance/records/7/ HTTP/1.1" 200 540
+INFO 2026-02-11 19:01:04,689 log "GET /api/v1/attendance/records/7/ HTTP/1.1" 200 540
+INFO 2026-02-11 19:01:08,915 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 19:01:08,925 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 19:01:08,925 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 19:01:08,939 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 19:01:08,964 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 19:01:08,966 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 19:01:09,023 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 19:01:09,025 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 19:01:09,085 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 19:01:09,140 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 19:01:13,816 log "OPTIONS /api/v1/attendance/records/bulk/ HTTP/1.1" 200 0
+INFO 2026-02-11 19:01:13,816 log "OPTIONS /api/v1/attendance/records/bulk/ HTTP/1.1" 200 0
+WARNING 2026-02-11 19:01:13,823 log Not Found: /api/v1/attendance/records/bulk/
+WARNING 2026-02-11 19:01:13,824 log "GET /api/v1/attendance/records/bulk/ HTTP/1.1" 404 23
+WARNING 2026-02-11 19:01:13,870 log Not Found: /api/v1/attendance/records/bulk/
+WARNING 2026-02-11 19:01:13,870 log "GET /api/v1/attendance/records/bulk/ HTTP/1.1" 404 23
+INFO 2026-02-11 19:01:17,526 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 19:01:17,534 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 19:01:17,537 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 19:01:17,546 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 19:01:17,573 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 19:01:17,573 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 19:01:17,642 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 19:01:17,643 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 19:01:17,699 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 19:01:17,754 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+WARNING 2026-02-11 19:01:22,401 log Not Found: /api/v1/attendance/records/bulk/
+WARNING 2026-02-11 19:01:22,401 log "GET /api/v1/attendance/records/bulk/ HTTP/1.1" 404 23
+WARNING 2026-02-11 19:01:22,407 log Not Found: /api/v1/attendance/records/bulk/
+WARNING 2026-02-11 19:01:22,408 log "GET /api/v1/attendance/records/bulk/ HTTP/1.1" 404 23
+INFO 2026-02-11 19:01:41,090 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 19:01:41,101 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 19:01:41,102 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 19:01:41,118 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 19:01:41,127 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 19:01:41,136 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 19:01:41,178 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 19:01:41,184 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 19:01:41,234 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 19:01:41,304 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+WARNING 2026-02-11 19:01:46,034 log Not Found: /api/v1/attendance/records/bulk/
+WARNING 2026-02-11 19:01:46,034 log "GET /api/v1/attendance/records/bulk/ HTTP/1.1" 404 23
+WARNING 2026-02-11 19:01:46,039 log Not Found: /api/v1/attendance/records/bulk/
+WARNING 2026-02-11 19:01:46,039 log "GET /api/v1/attendance/records/bulk/ HTTP/1.1" 404 23
+INFO 2026-02-11 19:01:48,365 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 19:01:48,374 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 19:01:48,374 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 19:01:48,385 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 19:01:48,409 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 19:01:48,415 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 19:01:48,468 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 19:01:48,472 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 19:01:48,529 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 19:01:48,586 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+WARNING 2026-02-11 19:02:39,954 log Not Found: /api/v1/attendance/records/bulk/
+WARNING 2026-02-11 19:02:39,954 log "GET /api/v1/attendance/records/bulk/ HTTP/1.1" 404 23
+WARNING 2026-02-11 19:02:39,960 log Not Found: /api/v1/attendance/records/bulk/
+WARNING 2026-02-11 19:02:39,961 log "GET /api/v1/attendance/records/bulk/ HTTP/1.1" 404 23
+WARNING 2026-02-11 19:02:46,602 log Not Found: /api/v1/attendance/records/bulk/
+WARNING 2026-02-11 19:02:46,603 log "GET /api/v1/attendance/records/bulk/ HTTP/1.1" 404 23
+WARNING 2026-02-11 19:02:46,612 log Not Found: /api/v1/attendance/records/bulk/
+WARNING 2026-02-11 19:02:46,612 log "GET /api/v1/attendance/records/bulk/ HTTP/1.1" 404 23
+INFO 2026-02-11 19:02:53,783 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 19:02:53,793 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+WARNING 2026-02-11 19:03:10,005 log Not Found: /api/v1/attendance/records/bulk/
+WARNING 2026-02-11 19:03:10,005 log "GET /api/v1/attendance/records/bulk/ HTTP/1.1" 404 23
+WARNING 2026-02-11 19:03:10,011 log Not Found: /api/v1/attendance/records/bulk/
+WARNING 2026-02-11 19:03:10,012 log "GET /api/v1/attendance/records/bulk/ HTTP/1.1" 404 23
+WARNING 2026-02-11 19:05:07,044 log Unauthorized: /api/v1/programs/programs/active/
+WARNING 2026-02-11 19:05:07,045 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 401 172
+WARNING 2026-02-11 19:05:07,048 log Unauthorized: /api/v1/programs/programs/active/
+WARNING 2026-02-11 19:05:07,048 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 401 172
+INFO 2026-02-11 19:05:07,058 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-11 19:05:07,060 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-11 19:05:07,117 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 19:05:07,170 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 19:06:22,801 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 19:06:22,812 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 587
+INFO 2026-02-11 19:06:42,767 log "OPTIONS /api/v1/participants/participants/?enrolled_program=2&is_active=true HTTP/1.1" 200 0
+INFO 2026-02-11 19:06:42,775 log "GET /api/v1/attendance/sessions/?program=2&session_date=2026-02-11&is_cancelled=false HTTP/1.1" 200 52
+INFO 2026-02-11 19:06:42,789 log "GET /api/v1/participants/participants/?enrolled_program=2&is_active=true HTTP/1.1" 200 717
+INFO 2026-02-11 19:06:47,000 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 19:06:47,004 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 19:06:47,018 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 19:06:47,028 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 19:06:47,049 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 19:06:47,057 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 19:06:47,067 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 19:06:47,089 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 19:06:47,123 log "GET /api/v1/attendance/records/ HTTP/1.1" 200 1321
+INFO 2026-02-11 19:06:47,195 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 135
+INFO 2026-02-11 19:12:00,996 log "OPTIONS /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 0
+INFO 2026-02-11 19:12:00,997 log "OPTIONS /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 0
+INFO 2026-02-11 19:12:00,997 log "OPTIONS /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 0
+INFO 2026-02-11 19:12:00,997 log "OPTIONS /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 0
+INFO 2026-02-11 19:12:01,031 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 19:12:01,034 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 19:12:01,089 log "OPTIONS /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 0
+INFO 2026-02-11 19:12:01,117 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 19:12:01,123 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 19:12:01,126 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 19:12:01,208 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 19:12:39,176 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-11 19:12:39,185 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-02-11 19:12:39,192 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 19:12:39,196 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-11 19:12:39,208 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-02-11 19:12:39,225 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 19:12:39,484 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 19:14:36,305 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 637
+INFO 2026-02-11 19:14:57,586 log "OPTIONS /api/v1/programs/locations/active/ HTTP/1.1" 200 0
+INFO 2026-02-11 19:14:57,587 log "OPTIONS /api/v1/programs/programs/2/ HTTP/1.1" 200 0
+INFO 2026-02-11 19:14:57,587 log "OPTIONS /api/v1/programs/locations/active/ HTTP/1.1" 200 0
+INFO 2026-02-11 19:14:57,587 log "OPTIONS /api/v1/programs/programs/2/ HTTP/1.1" 200 0
+INFO 2026-02-11 19:14:57,611 log "GET /api/v1/programs/locations/active/ HTTP/1.1" 200 124
+INFO 2026-02-11 19:14:57,622 log "GET /api/v1/programs/programs/2/ HTTP/1.1" 200 804
+INFO 2026-02-11 19:14:57,665 log "GET /api/v1/programs/locations/active/ HTTP/1.1" 200 124
+INFO 2026-02-11 19:14:57,698 log "GET /api/v1/programs/programs/2/ HTTP/1.1" 200 804
+INFO 2026-02-11 19:15:05,042 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 717
+INFO 2026-02-11 19:15:05,043 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 292
+INFO 2026-02-11 19:15:05,065 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 717
+INFO 2026-02-11 19:15:05,066 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 292
+INFO 2026-02-11 19:15:13,279 log "GET /api/v1/participants/notes/?participant=9 HTTP/1.1" 200 52
+INFO 2026-02-11 19:15:13,281 log "GET /api/v1/participants/participants/9/enrollments/ HTTP/1.1" 200 193
+INFO 2026-02-11 19:15:13,282 log "GET /api/v1/participants/participants/9/face_encoding_status/ HTTP/1.1" 200 177
+INFO 2026-02-11 19:15:13,285 log "GET /api/v1/participants/participants/9/ HTTP/1.1" 200 594
+INFO 2026-02-11 19:15:13,308 log "GET /api/v1/participants/participants/9/progress/ HTTP/1.1" 200 377
+INFO 2026-02-11 19:15:13,324 log "GET /api/v1/participants/participants/9/face_encoding_status/ HTTP/1.1" 200 177
+INFO 2026-02-11 19:15:13,325 log "GET /api/v1/participants/participants/9/enrollments/ HTTP/1.1" 200 193
+INFO 2026-02-11 19:15:13,339 log "GET /api/v1/participants/notes/?participant=9 HTTP/1.1" 200 52
+INFO 2026-02-11 19:15:13,351 log "GET /api/v1/participants/participants/9/progress/ HTTP/1.1" 200 377
+INFO 2026-02-11 19:15:13,354 log "GET /api/v1/participants/participants/9/ HTTP/1.1" 200 594
+INFO 2026-02-11 19:15:37,724 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 717
+INFO 2026-02-11 19:15:37,740 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 717
+INFO 2026-02-11 19:15:37,740 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 292
+INFO 2026-02-11 19:15:37,754 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 292
+INFO 2026-02-11 19:16:20,867 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 19:16:20,868 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 19:16:20,907 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 19:16:20,909 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 19:16:20,911 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 19:16:20,990 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 19:16:58,386 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 19:16:58,391 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 19:16:58,417 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 19:16:58,426 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 19:16:58,426 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 19:16:58,489 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 19:17:02,463 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 19:17:02,466 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 19:17:02,496 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 19:17:02,502 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 19:17:02,505 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 19:17:02,595 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 19:20:22,494 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 19:20:22,506 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 19:20:22,513 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 19:20:22,524 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 19:20:22,531 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 19:20:22,621 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 19:20:41,326 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 19:20:41,327 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 19:20:41,356 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 19:20:41,360 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 1321
+INFO 2026-02-11 19:20:41,362 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 637
+INFO 2026-02-11 19:20:41,429 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 135
+INFO 2026-02-11 19:21:03,979 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 717
+INFO 2026-02-11 19:21:03,979 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 292
+INFO 2026-02-11 19:21:04,000 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search= HTTP/1.1" 200 717
+INFO 2026-02-11 19:21:04,009 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 200 292
+INFO 2026-02-11 19:21:08,831 log "OPTIONS /api/v1/participants/participants/10/enrollments/ HTTP/1.1" 200 0
+INFO 2026-02-11 19:21:08,832 log "OPTIONS /api/v1/participants/participants/10/face_encoding_status/ HTTP/1.1" 200 0
+INFO 2026-02-11 19:21:08,833 log "OPTIONS /api/v1/participants/participants/10/ HTTP/1.1" 200 0
+INFO 2026-02-11 19:21:08,834 log "OPTIONS /api/v1/participants/notes/?participant=10 HTTP/1.1" 200 0
+INFO 2026-02-11 19:21:08,835 log "OPTIONS /api/v1/participants/participants/10/progress/ HTTP/1.1" 200 0
+INFO 2026-02-11 19:21:08,835 log "OPTIONS /api/v1/participants/participants/10/ HTTP/1.1" 200 0
+INFO 2026-02-11 19:21:08,841 log "OPTIONS /api/v1/participants/participants/10/enrollments/ HTTP/1.1" 200 0
+INFO 2026-02-11 19:21:08,849 log "OPTIONS /api/v1/participants/participants/10/progress/ HTTP/1.1" 200 0
+INFO 2026-02-11 19:21:08,850 log "OPTIONS /api/v1/participants/notes/?participant=10 HTTP/1.1" 200 0
+INFO 2026-02-11 19:21:08,851 log "OPTIONS /api/v1/participants/participants/10/face_encoding_status/ HTTP/1.1" 200 0
+INFO 2026-02-11 19:21:08,857 log "GET /api/v1/participants/participants/10/face_encoding_status/ HTTP/1.1" 200 155
+INFO 2026-02-11 19:21:08,867 log "GET /api/v1/participants/participants/10/ HTTP/1.1" 200 501
+INFO 2026-02-11 19:21:08,906 log "GET /api/v1/participants/participants/10/enrollments/ HTTP/1.1" 200 193
+INFO 2026-02-11 19:21:08,924 log "GET /api/v1/participants/participants/10/face_encoding_status/ HTTP/1.1" 200 155
+INFO 2026-02-11 19:21:08,931 log "GET /api/v1/participants/notes/?participant=10 HTTP/1.1" 200 52
+INFO 2026-02-11 19:21:08,945 log "GET /api/v1/participants/participants/10/ HTTP/1.1" 200 501
+INFO 2026-02-11 19:21:08,945 log "GET /api/v1/participants/participants/10/progress/ HTTP/1.1" 200 375
+INFO 2026-02-11 19:21:08,961 log "GET /api/v1/participants/participants/10/enrollments/ HTTP/1.1" 200 193
+INFO 2026-02-11 19:21:08,981 log "GET /api/v1/participants/notes/?participant=10 HTTP/1.1" 200 52
+INFO 2026-02-11 19:21:09,002 log "GET /api/v1/participants/participants/10/progress/ HTTP/1.1" 200 375
+INFO 2026-02-11 19:30:36,813 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/participants/models.py changed, reloading.
+INFO 2026-02-11 19:30:37,231 autoreload Watching for file changes with StatReloader
+INFO 2026-02-11 19:31:00,987 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/participants/serializers.py changed, reloading.
+INFO 2026-02-11 19:31:01,344 autoreload Watching for file changes with StatReloader
+INFO 2026-02-11 19:31:29,206 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/participants/views.py changed, reloading.
+INFO 2026-02-11 19:31:29,647 autoreload Watching for file changes with StatReloader

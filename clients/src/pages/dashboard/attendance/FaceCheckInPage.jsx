@@ -7,7 +7,8 @@ import {
   XCircleIcon,
   UserIcon,
   ExclamationTriangleIcon,
-  InformationCircleIcon
+  InformationCircleIcon,
+  ExclamationCircleIcon
 } from '@heroicons/react/24/outline';
 import Layout from '../../../components/layout/Layout';
 import Card from '../../../components/common/Card';
@@ -34,6 +35,9 @@ const FaceCheckInPage = () => {
   const [retryCount, setRetryCount] = useState(0);
   const [videoDimensions, setVideoDimensions] = useState({ width: 0, height: 0 });
   
+  // New error state categories
+  const [errorType, setErrorType] = useState(null); // 'camera', 'recognition', 'validation', 'system'
+  
   const [formData, setFormData] = useState({
     program: '',
     date: new Date().toISOString().split('T')[0],
@@ -48,11 +52,13 @@ const FaceCheckInPage = () => {
     
     if (!isSecure) {
       setError('Camera access requires HTTPS (or localhost).');
+      setErrorType('camera');
       return false;
     }
     
     if (!hasMediaDevices || !hasGetUserMedia) {
       setError('Your browser does not support camera access. Please use Chrome, Firefox, or Edge.');
+      setErrorType('camera');
       return false;
     }
     
@@ -69,6 +75,7 @@ const FaceCheckInPage = () => {
       
       if (videoDevices.length === 0) {
         setError('No camera detected on your device.');
+        setErrorType('camera');
       }
     } catch (error) {
       console.error('Error enumerating devices:', error);
@@ -85,6 +92,7 @@ const FaceCheckInPage = () => {
         
         if (permissions.state === 'denied') {
           setError('Camera access denied. Please allow camera access in browser settings.');
+          setErrorType('camera');
           return false;
         }
         
@@ -105,6 +113,7 @@ const FaceCheckInPage = () => {
   const startCamera = async () => {
     // Reset states
     setError('');
+    setErrorType(null);
     setCameraStatus('starting');
     setVideoDimensions({ width: 0, height: 0 });
     
@@ -127,6 +136,7 @@ const FaceCheckInPage = () => {
       
       if (cameraDevices.length === 0) {
         setError('No camera detected. Please connect a camera and try again.');
+        setErrorType('camera');
         setCameraStatus('error');
         return;
       }
@@ -171,8 +181,10 @@ const FaceCheckInPage = () => {
             setCameraStatus('active');
             setCameraActive(true);
             setError('');
+            setErrorType(null);
           } else {
             setError('Camera feed appears to be empty. Trying alternative camera...');
+            setErrorType('camera');
             tryAlternativeCamera();
           }
         };
@@ -190,6 +202,7 @@ const FaceCheckInPage = () => {
         const handleError = (e) => {
           console.error('Video element error:', e);
           setError('Failed to load camera feed. Please try again.');
+          setErrorType('camera');
           setCameraStatus('error');
         };
         
@@ -211,6 +224,7 @@ const FaceCheckInPage = () => {
           if (video.readyState < 1 && cameraStatus === 'starting') {
             console.warn('Video load timeout, readyState:', video.readyState);
             setError('Camera feed taking too long to load. Please try again.');
+            setErrorType('camera');
             setCameraStatus('error');
           }
         }, 5000);
@@ -221,6 +235,7 @@ const FaceCheckInPage = () => {
     } catch (err) {
       console.error('Error accessing camera:', err);
       setCameraStatus('error');
+      setErrorType('camera');
       
       let errorMessage = 'Failed to access camera. ';
       if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
@@ -260,6 +275,7 @@ const FaceCheckInPage = () => {
             setCameraStatus('active');
             setCameraActive(true);
             setError('');
+            setErrorType(null);
             console.log('Alternative camera worked!');
           }
         }, 1000);
@@ -272,6 +288,7 @@ const FaceCheckInPage = () => {
   const startCameraWithRetry = async (maxRetries = 2) => {
     if (retryCount >= maxRetries) {
       setError('Max retries reached. Please check camera settings and try again.');
+      setErrorType('camera');
       return;
     }
     
@@ -300,6 +317,7 @@ const FaceCheckInPage = () => {
   const capturePhoto = () => {
     if (!videoRef.current || !canvasRef.current) {
       setError('Camera not ready. Please try again.');
+      setErrorType('camera');
       return;
     }
     
@@ -311,6 +329,7 @@ const FaceCheckInPage = () => {
       // Check if video is ready
       if (video.videoWidth === 0 || video.videoHeight === 0) {
         setError('Camera feed not ready. Please wait and try again.');
+        setErrorType('camera');
         return;
       }
       
@@ -327,6 +346,7 @@ const FaceCheckInPage = () => {
       
       if (!hasData) {
         setError('Failed to capture image. Please try again.');
+        setErrorType('camera');
         return;
       }
       
@@ -336,14 +356,17 @@ const FaceCheckInPage = () => {
           setCapturedImage(blob);
           stopCamera();
           setError('');
+          setErrorType(null);
         } else {
           setError('Failed to create image. Please try again.');
+          setErrorType('camera');
         }
       }, 'image/jpeg', 0.95);
       
     } catch (err) {
       console.error('Error capturing photo:', err);
       setError('Failed to capture photo. Please try again.');
+      setErrorType('camera');
     }
   };
 
@@ -351,6 +374,7 @@ const FaceCheckInPage = () => {
     setCapturedImage(null);
     setResult(null);
     setError('');
+    setErrorType(null);
     setCameraStatus('idle');
     startCamera();
   };
@@ -358,16 +382,19 @@ const FaceCheckInPage = () => {
   const handleSubmit = async () => {
     if (!formData.program || !formData.date) {
       setError('Please select program and date');
+      setErrorType('validation');
       return;
     }
 
     if (!capturedImage) {
       setError('Please capture a photo');
+      setErrorType('validation');
       return;
     }
 
     setLoading(true);
     setError('');
+    setErrorType(null);
     setResult(null);
 
     try {
@@ -382,7 +409,9 @@ const FaceCheckInPage = () => {
       // Identify and record attendance
       const identifyResult = await attendanceService.identifyAndRecordAttendance(submitFormData);
       
+      console.log('✅ Identification successful:', identifyResult);
       setResult(identifyResult);
+      setErrorType(null);
       
       if (identifyResult.identified) {
         // Auto-clear after 3 seconds and reset
@@ -391,9 +420,25 @@ const FaceCheckInPage = () => {
         }, 3000);
       }
     } catch (err) {
-      console.error('Error identifying participant:', err);
-      setError(err.error || err.message || 'Failed to identify participant');
+      console.error('❌ Error identifying participant:', err);
+      
+      // Use the enhanced error handling from attendanceService
+      const friendlyMessage = attendanceService.getFriendlyErrorMessage(err);
+      setError(friendlyMessage);
       setResult(err);
+      
+      // Set error type based on error flags
+      if (err.isNotImplemented) {
+        setErrorType('not-implemented');
+      } else if (err.isFaceDetectionError) {
+        setErrorType('face-detection');
+      } else if (err.isNoEncodingsError) {
+        setErrorType('no-encodings');
+      } else if (err.status === 401 || err.status === 403) {
+        setErrorType('permission');
+      } else {
+        setErrorType('recognition');
+      }
     } finally {
       setLoading(false);
     }
@@ -403,6 +448,7 @@ const FaceCheckInPage = () => {
     setCapturedImage(null);
     setResult(null);
     setError('');
+    setErrorType(null);
     setCameraStatus('idle');
     setFormData(prev => ({
       ...prev,
@@ -439,6 +485,7 @@ const FaceCheckInPage = () => {
     } catch (error) {
       console.error('Error fetching programs:', error);
       setError('Failed to load programs');
+      setErrorType('system');
     }
   };
 
@@ -474,6 +521,161 @@ const FaceCheckInPage = () => {
       <span className={`inline-flex items-center rounded-full font-medium ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}>
         {children}
       </span>
+    );
+  };
+
+  // Error Alert Component with different variants
+  const ErrorAlert = ({ type, message, onDismiss }) => {
+    const configs = {
+      'camera': {
+        icon: ExclamationTriangleIcon,
+        bgColor: 'bg-red-50',
+        borderColor: 'border-red-200',
+        iconColor: 'text-red-400',
+        titleColor: 'text-red-800',
+        textColor: 'text-red-700',
+        title: 'Camera Error',
+        tips: [
+          'Refresh the page and try again',
+          'Check browser permissions (click lock icon in address bar)',
+          'Try using Chrome or Firefox if on a different browser',
+          'Make sure no other application is using the camera',
+          'For laptop users: check if your laptop has a physical camera switch'
+        ]
+      },
+      'not-implemented': {
+        icon: InformationCircleIcon,
+        bgColor: 'bg-yellow-50',
+        borderColor: 'border-yellow-200',
+        iconColor: 'text-yellow-400',
+        titleColor: 'text-yellow-800',
+        textColor: 'text-yellow-700',
+        title: 'Feature Not Available',
+        tips: [
+          'Face recognition is currently being set up',
+          'Please use the Bulk Check-in feature for now',
+          'Contact your administrator for more information'
+        ]
+      },
+      'face-detection': {
+        icon: ExclamationCircleIcon,
+        bgColor: 'bg-orange-50',
+        borderColor: 'border-orange-200',
+        iconColor: 'text-orange-400',
+        titleColor: 'text-orange-800',
+        textColor: 'text-orange-700',
+        title: 'Face Detection Issue',
+        tips: [
+          'Ensure your face is clearly visible and well-lit',
+          'Face the camera directly',
+          'Remove sunglasses, hats, or masks',
+          'Only one person should be in the frame',
+          'Try improving the lighting in your room'
+        ]
+      },
+      'no-encodings': {
+        icon: InformationCircleIcon,
+        bgColor: 'bg-blue-50',
+        borderColor: 'border-blue-200',
+        iconColor: 'text-blue-400',
+        titleColor: 'text-blue-800',
+        textColor: 'text-blue-700',
+        title: 'No Participants Registered',
+        tips: [
+          'Participants need to be registered with photos first',
+          'Go to Participants → Select participant → Upload Photo',
+          'Ensure "Enable Face Recognition" is checked',
+          'Photo consent must be given for each participant'
+        ]
+      },
+      'recognition': {
+        icon: XCircleIcon,
+        bgColor: 'bg-red-50',
+        borderColor: 'border-red-200',
+        iconColor: 'text-red-400',
+        titleColor: 'text-red-800',
+        textColor: 'text-red-700',
+        title: 'Recognition Failed',
+        tips: [
+          'Ensure the participant has a registered photo',
+          'Try taking another photo with better lighting',
+          'Make sure the face is clearly visible',
+          'The participant may need to re-register their photo'
+        ]
+      },
+      'validation': {
+        icon: ExclamationCircleIcon,
+        bgColor: 'bg-yellow-50',
+        borderColor: 'border-yellow-200',
+        iconColor: 'text-yellow-400',
+        titleColor: 'text-yellow-800',
+        textColor: 'text-yellow-700',
+        title: 'Validation Error',
+        tips: []
+      },
+      'permission': {
+        icon: ExclamationTriangleIcon,
+        bgColor: 'bg-red-50',
+        borderColor: 'border-red-200',
+        iconColor: 'text-red-400',
+        titleColor: 'text-red-800',
+        textColor: 'text-red-700',
+        title: 'Permission Error',
+        tips: [
+          'Please log in if you have been logged out',
+          'Contact your administrator if the issue persists'
+        ]
+      },
+      'system': {
+        icon: ExclamationTriangleIcon,
+        bgColor: 'bg-gray-50',
+        borderColor: 'border-gray-200',
+        iconColor: 'text-gray-400',
+        titleColor: 'text-gray-800',
+        textColor: 'text-gray-700',
+        title: 'System Error',
+        tips: [
+          'Please try again in a few moments',
+          'Contact support if the issue persists'
+        ]
+      }
+    };
+    
+    const config = configs[type] || configs['system'];
+    const Icon = config.icon;
+    
+    return (
+      <div className={`p-4 ${config.bgColor} border ${config.borderColor} rounded-md`}>
+        <div className="flex">
+          <Icon className={`h-5 w-5 ${config.iconColor} mr-3 flex-shrink-0`} />
+          <div className="flex-1">
+            <p className={`text-sm font-medium ${config.titleColor}`}>{config.title}</p>
+            <p className={`text-sm ${config.textColor} mt-1`}>{message}</p>
+            
+            {config.tips.length > 0 && (
+              <details className="mt-3">
+                <summary className={`cursor-pointer text-xs font-medium ${config.titleColor} hover:opacity-80`}>
+                  {type === 'not-implemented' ? 'What to do instead' : type === 'no-encodings' ? 'How to set up' : 'Troubleshooting Steps'}
+                </summary>
+                <ul className={`mt-2 pl-5 space-y-1 text-xs ${config.textColor} list-disc`}>
+                  {config.tips.map((tip, idx) => (
+                    <li key={idx}>{tip}</li>
+                  ))}
+                </ul>
+              </details>
+            )}
+            
+            {onDismiss && (
+              <button
+                onClick={onDismiss}
+                className={`mt-2 text-xs font-medium ${config.titleColor} hover:opacity-80`}
+              >
+                Dismiss
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
     );
   };
 
@@ -543,6 +745,7 @@ const FaceCheckInPage = () => {
                     src={URL.createObjectURL(capturedImage)}
                     alt="Captured"
                     className="w-full h-full object-cover"
+                    style={{ transform: 'scaleX(-1)' }} // Also mirror captured image
                   />
                 )}
                 
@@ -590,17 +793,22 @@ const FaceCheckInPage = () => {
                       <CheckCircleIcon className="h-16 w-16 mx-auto mb-4" />
                       <p className="text-2xl font-bold mb-2">Check-in Successful!</p>
                       <p className="text-lg">{result.participant_id}</p>
-                      <p className="text-sm mt-2">Confidence: {(result.confidence * 100).toFixed(1)}%</p>
+                      <p className="text-sm mt-2">Confidence: {result.confidence?.toFixed(1)}%</p>
                     </div>
                   </div>
                 )}
 
-                {result && !result.identified && (
+                {result && !result.identified && errorType !== 'not-implemented' && (
                   <div className="absolute inset-0 bg-red-600 bg-opacity-90 flex items-center justify-center">
-                    <div className="text-center text-white">
+                    <div className="text-center text-white px-4">
                       <XCircleIcon className="h-16 w-16 mx-auto mb-4" />
                       <p className="text-2xl font-bold mb-2">Not Identified</p>
-                      <p className="text-sm">{result.message}</p>
+                      <p className="text-sm">{result.message || 'Could not identify participant'}</p>
+                      {result.confidence > 0 && (
+                        <p className="text-xs mt-2 opacity-90">
+                          Closest match: {result.confidence?.toFixed(1)}% confidence
+                        </p>
+                      )}
                     </div>
                   </div>
                 )}
@@ -609,31 +817,13 @@ const FaceCheckInPage = () => {
               {/* Hidden canvas for capture */}
               <canvas ref={canvasRef} style={{ display: 'none' }} />
 
-              {/* Error Message Display */}
-              {error && (
-                <div className="p-4 bg-red-50 border border-red-200 rounded-md">
-                  <div className="flex">
-                    <ExclamationTriangleIcon className="h-5 w-5 text-red-400 mr-3 flex-shrink-0" />
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-red-800">Camera Error</p>
-                      <p className="text-sm text-red-700 mt-1">{error}</p>
-                      
-                      {/* Troubleshooting Steps */}
-                      <details className="mt-3">
-                        <summary className="cursor-pointer text-xs font-medium text-red-600 hover:text-red-800">
-                          Troubleshooting Steps
-                        </summary>
-                        <ul className="mt-2 pl-5 space-y-1 text-xs text-red-600 list-disc">
-                          <li>Refresh the page and try again</li>
-                          <li>Check browser permissions (click lock icon in address bar)</li>
-                          <li>Try using Chrome or Firefox if on a different browser</li>
-                          <li>Make sure no other application is using the camera</li>
-                          <li>For laptop users: check if your laptop has a physical camera switch</li>
-                        </ul>
-                      </details>
-                    </div>
-                  </div>
-                </div>
+              {/* Error Message Display - Enhanced with different types */}
+              {error && errorType && (
+                <ErrorAlert 
+                  type={errorType} 
+                  message={error}
+                  onDismiss={errorType === 'validation' ? () => { setError(''); setErrorType(null); } : null}
+                />
               )}
 
               {/* Camera Controls */}
@@ -668,22 +858,6 @@ const FaceCheckInPage = () => {
                 {capturedImage && !result && (
                   <Button onClick={retakePhoto} variant="outline" className="flex-1">
                     Retake Photo
-                  </Button>
-                )}
-                
-                {/* Debug button - remove in production */}
-                {process.env.NODE_ENV === 'development' && cameraActive && (
-                  <Button 
-                    onClick={() => {
-                      console.log('Video element:', videoRef.current);
-                      console.log('Video srcObject:', videoRef.current?.srcObject);
-                      console.log('Video readyState:', videoRef.current?.readyState);
-                      console.log('Video dimensions:', videoRef.current?.videoWidth, 'x', videoRef.current?.videoHeight);
-                    }}
-                    variant="outline" 
-                    size="sm"
-                  >
-                    Debug
                   </Button>
                 )}
               </div>
@@ -772,12 +946,15 @@ const FaceCheckInPage = () => {
                 <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-md">
                   <p className="text-sm font-medium text-yellow-800 mb-2">Top matches:</p>
                   <ul className="text-sm text-yellow-700 space-y-1">
-                    {result.top_matches.map((match, idx) => (
+                    {result.top_matches.slice(0, 3).map((match, idx) => (
                       <li key={idx}>
-                        {match.participant_id} - {(match.confidence * 100).toFixed(1)}% confidence
+                        {match.participant_id} - {match.confidence?.toFixed(1)}% confidence
                       </li>
                     ))}
                   </ul>
+                  <p className="text-xs text-yellow-600 mt-2">
+                    None of these matches meet the confidence threshold (60%)
+                  </p>
                 </div>
               )}
 

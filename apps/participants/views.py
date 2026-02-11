@@ -28,8 +28,8 @@ class ParticipantViewSet(viewsets.ModelViewSet):
     serializer_class = ParticipantSerializer
     permission_classes = [IsAuthenticated, CanEditData, IsDonorReadOnly]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend]
-    search_fields = ['participant_id']
-    ordering_fields = ['enrollment_date', 'age', 'created_at']
+    search_fields = ['participant_id', 'first_name', 'last_name']  # Added name fields
+    ordering_fields = ['enrollment_date', 'age', 'created_at', 'first_name', 'last_name']  # Added name fields
     filterset_fields = ['gender', 'is_active', 'education_level']
     
     def get_serializer_class(self):
@@ -54,6 +54,21 @@ class ParticipantViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(age__gte=age_min)
         if age_max:
             queryset = queryset.filter(age__lte=age_max)
+        
+        # Filter by name (case-insensitive partial match)
+        first_name = self.request.query_params.get('first_name')
+        last_name = self.request.query_params.get('last_name')
+        full_name = self.request.query_params.get('full_name')
+        
+        if first_name:
+            queryset = queryset.filter(first_name__icontains=first_name)
+        if last_name:
+            queryset = queryset.filter(last_name__icontains=last_name)
+        if full_name:
+            # Search for full name in either first or last name
+            queryset = queryset.filter(
+                Q(first_name__icontains=full_name) | Q(last_name__icontains=full_name)
+            )
         
         return queryset
     
@@ -91,6 +106,9 @@ class ParticipantViewSet(viewsets.ModelViewSet):
         
         progress_data = {
             'participant_id': participant.participant_id,
+            'full_name': participant.full_name,
+            'first_name': participant.first_name,
+            'last_name': participant.last_name,
             'age': participant.age,
             'gender': participant.get_gender_display(),
             'enrollments': EnrollmentListSerializer(enrollments, many=True).data,
@@ -282,6 +300,7 @@ class ParticipantViewSet(viewsets.ModelViewSet):
         
         status_info = {
             'participant_id': participant.participant_id,
+            'full_name': participant.full_name,
             'has_photo': bool(participant.photo),
             'has_encoding': bool(participant.face_encoding),
             'photo_consent_given': participant.photo_consent_given,
@@ -314,7 +333,7 @@ class EnrollmentViewSet(viewsets.ModelViewSet):
     serializer_class = EnrollmentSerializer
     permission_classes = [IsAuthenticated, CanEditData, IsDonorReadOnly]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend]
-    search_fields = ['participant__participant_id', 'program__name']
+    search_fields = ['participant__participant_id', 'participant__first_name', 'participant__last_name', 'program__name']  # Added name fields
     ordering_fields = ['enrollment_date', 'completion_date', 'attendance_rate']
     filterset_fields = ['status', 'participant', 'program']
     
@@ -428,7 +447,7 @@ class ParticipantNoteViewSet(viewsets.ModelViewSet):
     serializer_class = ParticipantNoteSerializer
     permission_classes = [IsAuthenticated, CanEditData, IsDonorReadOnly]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend]
-    search_fields = ['content', 'participant__participant_id']
+    search_fields = ['content', 'participant__participant_id', 'participant__first_name', 'participant__last_name']  # Added name fields
     ordering_fields = ['note_date', 'created_at']
     filterset_fields = ['participant', 'note_type', 'is_confidential']
     

@@ -38,6 +38,9 @@ import AttendanceListPage from './pages/dashboard/attendance/AttendanceListPage'
 import FaceCheckInPage from './pages/dashboard/attendance/FaceCheckInPage';
 import BulkAttendancePage from './pages/dashboard/attendance/BulkAttendancePage';
 import SessionsListPage from './pages/dashboard/attendance/SessionsListPage';
+import AttendanceDetailPage from './pages/dashboard/attendance/AttendanceDetailPage';
+import AttendanceEditPage from './pages/dashboard/attendance/AttendanceEditPage';
+
 
 // Milestones
 import MilestonesListPage from './pages/dashboard/milestones/MilestonesListPage';
@@ -288,6 +291,26 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff']}>
               <AttendanceListPage />
+            </ProtectedRoute>
+          } 
+        />
+
+        {/* Detail page - All authenticated users can view */}
+        <Route 
+          path="/dashboard/attendance/:id" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff', 'donor']}>
+              <AttendanceDetailPage />
+            </ProtectedRoute>
+          } 
+        />
+        
+        {/* Edit page - Only staff/teachers/managers can edit (donors excluded) */}
+        <Route 
+          path="/dashboard/attendance/:id/edit" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff']}>
+              <AttendanceEditPage />
             </ProtectedRoute>
           } 
         />

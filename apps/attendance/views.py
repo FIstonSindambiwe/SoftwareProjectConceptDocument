@@ -13,8 +13,7 @@ from .serializers import (
 )
 from users.permissions import CanEditData, IsDonorReadOnly
 from participants.models import Participant
-from .face_recognition_service import FaceRecognitionService
-        
+
 
 class AttendanceRecordViewSet(viewsets.ModelViewSet):
     """

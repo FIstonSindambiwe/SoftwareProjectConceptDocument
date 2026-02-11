@@ -1,377 +1,477 @@
 # apps/attendance/face_recognition_service.py
 """
-Face Recognition Service for Attendance
-Uses face_recognition library for detecting and matching faces
+Face Recognition Service for Attendance System
+
+This service handles:
+- Face encoding generation from photos
+- Face verification (1:1 matching)
+- Face identification (1:N matching)
+- Photo quality assessment
+
+Uses the face_recognition library built on dlib
 """
-import face_recognition
-import numpy as np
-from PIL import Image
-from io import BytesIO
-from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.utils import timezone
-from django.conf import settings
+
 import logging
+from typing import Dict, List, Optional, Tuple, Any, Union
+from django.core.files.uploadedfile import UploadedFile
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
+
+# Check if face_recognition is available
+try:
+    import face_recognition
+    import numpy as np
+    from PIL import Image
+    import io
+    FACE_RECOGNITION_AVAILABLE = True
+except ImportError:
+    FACE_RECOGNITION_AVAILABLE = False
+    logger.warning("face_recognition library not installed. Face recognition features will be disabled.")
 
 
 class FaceRecognitionService:
     """
-    Service class for face recognition operations
+    Service for handling face recognition operations
     """
     
-    # Recognition threshold (lower = stricter matching)
-    RECOGNITION_THRESHOLD = getattr(settings, 'FACE_RECOGNITION_THRESHOLD', 0.6)
-    
-    # Maximum face size for processing (to prevent memory issues)
-    MAX_IMAGE_SIZE = (1024, 1024)
+    # Configuration
+    RECOGNITION_THRESHOLD = 0.6  # Lower = more strict (0.6 is recommended)
+    QUALITY_THRESHOLD = 0.5  # Minimum quality score for usable photos
+    MAX_FACE_DISTANCE = 0.6  # Maximum distance for positive match
     
     @staticmethod
-    def extract_face_encoding(image_file):
+    def is_available() -> bool:
+        """Check if face recognition is available"""
+        return FACE_RECOGNITION_AVAILABLE
+    
+    @staticmethod
+    def _load_image_file(image_source: Union[str, UploadedFile]) -> Optional[np.ndarray]:
         """
-        Extract face encoding from an image file
+        Load image from file path or uploaded file
         
         Args:
-            image_file: Django UploadedFile or file path
+            image_source: File path (str) or UploadedFile object
             
         Returns:
-            dict: {
-                'encoding': list of floats (128-dimensional),
-                'face_locations': list of face locations found,
-                'success': bool,
-                'error': str or None
-            }
+            numpy array of image or None if error
         """
+        if not FACE_RECOGNITION_AVAILABLE:
+            return None
+            
+        try:
+            if isinstance(image_source, str):
+                # File path
+                return face_recognition.load_image_file(image_source)
+            else:
+                # UploadedFile object
+                image = Image.open(image_source)
+                # Convert to RGB if needed
+                if image.mode != 'RGB':
+                    image = image.convert('RGB')
+                return np.array(image)
+        except Exception as e:
+            logger.error(f"Error loading image: {str(e)}")
+            return None
+    
+    @staticmethod
+    def generate_face_encoding(image_source: Union[str, UploadedFile]) -> Dict[str, Any]:
+        """
+        Generate face encoding from an image
+        
+        Args:
+            image_source: File path (str) or UploadedFile object
+            
+        Returns:
+            dict with 'success', 'encoding', 'error' keys
+        """
+        if not FACE_RECOGNITION_AVAILABLE:
+            return {
+                'success': False,
+                'encoding': None,
+                'error': 'Face recognition not yet implemented. Please install face_recognition package: pip install face-recognition'
+            }
+        
         try:
             # Load image
-            if isinstance(image_file, (InMemoryUploadedFile, str)):
-                if isinstance(image_file, str):
-                    image = face_recognition.load_image_file(image_file)
-                else:
-                    # Read uploaded file
-                    image_data = image_file.read()
-                    image = face_recognition.load_image_file(BytesIO(image_data))
-                    image_file.seek(0)  # Reset file pointer
-            else:
+            image = FaceRecognitionService._load_image_file(image_source)
+            if image is None:
                 return {
-                    'encoding': None,
-                    'face_locations': [],
                     'success': False,
-                    'error': 'Invalid image file format'
+                    'encoding': None,
+                    'error': 'Could not load image file'
                 }
             
-            # Resize if too large
-            pil_image = Image.fromarray(image)
-            if pil_image.size[0] > FaceRecognitionService.MAX_IMAGE_SIZE[0] or \
-               pil_image.size[1] > FaceRecognitionService.MAX_IMAGE_SIZE[1]:
-                pil_image.thumbnail(FaceRecognitionService.MAX_IMAGE_SIZE, Image.Resampling.LANCZOS)
-                image = np.array(pil_image)
-            
-            # Detect faces
+            # Find faces in image
             face_locations = face_recognition.face_locations(image)
             
             if len(face_locations) == 0:
                 return {
-                    'encoding': None,
-                    'face_locations': [],
                     'success': False,
-                    'error': 'No face detected in image'
+                    'encoding': None,
+                    'error': 'No face detected in image. Please ensure face is clearly visible.'
                 }
             
             if len(face_locations) > 1:
-                logger.warning(f"Multiple faces detected ({len(face_locations)}), using the first one")
+                return {
+                    'success': False,
+                    'encoding': None,
+                    'error': f'Multiple faces detected ({len(face_locations)}). Please provide image with single face.'
+                }
             
-            # Extract encoding for the first face
+            # Generate encoding
             face_encodings = face_recognition.face_encodings(image, face_locations)
             
             if len(face_encodings) == 0:
                 return {
-                    'encoding': None,
-                    'face_locations': face_locations,
                     'success': False,
-                    'error': 'Failed to encode face'
+                    'encoding': None,
+                    'error': 'Could not generate face encoding. Face may be too blurry or poorly lit.'
                 }
             
             # Convert numpy array to list for JSON storage
-            encoding = face_encodings[0].tolist()
+            encoding_list = face_encodings[0].tolist()
             
             return {
-                'encoding': encoding,
-                'face_locations': face_locations,
                 'success': True,
+                'encoding': encoding_list,
                 'error': None
             }
             
         except Exception as e:
-            logger.error(f"Error extracting face encoding: {str(e)}")
+            logger.error(f"Error generating face encoding: {str(e)}")
             return {
-                'encoding': None,
-                'face_locations': [],
                 'success': False,
-                'error': str(e)
+                'encoding': None,
+                'error': f'Error processing image: {str(e)}'
             }
     
     @staticmethod
-    def compare_faces(known_encoding, unknown_image, tolerance=None):
+    def verify_participant_face(participant: Any, image_source: Union[str, UploadedFile]) -> Dict[str, Any]:
         """
-        Compare a known face encoding with a new image
-        
-        Args:
-            known_encoding: List of floats (stored encoding)
-            unknown_image: Image file to check
-            tolerance: Recognition threshold (default: RECOGNITION_THRESHOLD)
-            
-        Returns:
-            dict: {
-                'match': bool,
-                'confidence': float (0-1, higher = more confident),
-                'distance': float (0-1, lower = better match),
-                'face_found': bool,
-                'error': str or None
-            }
-        """
-        if tolerance is None:
-            tolerance = FaceRecognitionService.RECOGNITION_THRESHOLD
-        
-        try:
-            # Extract encoding from unknown image
-            result = FaceRecognitionService.extract_face_encoding(unknown_image)
-            
-            if not result['success']:
-                return {
-                    'match': False,
-                    'confidence': 0.0,
-                    'distance': 1.0,
-                    'face_found': False,
-                    'error': result['error']
-                }
-            
-            unknown_encoding = result['encoding']
-            
-            # Convert known encoding to numpy array
-            known_encoding_np = np.array(known_encoding)
-            unknown_encoding_np = np.array(unknown_encoding)
-            
-            # Calculate face distance
-            face_distance = face_recognition.face_distance([known_encoding_np], unknown_encoding_np)[0]
-            
-            # Check if faces match
-            matches = face_recognition.compare_faces(
-                [known_encoding_np], 
-                unknown_encoding_np, 
-                tolerance=tolerance
-            )
-            
-            is_match = matches[0]
-            
-            # Calculate confidence (inverse of distance, normalized)
-            confidence = max(0.0, 1.0 - face_distance)
-            
-            return {
-                'match': is_match,
-                'confidence': round(float(confidence), 4),
-                'distance': round(float(face_distance), 4),
-                'face_found': True,
-                'error': None
-            }
-            
-        except Exception as e:
-            logger.error(f"Error comparing faces: {str(e)}")
-            return {
-                'match': False,
-                'confidence': 0.0,
-                'distance': 1.0,
-                'face_found': False,
-                'error': str(e)
-            }
-    
-    @staticmethod
-    def verify_attendance(participant, attendance_image):
-        """
-        Verify participant identity for attendance using face recognition
+        Verify if image matches participant's stored face encoding (1:1 verification)
         
         Args:
             participant: Participant model instance
-            attendance_image: Uploaded image file
+            image_source: File path or UploadedFile
             
         Returns:
-            dict: {
-                'verified': bool,
-                'confidence': float,
-                'participant_id': str,
-                'participant_name': str (if available),
-                'error': str or None,
-                'timestamp': datetime
-            }
+            dict with 'verified', 'confidence', 'error' keys
         """
+        if not FACE_RECOGNITION_AVAILABLE:
+            return {
+                'verified': False,
+                'confidence': 0.0,
+                'error': 'Face recognition not yet implemented. Please install face_recognition package.'
+            }
+        
         # Check if participant has face encoding
         if not participant.face_encoding:
             return {
                 'verified': False,
                 'confidence': 0.0,
-                'participant_id': participant.participant_id,
-                'error': 'No face encoding on file for this participant',
-                'timestamp': timezone.now()
+                'error': f'Participant {participant.participant_id} has no face encoding on file'
             }
         
-        # Check if consent was given
         if not participant.photo_consent_given:
             return {
                 'verified': False,
                 'confidence': 0.0,
-                'participant_id': participant.participant_id,
-                'error': 'Photo consent not given for this participant',
-                'timestamp': timezone.now()
+                'error': 'Photo consent not given for this participant'
             }
         
-        # Compare faces
-        result = FaceRecognitionService.compare_faces(
-            participant.face_encoding,
-            attendance_image
-        )
-        
-        return {
-            'verified': result['match'],
-            'confidence': result['confidence'],
-            'participant_id': participant.participant_id,
-            'distance': result.get('distance', 1.0),
-            'error': result.get('error'),
-            'timestamp': timezone.now()
-        }
-    
-    @staticmethod
-    def identify_participant_from_image(image_file, program=None):
-        """
-        Identify which participant matches the uploaded image
-        Searches through all participants (or program participants)
-        
-        Args:
-            image_file: Uploaded image file
-            program: Optional Program instance to limit search
+        try:
+            # Generate encoding from provided image
+            encoding_result = FaceRecognitionService.generate_face_encoding(image_source)
             
-        Returns:
-            dict: {
-                'identified': bool,
-                'participant': Participant instance or None,
-                'confidence': float,
-                'matches': list of potential matches with confidence scores,
-                'error': str or None
-            }
-        """
-        from participants.models import Participant
-        
-        # Extract encoding from uploaded image
-        encoding_result = FaceRecognitionService.extract_face_encoding(image_file)
-        
-        if not encoding_result['success']:
-            return {
-                'identified': False,
-                'participant': None,
-                'confidence': 0.0,
-                'matches': [],
-                'error': encoding_result['error']
-            }
-        
-        unknown_encoding = np.array(encoding_result['encoding'])
-        
-        # Get participants to search
-        if program:
-            # Search only enrolled participants in this program
-            participant_ids = program.enrollments.filter(
-                status__in=['enrolled', 'active']
-            ).values_list('participant_id', flat=True)
-            participants = Participant.objects.filter(
-                id__in=participant_ids,
-                face_encoding__isnull=False,
-                photo_consent_given=True
-            )
-        else:
-            # Search all active participants with face encodings
-            participants = Participant.objects.filter(
-                is_active=True,
-                face_encoding__isnull=False,
-                photo_consent_given=True
-            )
-        
-        if participants.count() == 0:
-            return {
-                'identified': False,
-                'participant': None,
-                'confidence': 0.0,
-                'matches': [],
-                'error': 'No participants with face encodings found'
-            }
-        
-        # Compare with all participants
-        matches = []
-        
-        for participant in participants:
-            known_encoding = np.array(participant.face_encoding)
+            if not encoding_result['success']:
+                return {
+                    'verified': False,
+                    'confidence': 0.0,
+                    'error': encoding_result['error']
+                }
             
-            # Calculate distance
-            distance = face_recognition.face_distance([known_encoding], unknown_encoding)[0]
-            confidence = max(0.0, 1.0 - distance)
+            # Compare encodings
+            stored_encoding = np.array(participant.face_encoding)
+            new_encoding = np.array(encoding_result['encoding'])
             
-            matches.append({
-                'participant': participant,
-                'participant_id': participant.participant_id,
-                'confidence': round(float(confidence), 4),
-                'distance': round(float(distance), 4)
-            })
-        
-        # Sort by confidence (highest first)
-        matches.sort(key=lambda x: x['confidence'], reverse=True)
-        
-        # Get best match
-        best_match = matches[0] if matches else None
-        
-        # Check if best match exceeds threshold
-        if best_match and best_match['distance'] < FaceRecognitionService.RECOGNITION_THRESHOLD:
+            # Calculate face distance (lower = more similar)
+            face_distance = face_recognition.face_distance([stored_encoding], new_encoding)[0]
+            
+            # Convert distance to confidence score (0-100)
+            confidence = max(0, min(100, (1 - face_distance) * 100))
+            
+            # Verify if match
+            verified = face_distance <= FaceRecognitionService.RECOGNITION_THRESHOLD
+            
             return {
-                'identified': True,
-                'participant': best_match['participant'],
-                'confidence': best_match['confidence'],
-                'matches': matches[:5],  # Top 5 matches
+                'verified': verified,
+                'confidence': round(confidence, 2),
                 'error': None
             }
-        else:
+            
+        except Exception as e:
+            logger.error(f"Error verifying face: {str(e)}")
             return {
-                'identified': False,
-                'participant': None,
-                'confidence': best_match['confidence'] if best_match else 0.0,
-                'matches': matches[:5],  # Show top matches even if below threshold
-                'error': 'No confident match found'
+                'verified': False,
+                'confidence': 0.0,
+                'error': f'Error during verification: {str(e)}'
             }
     
     @staticmethod
-    def update_participant_encoding(participant, new_photo):
+    def identify_participant_from_image(image_source: Union[str, UploadedFile], program: Optional[Any] = None) -> Dict[str, Any]:
+        """
+        Identify participant from image by comparing against all stored encodings (1:N identification)
+        
+        Args:
+            image_source: File path or UploadedFile
+            program: Optional Program instance to limit search to enrolled participants
+            
+        Returns:
+            dict with 'identified', 'participant', 'confidence', 'error', 'matches' keys
+        """
+        if not FACE_RECOGNITION_AVAILABLE:
+            return {
+                'identified': False,
+                'participant': None,
+                'confidence': 0.0,
+                'error': 'Face recognition not yet implemented. Please install face_recognition package: pip install face-recognition',
+                'matches': []
+            }
+        
+        try:
+            from participants.models import Participant
+            
+            # Generate encoding from provided image
+            encoding_result = FaceRecognitionService.generate_face_encoding(image_source)
+            
+            if not encoding_result['success']:
+                return {
+                    'identified': False,
+                    'participant': None,
+                    'confidence': 0.0,
+                    'error': encoding_result['error'],
+                    'matches': []
+                }
+            
+            new_encoding = np.array(encoding_result['encoding'])
+            
+            # Get participants with face encodings and consent
+            participants_query = Participant.objects.filter(
+                face_encoding__isnull=False,
+                photo_consent_given=True,
+                is_active=True
+            )
+            
+            # Filter by program if specified
+            if program:
+                participants_query = participants_query.filter(
+                    enrollments__program=program,
+                    enrollments__status__in=['enrolled', 'active']
+                ).distinct()
+            
+            participants = list(participants_query)
+            
+            if not participants:
+                return {
+                    'identified': False,
+                    'participant': None,
+                    'confidence': 0.0,
+                    'error': 'No participants with face encodings found' + (f' for program {program.name}' if program else ''),
+                    'matches': []
+                }
+            
+            # Compare against all participants
+            matches: List[Dict[str, Any]] = []
+            
+            for participant in participants:
+                try:
+                    stored_encoding = np.array(participant.face_encoding)
+                    face_distance = face_recognition.face_distance([stored_encoding], new_encoding)[0]
+                    confidence = max(0, min(100, (1 - face_distance) * 100))
+                    
+                    matches.append({
+                        'participant': participant,
+                        'participant_id': participant.participant_id,
+                        'distance': float(face_distance),
+                        'confidence': round(confidence, 2)
+                    })
+                except Exception as e:
+                    logger.warning(f"Error comparing with participant {participant.participant_id}: {str(e)}")
+                    continue
+            
+            # Sort by confidence (highest first)
+            matches.sort(key=lambda x: x['confidence'], reverse=True)
+            
+            # Check if best match is above threshold
+            if matches and matches[0]['distance'] <= FaceRecognitionService.RECOGNITION_THRESHOLD:
+                best_match = matches[0]
+                return {
+                    'identified': True,
+                    'participant': best_match['participant'],
+                    'confidence': best_match['confidence'],
+                    'error': None,
+                    'matches': matches[:5]  # Return top 5 matches
+                }
+            else:
+                return {
+                    'identified': False,
+                    'participant': None,
+                    'confidence': matches[0]['confidence'] if matches else 0.0,
+                    'error': None,
+                    'matches': matches[:5]  # Return top 5 matches for review
+                }
+            
+        except Exception as e:
+            logger.error(f"Error identifying participant: {str(e)}")
+            return {
+                'identified': False,
+                'participant': None,
+                'confidence': 0.0,
+                'error': f'Error during identification: {str(e)}',
+                'matches': []
+            }
+    
+    @staticmethod
+    def get_face_quality_score(image_source: Union[str, UploadedFile]) -> Dict[str, Any]:
+        """
+        Assess photo quality for face recognition
+        
+        Args:
+            image_source: File path or UploadedFile
+            
+        Returns:
+            dict with 'quality_score', 'suitable', 'face_found', 'recommendations' keys
+        """
+        if not FACE_RECOGNITION_AVAILABLE:
+            return {
+                'quality_score': 0.0,
+                'suitable': False,
+                'face_found': False,
+                'recommendations': ['Install face_recognition package to enable quality assessment']
+            }
+        
+        try:
+            # Load image
+            image = FaceRecognitionService._load_image_file(image_source)
+            if image is None:
+                return {
+                    'quality_score': 0.0,
+                    'suitable': False,
+                    'face_found': False,
+                    'recommendations': ['Could not load image file']
+                }
+            
+            recommendations: List[str] = []
+            quality_score = 100.0
+            
+            # Check image size
+            height, width = image.shape[:2]
+            if width < 200 or height < 200:
+                quality_score -= 30
+                recommendations.append('Image resolution too low (minimum 200x200 pixels)')
+            
+            # Find faces
+            face_locations = face_recognition.face_locations(image)
+            
+            if len(face_locations) == 0:
+                return {
+                    'quality_score': 0.0,
+                    'suitable': False,
+                    'face_found': False,
+                    'recommendations': ['No face detected - ensure face is clearly visible and well-lit']
+                }
+            
+            if len(face_locations) > 1:
+                quality_score -= 40
+                recommendations.append(f'Multiple faces detected ({len(face_locations)}) - only one face should be visible')
+            
+            # Analyze face location and size
+            face_location = face_locations[0]
+            top, right, bottom, left = face_location
+            face_width = right - left
+            face_height = bottom - top
+            
+            # Face should be at least 20% of image
+            face_area_ratio = (face_width * face_height) / (width * height)
+            if face_area_ratio < 0.2:
+                quality_score -= 20
+                recommendations.append('Face too small - move closer to camera')
+            elif face_area_ratio > 0.8:
+                quality_score -= 15
+                recommendations.append('Face too close - move back from camera')
+            
+            # Check if face is centered
+            face_center_x = (left + right) / 2
+            face_center_y = (top + bottom) / 2
+            image_center_x = width / 2
+            image_center_y = height / 2
+            
+            x_offset = abs(face_center_x - image_center_x) / width
+            y_offset = abs(face_center_y - image_center_y) / height
+            
+            if x_offset > 0.3 or y_offset > 0.3:
+                quality_score -= 10
+                recommendations.append('Face not centered - position face in center of frame')
+            
+            # Try to generate encoding (checks if face is clear enough)
+            face_encodings = face_recognition.face_encodings(image, face_locations)
+            if len(face_encodings) == 0:
+                quality_score -= 30
+                recommendations.append('Face too blurry or poorly lit - improve lighting and focus')
+            
+            # Overall assessment
+            suitable = quality_score >= (FaceRecognitionService.QUALITY_THRESHOLD * 100)
+            
+            if not recommendations:
+                recommendations.append('Photo quality is good')
+            
+            return {
+                'quality_score': round(quality_score, 2),
+                'suitable': suitable,
+                'face_found': True,
+                'recommendations': recommendations
+            }
+            
+        except Exception as e:
+            logger.error(f"Error assessing photo quality: {str(e)}")
+            return {
+                'quality_score': 0.0,
+                'suitable': False,
+                'face_found': False,
+                'recommendations': [f'Error analyzing photo: {str(e)}']
+            }
+    
+    @staticmethod
+    def update_participant_encoding(participant: Any, image_source: Union[str, UploadedFile]) -> Dict[str, Any]:
         """
         Update participant's face encoding from a new photo
         
         Args:
-            participant: Participant instance
-            new_photo: New photo file
+            participant: Participant model instance
+            image_source: File path or UploadedFile
             
         Returns:
-            dict: {
-                'success': bool,
-                'encoding_updated': bool,
-                'error': str or None
-            }
+            dict with 'success', 'error' keys
         """
-        # Check consent
-        if not participant.photo_consent_given:
+        if not FACE_RECOGNITION_AVAILABLE:
             return {
                 'success': False,
-                'encoding_updated': False,
-                'error': 'Photo consent required before updating face encoding'
+                'error': 'Face recognition not yet implemented. Please install face_recognition package.'
             }
         
-        # Extract encoding
-        result = FaceRecognitionService.extract_face_encoding(new_photo)
+        # Generate encoding
+        encoding_result = FaceRecognitionService.generate_face_encoding(image_source)
         
-        if result['success']:
-            participant.face_encoding = result['encoding']
+        if not encoding_result['success']:
+            return {
+                'success': False,
+                'error': encoding_result['error']
+            }
+        
+        # Update participant
+        try:
+            participant.face_encoding = encoding_result['encoding']
             participant.face_encoding_date = timezone.now()
             participant.save(update_fields=['face_encoding', 'face_encoding_date'])
             
@@ -379,110 +479,120 @@ class FaceRecognitionService:
             
             return {
                 'success': True,
-                'encoding_updated': True,
                 'error': None
-            }
-        else:
-            return {
-                'success': False,
-                'encoding_updated': False,
-                'error': result['error']
-            }
-    
-    @staticmethod
-    def get_face_quality_score(image_file):
-        """
-        Assess the quality of a face photo for recognition
-        
-        Args:
-            image_file: Image file to assess
-            
-        Returns:
-            dict: {
-                'quality_score': float (0-1),
-                'face_found': bool,
-                'face_size': tuple (width, height) or None,
-                'recommendations': list of str,
-                'suitable': bool
-            }
-        """
-        try:
-            # Load image
-            if isinstance(image_file, str):
-                image = face_recognition.load_image_file(image_file)
-            else:
-                image_data = image_file.read()
-                image = face_recognition.load_image_file(BytesIO(image_data))
-                image_file.seek(0)
-            
-            # Detect faces
-            face_locations = face_recognition.face_locations(image)
-            
-            if len(face_locations) == 0:
-                return {
-                    'quality_score': 0.0,
-                    'face_found': False,
-                    'face_size': None,
-                    'recommendations': ['No face detected. Ensure face is clearly visible.'],
-                    'suitable': False
-                }
-            
-            recommendations = []
-            quality_score = 1.0
-            
-            # Check number of faces
-            if len(face_locations) > 1:
-                recommendations.append(f'Multiple faces detected ({len(face_locations)}). Use a photo with only one person.')
-                quality_score -= 0.3
-            
-            # Check face size
-            face_loc = face_locations[0]
-            top, right, bottom, left = face_loc
-            face_width = right - left
-            face_height = bottom - top
-            image_height, image_width = image.shape[:2]
-            
-            face_area = face_width * face_height
-            image_area = image_width * image_height
-            face_ratio = face_area / image_area
-            
-            if face_ratio < 0.1:
-                recommendations.append('Face is too small in the image. Move closer to camera.')
-                quality_score -= 0.4
-            elif face_ratio < 0.2:
-                recommendations.append('Face could be larger in the image.')
-                quality_score -= 0.2
-            
-            # Check if face is too close
-            if face_ratio > 0.8:
-                recommendations.append('Face is too close. Move slightly away from camera.')
-                quality_score -= 0.3
-            
-            # Image quality
-            if image_width < 640 or image_height < 480:
-                recommendations.append('Image resolution is low. Use a better camera if possible.')
-                quality_score -= 0.2
-            
-            # Overall assessment
-            suitable = quality_score >= 0.5 and len(face_locations) == 1
-            
-            if suitable and not recommendations:
-                recommendations.append('Photo quality is good for face recognition.')
-            
-            return {
-                'quality_score': round(max(0.0, quality_score), 2),
-                'face_found': True,
-                'face_size': (face_width, face_height),
-                'face_coverage': round(face_ratio, 2),
-                'recommendations': recommendations,
-                'suitable': suitable
             }
             
         except Exception as e:
+            logger.error(f"Error updating participant encoding: {str(e)}")
             return {
-                'quality_score': 0.0,
-                'face_found': False,
-                'face_size': None,
-                'recommendations': [f'Error processing image: {str(e)}'],
-                'suitable': False
+                'success': False,
+                'error': f'Error saving encoding: {str(e)}'
+            }
+
+    @staticmethod
+    def validate_encoding_format(encoding: Any) -> bool:
+        """
+        Validate that an encoding is in the correct format
+        
+        Args:
+            encoding: Encoding to validate (list or numpy array)
+            
+        Returns:
+            bool: True if encoding format is valid
+        """
+        if encoding is None:
+            return False
+        
+        try:
+            # Convert to numpy array if it's a list
+            if isinstance(encoding, list):
+                encoding_array = np.array(encoding)
+            elif isinstance(encoding, np.ndarray):
+                encoding_array = encoding
+            else:
+                return False
+            
+            # Check shape - should be 1D with 128 values (standard face_recognition encoding)
+            if encoding_array.ndim != 1:
+                return False
+            
+            # Standard face_recognition encoding has 128 values
+            if encoding_array.shape[0] != 128:
+                logger.warning(f"Encoding has unexpected shape: {encoding_array.shape}")
+                # Still return True if it's non-empty, as encoding methods may vary
+                return encoding_array.shape[0] > 0
+            
+            return True
+        except Exception as e:
+            logger.error(f"Error validating encoding format: {str(e)}")
+            return False
+
+    @staticmethod
+    def batch_verify_participants(participants: List[Any], image_source: Union[str, UploadedFile]) -> Dict[str, Any]:
+        """
+        Verify image against multiple participants (bulk operation)
+        
+        Args:
+            participants: List of Participant instances
+            image_source: File path or UploadedFile
+            
+        Returns:
+            dict with 'results', 'best_match', 'error' keys
+        """
+        if not FACE_RECOGNITION_AVAILABLE:
+            return {
+                'results': [],
+                'best_match': None,
+                'error': 'Face recognition not available'
+            }
+        
+        try:
+            # Generate encoding from image
+            encoding_result = FaceRecognitionService.generate_face_encoding(image_source)
+            if not encoding_result['success']:
+                return {
+                    'results': [],
+                    'best_match': None,
+                    'error': encoding_result['error']
+                }
+            
+            new_encoding = np.array(encoding_result['encoding'])
+            results = []
+            
+            for participant in participants:
+                if not participant.face_encoding or not participant.photo_consent_given:
+                    continue
+                
+                try:
+                    stored_encoding = np.array(participant.face_encoding)
+                    face_distance = face_recognition.face_distance([stored_encoding], new_encoding)[0]
+                    confidence = max(0, min(100, (1 - face_distance) * 100))
+                    verified = face_distance <= FaceRecognitionService.RECOGNITION_THRESHOLD
+                    
+                    results.append({
+                        'participant': participant,
+                        'participant_id': participant.participant_id,
+                        'verified': verified,
+                        'distance': float(face_distance),
+                        'confidence': round(confidence, 2)
+                    })
+                except Exception as e:
+                    logger.warning(f"Error verifying participant {participant.participant_id}: {str(e)}")
+                    continue
+            
+            # Sort by confidence
+            results.sort(key=lambda x: x['confidence'], reverse=True)
+            
+            return {
+                'results': results,
+                'best_match': results[0] if results else None,
+                'error': None
+            }
+            
+        except Exception as e:
+            logger.error(f"Error in batch verification: {str(e)}")
+            return {
+                'results': [],
+                'best_match': None,
+                'error': f'Batch verification failed: {str(e)}'
             }

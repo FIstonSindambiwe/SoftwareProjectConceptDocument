@@ -161,7 +161,17 @@ const attendanceService = {
       return response.data;
     } catch (error) {
       console.error('Error verifying attendance with face:', error);
-      throw error.response?.data || error;
+      console.error('Error response:', error.response?.data);
+      
+      // Return structured error response
+      const errorData = error.response?.data || {};
+      throw {
+        verified: false,
+        error: errorData.error || errorData.detail || 'Failed to verify participant',
+        message: errorData.message || 'Face verification failed',
+        confidence: errorData.confidence || 0,
+        status: error.response?.status || 500
+      };
     }
   },
 
@@ -169,36 +179,86 @@ const attendanceService = {
    * Identify participant from photo and record attendance
    * POST /api/v1/attendance/records/identify-and-record/
    * @param {FormData} formData - Contains program, date, session_name, image
+   * @returns {Promise<Object>} - { identified, participant_id?, confidence, attendance?, error?, message?, top_matches? }
    */
   async identifyAndRecordAttendance(formData) {
     try {
       console.log('Identifying participant and recording attendance');
       
-      // The endpoint is /attendance/records/identify-and-record/
-      // Note: Django REST Framework converts action names from snake_case to kebab-case
-      // identify_and_record becomes identify-and-record in the URL
+      // Log FormData contents for debugging
+      console.log('FormData contents:');
+      for (let [key, value] of formData.entries()) {
+        if (value instanceof File) {
+          console.log(`  ${key}: [File: ${value.name}, ${value.size} bytes, ${value.type}]`);
+        } else {
+          console.log(`  ${key}: ${value}`);
+        }
+      }
+      
       const response = await api.post('/attendance/records/identify-and-record/', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
       
-      console.log('Identification result:', response.data);
+      console.log('Identification successful:', response.data);
       return response.data;
+      
     } catch (error) {
       console.error('Error identifying and recording attendance:', error);
       console.error('Error response:', error.response?.data);
+      console.error('Error status:', error.response?.status);
       
-      // Return structured error response
+      // Extract error details from response
       const errorData = error.response?.data || {};
-      throw {
+      const status = error.response?.status || 500;
+      
+      // Build structured error response
+      const errorResponse = {
         identified: false,
         error: errorData.error || errorData.detail || 'Failed to identify participant',
         message: errorData.message || 'Face recognition failed',
         top_matches: errorData.top_matches || [],
         confidence: errorData.confidence || 0,
-        status: error.response?.status || 500
+        status: status
       };
+      
+      // Add specific error messages based on status code
+      if (status === 400) {
+        // Bad request - could be validation error or face recognition issue
+        if (errorData.error?.includes('not yet implemented')) {
+          errorResponse.error = 'Face recognition feature is not yet available';
+          errorResponse.message = 'Please use manual attendance or bulk check-in';
+          errorResponse.isNotImplemented = true;
+        } else if (errorData.error?.includes('No face detected')) {
+          errorResponse.error = 'No face detected in image';
+          errorResponse.message = 'Please ensure your face is clearly visible and well-lit';
+          errorResponse.isFaceDetectionError = true;
+        } else if (errorData.error?.includes('Multiple faces')) {
+          errorResponse.error = 'Multiple faces detected';
+          errorResponse.message = 'Please ensure only one person is in the frame';
+          errorResponse.isFaceDetectionError = true;
+        } else if (errorData.error?.includes('No participants with face encodings')) {
+          errorResponse.error = 'No participants registered for face recognition';
+          errorResponse.message = 'Please register participants with photos first';
+          errorResponse.isNoEncodingsError = true;
+        }
+      } else if (status === 404) {
+        errorResponse.error = 'Program not found';
+        errorResponse.message = 'The selected program does not exist';
+      } else if (status === 401) {
+        errorResponse.error = 'Authentication required';
+        errorResponse.message = 'Please log in to continue';
+      } else if (status === 403) {
+        errorResponse.error = 'Permission denied';
+        errorResponse.message = 'You do not have permission to perform this action';
+      } else if (status === 500) {
+        errorResponse.error = 'Server error';
+        errorResponse.message = 'An unexpected error occurred. Please try again later.';
+      }
+      
+      console.log('Structured error response:', errorResponse);
+      throw errorResponse;
     }
   },
 
@@ -495,6 +555,13 @@ const attendanceService = {
       formData.append('session_name', data.session_name);
     }
     formData.append('image', data.imageFile);
+    
+    console.log('Created FormData for face identification:');
+    console.log('  - program:', data.program);
+    console.log('  - date:', data.date);
+    console.log('  - session_name:', data.session_name || '(none)');
+    console.log('  - image:', data.imageFile?.name || '(none)', data.imageFile?.size || 0, 'bytes');
+    
     return formData;
   },
 
@@ -635,14 +702,46 @@ const attendanceService = {
 
   /**
    * Get confidence level from score
-   * @param {number} score - Confidence score (0-1)
+   * @param {number} score - Confidence score (0-100)
    */
   getConfidenceLevel(score) {
-    if (score >= 0.9) return 'Excellent';
-    if (score >= 0.8) return 'Good';
-    if (score >= 0.7) return 'Fair';
-    if (score >= 0.6) return 'Acceptable';
+    if (score >= 90) return 'Excellent';
+    if (score >= 80) return 'Good';
+    if (score >= 70) return 'Fair';
+    if (score >= 60) return 'Acceptable';
     return 'Low';
+  },
+
+  /**
+   * Get user-friendly error message
+   * @param {Object} error - Error object from API
+   */
+  getFriendlyErrorMessage(error) {
+    if (error.isNotImplemented) {
+      return 'Face recognition is not yet available. Please use manual check-in.';
+    }
+    
+    if (error.isFaceDetectionError) {
+      return error.message || 'Could not detect face in image. Please try again with better lighting.';
+    }
+    
+    if (error.isNoEncodingsError) {
+      return 'No participants are registered for face recognition yet.';
+    }
+    
+    if (error.status === 401) {
+      return 'Please log in to continue.';
+    }
+    
+    if (error.status === 403) {
+      return 'You do not have permission to perform this action.';
+    }
+    
+    if (error.status === 404) {
+      return 'The requested resource was not found.';
+    }
+    
+    return error.message || error.error || 'An unexpected error occurred. Please try again.';
   }
 };
 

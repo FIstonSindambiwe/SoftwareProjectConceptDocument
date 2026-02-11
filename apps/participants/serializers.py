@@ -9,6 +9,8 @@ class ParticipantSerializer(serializers.ModelSerializer):
     """
     gender_display = serializers.CharField(source='get_gender_display', read_only=True)
     education_level_display = serializers.CharField(source='get_education_level_display', read_only=True)
+    full_name = serializers.ReadOnlyField()
+    display_name = serializers.ReadOnlyField()
     active_enrollments_count = serializers.ReadOnlyField()
     completed_programs_count = serializers.ReadOnlyField()
     created_by_name = serializers.CharField(source='created_by.get_full_name', read_only=True)
@@ -16,14 +18,15 @@ class ParticipantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Participant
         fields = [
-            'id', 'participant_id', 'age', 'gender', 'gender_display',
+            'id', 'participant_id', 'first_name', 'last_name', 'full_name', 'display_name',
+            'age', 'gender', 'gender_display',
             'photo', 'photo_consent_given', 'data_sharing_consent',
             'education_level', 'education_level_display', 'special_needs',
             'enrollment_date', 'is_active', 'notes',
             'active_enrollments_count', 'completed_programs_count',
             'created_by', 'created_by_name', 'created_at', 'updated_at'
         ]
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'participant_id', 'full_name', 'display_name', 'created_at', 'updated_at']
     
     def validate_photo(self, value):
         """Ensure photo consent is given before uploading photo"""
@@ -39,12 +42,14 @@ class ParticipantListSerializer(serializers.ModelSerializer):
     Lightweight serializer for participant listings
     """
     gender_display = serializers.CharField(source='get_gender_display', read_only=True)
+    full_name = serializers.ReadOnlyField()
     active_enrollments_count = serializers.ReadOnlyField()
     
     class Meta:
         model = Participant
         fields = [
-            'id', 'participant_id', 'age', 'gender', 'gender_display',
+            'id', 'participant_id', 'first_name', 'last_name', 'full_name',
+            'age', 'gender', 'gender_display',
             'enrollment_date', 'is_active', 'active_enrollments_count'
         ]
 
@@ -55,17 +60,19 @@ class ParticipantCreateSerializer(serializers.ModelSerializer):
     Note: participant_id is auto-generated
     """
     participant_id = serializers.CharField(read_only=True)
-    id = serializers.IntegerField(read_only=True)  # Add the id field
+    id = serializers.IntegerField(read_only=True)
+    full_name = serializers.ReadOnlyField()
+    display_name = serializers.ReadOnlyField()
     
     class Meta:
         model = Participant
         fields = [
-            'id',  # Add this field
-            'participant_id', 'age', 'gender', 'photo',
+            'id', 'participant_id', 'first_name', 'last_name', 'full_name', 'display_name',
+            'age', 'gender', 'photo',
             'photo_consent_given', 'data_sharing_consent',
             'education_level', 'special_needs', 'enrollment_date', 'notes'
         ]
-        read_only_fields = ['id', 'participant_id']  # Add 'id' to read-only fields
+        read_only_fields = ['id', 'participant_id', 'full_name', 'display_name']
     
     def validate(self, attrs):
         """Validate participant data"""
@@ -73,6 +80,17 @@ class ParticipantCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({
                 'photo': 'Photo consent must be given before uploading a photo'
             })
+        
+        # Ensure first_name and last_name are provided
+        if not attrs.get('first_name'):
+            raise serializers.ValidationError({
+                'first_name': 'First name is required'
+            })
+        if not attrs.get('last_name'):
+            raise serializers.ValidationError({
+                'last_name': 'Last name is required'
+            })
+        
         return attrs
 
 
@@ -81,6 +99,7 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     Detailed serializer for Enrollment model
     """
     participant_id = serializers.CharField(source='participant.participant_id', read_only=True)
+    participant_name = serializers.CharField(source='participant.full_name', read_only=True)
     participant_age = serializers.IntegerField(source='participant.age', read_only=True)
     participant_gender = serializers.CharField(source='participant.get_gender_display', read_only=True)
     
@@ -95,7 +114,8 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Enrollment
         fields = [
-            'id', 'participant', 'participant_id', 'participant_age', 'participant_gender',
+            'id', 'participant', 'participant_id', 'participant_name', 
+            'participant_age', 'participant_gender',
             'program', 'program_name', 'program_location',
             'enrollment_date', 'completion_date', 'expected_completion_date',
             'status', 'status_display', 'attendance_rate',
@@ -136,13 +156,14 @@ class EnrollmentListSerializer(serializers.ModelSerializer):
     Lightweight serializer for enrollment listings
     """
     participant_id = serializers.CharField(source='participant.participant_id', read_only=True)
+    participant_name = serializers.CharField(source='participant.full_name', read_only=True)
     program_name = serializers.CharField(source='program.name', read_only=True)
     status_display = serializers.CharField(source='get_status_display', read_only=True)
     
     class Meta:
         model = Enrollment
         fields = [
-            'id', 'participant_id', 'program_name',
+            'id', 'participant_id', 'participant_name', 'program_name',
             'enrollment_date', 'status', 'status_display',
             'attendance_rate'
         ]
@@ -182,13 +203,14 @@ class ParticipantNoteSerializer(serializers.ModelSerializer):
     Serializer for participant notes
     """
     participant_id = serializers.CharField(source='participant.participant_id', read_only=True)
+    participant_name = serializers.CharField(source='participant.full_name', read_only=True)
     note_type_display = serializers.CharField(source='get_note_type_display', read_only=True)
     created_by_name = serializers.CharField(source='created_by.get_full_name', read_only=True)
     
     class Meta:
         model = ParticipantNote
         fields = [
-            'id', 'participant', 'participant_id', 'enrollment',
+            'id', 'participant', 'participant_id', 'participant_name', 'enrollment',
             'note_date', 'note_type', 'note_type_display',
             'content', 'is_confidential',
             'created_by', 'created_by_name', 'created_at'
@@ -201,6 +223,7 @@ class ParticipantProgressSerializer(serializers.Serializer):
     Serializer for participant progress overview
     """
     participant_id = serializers.CharField()
+    full_name = serializers.CharField()
     age = serializers.IntegerField()
     gender = serializers.CharField()
     

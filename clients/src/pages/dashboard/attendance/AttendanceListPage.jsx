@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   CalendarIcon,
   UserGroupIcon,
@@ -8,7 +8,16 @@ import {
   FunnelIcon,
   PlusIcon,
   CameraIcon,
-  ChartBarIcon
+  ChartBarIcon,
+  MagnifyingGlassIcon,
+  ArrowPathIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  EllipsisVerticalIcon,
+  EyeIcon,
+  PencilIcon,
+  InformationCircleIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline';
 import Layout from '../../../components/layout/Layout';
 import Card from '../../../components/common/Card';
@@ -24,300 +33,647 @@ const AttendanceListPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   
+  // ✅ Match ParticipantsListPage permission pattern
+  const userRole = user?.role;
+  const canEdit = ['admin', 'teacher', 'program_manager'].includes(userRole);
+  const isReadOnly = userRole === 'donor';
+  
+  // State Management
   const [attendance, setAttendance] = useState([]);
   const [programs, setPrograms] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  
+  const [selectedRecord, setSelectedRecord] = useState(null);
+  const [actionMenuPosition, setActionMenuPosition] = useState({ x: 0, y: 0 });
+  const [showActionMenu, setShowActionMenu] = useState(false);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    total_pages: 1,
+    total_count: 0
+  });
+
+  // Filter State
   const [filters, setFilters] = useState({
     program: '',
     date_from: '',
     date_to: '',
-    present: '',
+    status: '',
     verified_by_face: '',
     search: ''
   });
 
+  // Simple debounce implementation
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  
   useEffect(() => {
-    fetchData();
+    const timer = setTimeout(() => {
+      setDebouncedSearch(filters.search);
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, [filters.search]);
+
+  // Fetch programs on mount
+  useEffect(() => {
+    fetchPrograms();
   }, []);
 
+  // Fetch attendance when filters, page, or debounced search changes
   useEffect(() => {
     fetchAttendance();
-  }, [filters]);
+  }, [filters.program, filters.date_from, filters.date_to, filters.status, filters.verified_by_face, pagination.page, debouncedSearch]);
 
-  const fetchData = async () => {
+  const fetchPrograms = async () => {
     try {
-      setLoading(true);
-      const [attendanceData, programsData, statsData] = await Promise.all([
-        attendanceService.getAttendanceRecords(),
-        programService.getPrograms(),
-        attendanceService.getAttendanceStats()
-      ]);
-      
-      setAttendance(attendanceData.results || attendanceData || []);
-      setPrograms(programsData.results || programsData || []);
-      setStats(statsData);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    } finally {
-      setLoading(false);
+      const response = await programService.getPrograms({ 
+        limit: 100,
+        is_active: true 
+      });
+      setPrograms(response.results || response || []);
+    } catch (err) {
+      console.error('Error fetching programs:', err);
+      setError('Failed to load programs');
     }
   };
 
   const fetchAttendance = async () => {
     try {
-      const params = {};
+      setLoading(true);
+      setError('');
       
-      if (filters.program) params.program = filters.program;
+      const params = {
+        page: pagination.page,
+        page_size: 10
+      };
+      
+      if (filters.program) params.program_id = filters.program;
       if (filters.date_from) params.date_from = filters.date_from;
       if (filters.date_to) params.date_to = filters.date_to;
-      if (filters.present !== '') params.present = filters.present;
-      if (filters.verified_by_face !== '') params.verified_by_face = filters.verified_by_face;
-      if (filters.search) params.search = filters.search;
+      if (filters.status) params.present = filters.status === 'present';
+      if (filters.verified_by_face) {
+        params.verified_by_face = filters.verified_by_face === 'yes';
+      }
+      if (debouncedSearch) params.search = debouncedSearch;
       
-      const data = await attendanceService.getAttendanceRecords(params);
-      setAttendance(data.results || data || []);
+      const response = await attendanceService.getAttendanceRecords(params);
       
-      // Fetch stats with same filters
-      const statsData = await attendanceService.getAttendanceStats(params);
-      setStats(statsData);
-    } catch (error) {
-      console.error('Error fetching attendance:', error);
+      // Handle the API response structure (same pattern as ParticipantsListPage)
+      const attendanceList = response.results || response || [];
+      
+      // Check for missing IDs
+      const validRecords = attendanceList.filter(r => r && r.id);
+      const invalidRecords = attendanceList.filter(r => !r || !r.id);
+      
+      if (invalidRecords.length > 0) {
+        console.warn('Some attendance records are missing IDs:', invalidRecords);
+      }
+      
+      setAttendance(validRecords);
+      setPagination({
+        page: response.page || 1,
+        total_pages: response.total_pages || 1,
+        total_count: response.count || response.results?.length || 0
+      });
+      
+      if (!debouncedSearch) {
+        const statsData = await attendanceService.getAttendanceStats(params);
+        setStats(statsData);
+      }
+      
+    } catch (err) {
+      console.error('Error fetching attendance:', err);
+      setError(err.message || 'Failed to load attendance records');
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
     }
   };
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters(prev => ({ ...prev, [name]: value }));
+    setPagination(prev => ({ ...prev, page: 1 }));
   };
 
-  const clearFilters = () => {
+  const handleClearFilters = () => {
     setFilters({
       program: '',
       date_from: '',
       date_to: '',
-      present: '',
+      status: '',
       verified_by_face: '',
       search: ''
     });
+    setPagination(prev => ({ ...prev, page: 1 }));
   };
 
-  const getStatusBadge = (present) => {
-    return present ? (
-      <Badge color="green">
-        <CheckCircleIcon className="h-4 w-4 mr-1" />
-        Present
-      </Badge>
-    ) : (
-      <Badge color="red">
-        <XCircleIcon className="h-4 w-4 mr-1" />
-        Absent
-      </Badge>
+  const handlePageChange = (newPage) => {
+    setPagination(prev => ({ ...prev, page: newPage }));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchAttendance();
+  };
+
+  const handleActionMenuClick = (record, event) => {
+    event.stopPropagation();
+    
+    // Calculate position for the action menu
+    const rect = event.currentTarget.getBoundingClientRect();
+    setActionMenuPosition({
+      x: rect.left + window.scrollX,
+      y: rect.bottom + window.scrollY + 5
+    });
+    
+    setSelectedRecord(record);
+    setShowActionMenu(true);
+  };
+
+  const handleDelete = async (record) => {
+    if (!record?.id) {
+      setError('Cannot delete record: Missing ID');
+      return;
+    }
+    
+    if (window.confirm(`Are you sure you want to delete this attendance record? This action cannot be undone.`)) {
+      try {
+        await attendanceService.deleteAttendanceRecord(record.id);
+        setSuccess('Attendance record deleted successfully');
+        setShowActionMenu(false);
+        setSelectedRecord(null);
+        fetchAttendance();
+      } catch (err) {
+        console.error('Error deleting attendance record:', err);
+        setError(err.message || 'Failed to delete attendance record');
+        setSuccess('');
+      }
+    }
+  };
+
+  // ✅ Action Menu Component - Matches ParticipantsListPage pattern
+  const ActionMenu = () => {
+    if (!selectedRecord || !showActionMenu) return null;
+
+    const menuItems = [
+      {
+        label: 'View Details',
+        icon: <EyeIcon className="h-4 w-4 mr-2" />,
+        onClick: () => {
+          navigate(`/dashboard/attendance/records/${selectedRecord.id}`);
+          setShowActionMenu(false);
+        }
+      },
+      ...(canEdit ? [
+        {
+          label: 'Edit',
+          icon: <PencilIcon className="h-4 w-4 mr-2" />,
+          onClick: () => {
+            navigate(`/dashboard/attendance/records/${selectedRecord.id}/edit`);
+            setShowActionMenu(false);
+          }
+        },
+        {
+          label: 'Delete',
+          icon: <XCircleIcon className="h-4 w-4 mr-2" />,
+          onClick: () => handleDelete(selectedRecord),
+          className: 'text-red-600 hover:bg-red-50'
+        }
+      ] : [])
+    ];
+
+    return (
+      <>
+        {/* Overlay to close menu when clicking outside */}
+        <div 
+          className="fixed inset-0 z-40"
+          onClick={() => {
+            setShowActionMenu(false);
+            setSelectedRecord(null);
+          }}
+        />
+        
+        {/* Action Menu */}
+        <div 
+          className="fixed z-50 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 animate-slideDown"
+          style={{
+            top: actionMenuPosition.y,
+            left: actionMenuPosition.x,
+            transform: 'translateX(-100%)'
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="py-1" role="menu">
+            <div className="px-4 py-2 text-xs text-gray-500 border-b border-gray-100">
+              {selectedRecord.participant_name || selectedRecord.participant_id || 'Attendance Record'}
+            </div>
+            {menuItems.map((item, index) => (
+              <button
+                key={index}
+                onClick={item.onClick}
+                className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center ${item.className || ''}`}
+                role="menuitem"
+              >
+                {item.icon}
+                {item.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </>
     );
   };
 
-  const getVerificationBadge = (record) => {
-    if (record.verified_by_face) {
-      const quality = attendanceService.getConfidenceLevel(record.confidence_score || 0);
+  // Status Badge Component
+  const StatusBadge = ({ present }) => {
+    if (present) {
       return (
-        <Badge color="blue" size="sm">
-          <CameraIcon className="h-3 w-3 mr-1" />
-          Face ({quality})
+        <Badge 
+          color="green" 
+          className="flex items-center gap-1 px-2.5 py-1 w-fit"
+          size="md"
+        >
+          <CheckCircleIcon className="h-4 w-4" />
+          <span>Present</span>
         </Badge>
       );
     }
     return (
-      <Badge color="gray" size="sm">
-        {record.verification_method_display || 'Manual'}
+      <Badge 
+        color="red" 
+        className="flex items-center gap-1 px-2.5 py-1 w-fit"
+        size="md"
+      >
+        <XCircleIcon className="h-4 w-4" />
+        <span>Absent</span>
       </Badge>
     );
   };
 
+  // Verification Badge Component
+  const VerificationBadge = ({ record }) => {
+    if (record.verified_by_face) {
+      const confidenceLevel = record.confidence_score >= 80 ? 'High' :
+                            record.confidence_score >= 60 ? 'Medium' : 'Low';
+      
+      const color = record.confidence_score >= 80 ? 'green' :
+                   record.confidence_score >= 60 ? 'yellow' : 'orange';
+      
+      return (
+        <Badge 
+          color={color} 
+          size="sm"
+          className="flex items-center gap-1 w-fit cursor-help"
+          title={`Face Recognition - ${confidenceLevel} Confidence (${record.confidence_score}%)`}
+        >
+          <CameraIcon className="h-3 w-3" />
+          <span>Face</span>
+          {record.confidence_score && (
+            <span className="ml-0.5 font-semibold">{record.confidence_score}%</span>
+          )}
+        </Badge>
+      );
+    }
+    
+    return (
+      <Badge 
+        color="gray" 
+        size="sm" 
+        className="flex items-center gap-1 w-fit cursor-help"
+        title="Manually verified by staff"
+      >
+        <span className="text-xs">Manual</span>
+      </Badge>
+    );
+  };
+
+  // ✅ Table Columns - Matches ParticipantsListPage pattern
   const columns = [
     {
       key: 'date',
       header: 'Date',
-      render: (value) => <span>{new Date(value).toLocaleDateString()}</span>
+      render: (value, record) => {
+        if (!record || !record.id) {
+          return (
+            <div className="flex items-center gap-2">
+              <CalendarIcon className="h-4 w-4 text-gray-400" />
+              <span className="text-gray-700 font-medium">
+                {new Date(value).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric'
+                })}
+              </span>
+            </div>
+          );
+        }
+        
+        return (
+          <div className="flex items-center gap-2">
+            <CalendarIcon className="h-4 w-4 text-gray-400" />
+            <Link 
+              to={`/dashboard/attendance/records/${record.id}`}
+              className="text-blue-600 hover:text-blue-800 font-medium hover:underline"
+            >
+              {new Date(value).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+              })}
+            </Link>
+          </div>
+        );
+      }
     },
     {
-      key: 'participant_id',
+      key: 'participant',
       header: 'Participant',
-      render: (value) => (
-        <span className="font-medium text-gray-900">{value}</span>
+      render: (_, record) => (
+        <div className="flex items-center gap-3">
+          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold">
+            {record.participant_name?.charAt(0) || record.participant_id?.charAt(0) || 'P'}
+          </div>
+          <div>
+            <div className="font-medium text-gray-900">
+              {record.participant_name || 'Unknown Participant'}
+            </div>
+            <div className="text-xs text-gray-500">
+              ID: {record.participant_id}
+            </div>
+          </div>
+        </div>
       )
     },
     {
-      key: 'program_name',
-      header: 'Program'
+      key: 'program',
+      header: 'Program',
+      render: (_, record) => (
+        <div>
+          <div className="font-medium text-gray-900">{record.program_name}</div>
+          {record.session_name && (
+            <div className="text-xs text-gray-500 mt-0.5">
+              Session: {record.session_name}
+            </div>
+          )}
+        </div>
+      )
     },
     {
-      key: 'session_name',
-      header: 'Session',
-      render: (value) => <span className="text-sm text-gray-600">{value || 'N/A'}</span>
-    },
-    {
-      key: 'present',
+      key: 'status',
       header: 'Status',
-      render: (value) => getStatusBadge(value)
+      render: (_, record) => <StatusBadge present={record.present} />
     },
     {
       key: 'verification',
       header: 'Verification',
-      render: (_, record) => getVerificationBadge(record)
+      render: (_, record) => <VerificationBadge record={record} />
     },
     {
-      key: 'arrival_time',
+      key: 'time',
       header: 'Time',
-      render: (value, record) => (
-        <span className="text-sm text-gray-600">
-          {value || 'N/A'}
-          {record.departure_time && ` - ${record.departure_time}`}
-        </span>
+      render: (_, record) => (
+        <div className="text-sm">
+          {record.arrival_time ? (
+            <>
+              <div className="text-gray-900 font-medium">
+                {record.arrival_time}
+              </div>
+              {record.departure_time && (
+                <div className="text-gray-500 text-xs">
+                  → {record.departure_time}
+                </div>
+              )}
+            </>
+          ) : (
+            <span className="text-gray-400">—</span>
+          )}
+        </div>
       )
     },
     {
       key: 'actions',
-      header: 'Actions',
-      render: (_, record) => (
-        <div className="flex space-x-2">
-          <Button
-            size="xs"
-            variant="outline"
-            onClick={() => navigate(`/dashboard/attendance/${record.id}`)}
+      header: '',
+      width: '60px',
+      render: (_, record) => {
+        if (!record || !record.id) {
+          return <span className="text-gray-300">—</span>;
+        }
+        
+        return (
+          <button
+            onClick={(e) => handleActionMenuClick(record, e)}
+            className="p-1.5 rounded-md hover:bg-gray-100 transition-colors"
+            title="Actions"
           >
-            View
-          </Button>
-          {user && user.role !== 'donor' && (
-            <Button
-              size="xs"
-              variant="outline"
-              onClick={() => navigate(`/dashboard/attendance/${record.id}/edit`)}
-            >
-              Edit
-            </Button>
-          )}
-        </div>
-      )
+            <EllipsisVerticalIcon className="h-5 w-5 text-gray-500" />
+          </button>
+        );
+      }
     }
   ];
 
+  // Stats Cards
+  const statsCards = stats ? [
+    {
+      title: 'Total Records',
+      value: stats.total_records?.toLocaleString() || '0',
+      icon: CalendarIcon,
+      bgColor: 'bg-blue-100',
+      iconColor: 'text-blue-600'
+    },
+    {
+      title: 'Present',
+      value: stats.present_count?.toLocaleString() || '0',
+      icon: CheckCircleIcon,
+      bgColor: 'bg-green-100',
+      iconColor: 'text-green-600',
+      subtitle: `${stats.attendance_rate || 0}% rate`
+    },
+    {
+      title: 'Face Verified',
+      value: stats.face_verified_count?.toLocaleString() || '0',
+      icon: CameraIcon,
+      bgColor: 'bg-purple-100',
+      iconColor: 'text-purple-600',
+      subtitle: stats.total_records ? `${Math.round((stats.face_verified_count / stats.total_records) * 100) || 0}%` : '0%'
+    },
+    {
+      title: 'Active Programs',
+      value: stats.active_programs_count || programs.length,
+      icon: ChartBarIcon,
+      bgColor: 'bg-yellow-100',
+      iconColor: 'text-yellow-600'
+    }
+  ] : [];
+
+  if (loading && attendance.length === 0) {
+    return (
+      <Layout>
+        <div className="flex flex-col justify-center items-center h-64">
+          <Spinner size="lg" />
+          <p className="mt-4 text-gray-500">Loading attendance records...</p>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
+      {/* Floating Action Menu */}
+      {showActionMenu && <ActionMenu />}
+      
       <div className="space-y-6">
-        {/* Header */}
+        {/* Header - Matches ParticipantsListPage */}
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Attendance Records</h1>
-            <p className="mt-1 text-sm text-gray-500">
-              Track and manage participant attendance
+            <p className="text-gray-600">
+              {isReadOnly ? 'View attendance records' : 'Track and manage participant attendance'}
             </p>
           </div>
-          
-          {user && user.role !== 'donor' && (
-            <div className="flex space-x-3">
-              <Button
-                onClick={() => navigate('/dashboard/attendance/face-check-in')}
-                variant="outline"
-              >
-                <CameraIcon className="h-5 w-5 mr-2" />
-                Face Check-in
-              </Button>
-              <Button
-                onClick={() => navigate('/dashboard/attendance/bulk-record')}
-                variant="outline"
-              >
-                <UserGroupIcon className="h-5 w-5 mr-2" />
-                Bulk Record
-              </Button>
+          <div className="flex space-x-3">
+            <Button
+              variant="outline"
+              onClick={handleRefresh}
+              disabled={refreshing}
+            >
+              <ArrowPathIcon className={`h-5 w-5 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+            {canEdit && (
               <Button onClick={() => navigate('/dashboard/attendance/create')}>
                 <PlusIcon className="h-5 w-5 mr-2" />
-                Record Attendance
+                Add Record
               </Button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
-        {/* Stats Cards */}
-        {stats && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <Card>
-              <div className="flex items-center">
-                <div className="flex-shrink-0 bg-blue-100 rounded-lg p-3">
-                  <CalendarIcon className="h-6 w-6 text-blue-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-500">Total Records</p>
-                  <p className="text-2xl font-semibold text-gray-900">{stats.total_records}</p>
-                </div>
+        {/* Success Message - Matches ParticipantsListPage */}
+        {success && (
+          <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
               </div>
-            </Card>
-
-            <Card>
-              <div className="flex items-center">
-                <div className="flex-shrink-0 bg-green-100 rounded-lg p-3">
-                  <CheckCircleIcon className="h-6 w-6 text-green-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-500">Present</p>
-                  <p className="text-2xl font-semibold text-gray-900">{stats.present_count}</p>
-                </div>
+              <div className="ml-3">
+                <p className="text-sm font-medium text-green-800">{success}</p>
               </div>
-            </Card>
-
-            <Card>
-              <div className="flex items-center">
-                <div className="flex-shrink-0 bg-yellow-100 rounded-lg p-3">
-                  <ChartBarIcon className="h-6 w-6 text-yellow-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-500">Attendance Rate</p>
-                  <p className="text-2xl font-semibold text-gray-900">{stats.attendance_rate}%</p>
-                </div>
+              <div className="ml-auto pl-3">
+                <button
+                  onClick={() => setSuccess('')}
+                  className="text-green-500 hover:text-green-600"
+                >
+                  <span className="sr-only">Dismiss</span>
+                  <XMarkIcon className="h-5 w-5" />
+                </button>
               </div>
-            </Card>
-
-            <Card>
-              <div className="flex items-center">
-                <div className="flex-shrink-0 bg-purple-100 rounded-lg p-3">
-                  <CameraIcon className="h-6 w-6 text-purple-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-500">Face Verified</p>
-                  <p className="text-2xl font-semibold text-gray-900">{stats.face_verified_count}</p>
-                </div>
-              </div>
-            </Card>
+            </div>
           </div>
         )}
 
-        {/* Filters */}
-        <Card>
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowFilters(!showFilters)}
-            >
-              <FunnelIcon className="h-4 w-4 mr-2" />
-              {showFilters ? 'Hide' : 'Show'} Filters
-            </Button>
+        {/* Error Message - Matches ParticipantsListPage */}
+        {error && (
+          <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-sm font-medium text-red-800">{error}</p>
+              </div>
+              <div className="ml-auto pl-3">
+                <button
+                  onClick={() => setError('')}
+                  className="text-red-500 hover:text-red-600"
+                >
+                  <span className="sr-only">Dismiss</span>
+                  <XMarkIcon className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Stats Cards */}
+        {stats && (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {statsCards.map((stat, index) => (
+              <Card key={index} className="hover:shadow-md transition-shadow">
+                <div className="flex items-center">
+                  <div className={`p-3 rounded-lg ${stat.bgColor} ${stat.iconColor}`}>
+                    <stat.icon className="h-6 w-6" />
+                  </div>
+                  <div className="ml-4">
+                    <h3 className="text-sm font-medium text-gray-600">{stat.title}</h3>
+                    <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                    {stat.subtitle && (
+                      <p className="text-xs text-gray-500 mt-0.5">{stat.subtitle}</p>
+                    )}
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        {/* Filters Section - Matches ParticipantsListPage */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <Button
+                variant={showFilters ? "primary" : "outline"}
+                size="sm"
+                onClick={() => setShowFilters(!showFilters)}
+              >
+                <FunnelIcon className="h-4 w-4 mr-2" />
+                Filters
+                {Object.values(filters).some(value => value !== '' && value !== 'true') && (
+                  <span className="ml-2 bg-blue-100 text-blue-600 text-xs px-2 py-0.5 rounded-full">
+                    Active
+                  </span>
+                )}
+              </Button>
+              
+              {Object.values(filters).some(value => value !== '' && value !== 'true') && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleClearFilters}
+                >
+                  <XMarkIcon className="h-4 w-4 mr-2" />
+                  Clear All
+                </Button>
+              )}
+            </div>
+            
+            <div className="text-sm text-gray-500">
+              Showing {attendance.length} of {pagination.total_count} records
+            </div>
           </div>
 
+          {/* Filter Panel */}
           {showFilters && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card className="animate-slideDown p-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Program
                   </label>
                   <select
                     name="program"
                     value={filters.program}
                     onChange={handleFilterChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">All Programs</option>
                     {programs.map(program => (
@@ -329,116 +685,140 @@ const AttendanceListPage = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    From Date
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Date Range
                   </label>
-                  <input
-                    type="date"
-                    name="date_from"
-                    value={filters.date_from}
-                    onChange={handleFilterChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  />
+                  <div className="flex gap-2">
+                    <input
+                      type="date"
+                      name="date_from"
+                      value={filters.date_from}
+                      onChange={handleFilterChange}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                      placeholder="From"
+                    />
+                    <input
+                      type="date"
+                      name="date_to"
+                      value={filters.date_to}
+                      onChange={handleFilterChange}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                      placeholder="To"
+                    />
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    To Date
-                  </label>
-                  <input
-                    type="date"
-                    name="date_to"
-                    value={filters.date_to}
-                    onChange={handleFilterChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Status
                   </label>
                   <select
-                    name="present"
-                    value={filters.present}
+                    name="status"
+                    value={filters.status}
                     onChange={handleFilterChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">All</option>
-                    <option value="true">Present</option>
-                    <option value="false">Absent</option>
+                    <option value="present">Present</option>
+                    <option value="absent">Absent</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Face Verified
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Verification
                   </label>
                   <select
                     name="verified_by_face"
                     value={filters.verified_by_face}
                     onChange={handleFilterChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
-                    <option value="">All</option>
-                    <option value="true">Yes</option>
-                    <option value="false">No</option>
+                    <option value="">All Methods</option>
+                    <option value="yes">Face Recognition</option>
+                    <option value="no">Manual</option>
                   </select>
                 </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Search
-                  </label>
-                  <input
-                    type="text"
-                    name="search"
-                    value={filters.search}
-                    onChange={handleFilterChange}
-                    placeholder="Participant ID, Program..."
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  />
-                </div>
               </div>
-
-              <div className="flex justify-end">
-                <Button variant="outline" size="sm" onClick={clearFilters}>
-                  Clear Filters
-                </Button>
-              </div>
-            </div>
+            </Card>
           )}
-        </Card>
+        </div>
 
-        {/* Attendance Table */}
-        <Card>
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">
-              Attendance Records ({attendance.length})
-            </h3>
+        {/* Attendance Table - Matches ParticipantsListPage pattern */}
+        <Card className="overflow-hidden">
+          <div className="overflow-x-auto">
+            <Table
+              columns={columns}
+              data={attendance.filter(r => r && r.id)}
+              rowClassName="hover:bg-gray-50 transition-colors"
+              emptyMessage={
+                <div className="text-center py-16">
+                  <CalendarIcon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No attendance records found</h3>
+                  <p className="text-gray-500 mb-6 max-w-md mx-auto">
+                    {Object.values(filters).some(value => value !== '' && value !== 'true')
+                      ? 'No records match your current filters. Try adjusting your search criteria.'
+                      : 'Start tracking attendance by recording your first check-in.'
+                    }
+                  </p>
+                  <div className="space-x-3">
+                    {Object.values(filters).some(value => value !== '' && value !== 'true') && (
+                      <Button
+                        variant="outline"
+                        onClick={handleClearFilters}
+                      >
+                        <XMarkIcon className="h-5 w-5 mr-2" />
+                        Clear Filters
+                      </Button>
+                    )}
+                    {canEdit && !Object.values(filters).some(value => value !== '' && value !== 'true') && (
+                      <Button
+                        onClick={() => navigate('/dashboard/attendance/face-check-in')}
+                      >
+                        <CameraIcon className="h-5 w-5 mr-2" />
+                        Face Check-in
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              }
+            />
           </div>
-
-          {loading ? (
-            <div className="flex justify-center py-12">
-              <Spinner size="lg" />
-            </div>
-          ) : attendance.length === 0 ? (
-            <div className="text-center py-12">
-              <CalendarIcon className="h-12 w-12 text-gray-400 mx-auto" />
-              <p className="mt-2 text-gray-500">No attendance records found</p>
-              {user && user.role !== 'donor' && (
+          
+          {/* Table Footer - Matches ParticipantsListPage */}
+          {attendance.length > 0 && (
+            <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 bg-gray-50">
+              <div className="text-sm text-gray-700">
+                Showing <span className="font-medium">{attendance.length}</span> of{' '}
+                <span className="font-medium">{pagination.total_count}</span> records
+              </div>
+              
+              <div className="flex items-center space-x-2">
                 <Button
-                  onClick={() => navigate('/dashboard/attendance/create')}
-                  className="mt-4"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handlePageChange(pagination.page - 1)}
+                  disabled={pagination.page === 1}
                 >
-                  <PlusIcon className="h-5 w-5 mr-2" />
-                  Record First Attendance
+                  ← Previous
                 </Button>
-              )}
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <Table columns={columns} data={attendance} />
+                <span className="text-sm text-gray-500 mx-2">
+                  Page {pagination.page} of {pagination.total_pages}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handlePageChange(pagination.page + 1)}
+                  disabled={pagination.page === pagination.total_pages}
+                >
+                  Next →
+                </Button>
+              </div>
+              
+              <div className="flex items-center text-sm text-gray-500">
+                <InformationCircleIcon className="h-4 w-4 mr-1" />
+                Click on date to view details
+              </div>
             </div>
           )}
         </Card>

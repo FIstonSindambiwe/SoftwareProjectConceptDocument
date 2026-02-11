@@ -41,6 +41,16 @@ class Participant(models.Model):
         help_text=_("Auto-generated unique identifier (e.g., YP-2024-A3B9C2)")
     )
     
+    # Personal Information
+    first_name = models.CharField(
+        max_length=100,
+        help_text=_("Participant's first name")
+    )
+    last_name = models.CharField(
+        max_length=100,
+        help_text=_("Participant's last name")
+    )
+    
     # Demographics (minimal data for privacy)
     age = models.IntegerField(
         validators=[MinValueValidator(5), MaxValueValidator(25)],
@@ -118,12 +128,23 @@ class Participant(models.Model):
         verbose_name_plural = _('Participants')
         indexes = [
             models.Index(fields=['participant_id']),
+            models.Index(fields=['first_name', 'last_name']),
             models.Index(fields=['enrollment_date']),
             models.Index(fields=['is_active']),
         ]
     
     def __str__(self):
-        return self.participant_id
+        return f"{self.participant_id} - {self.full_name}"
+    
+    @property
+    def full_name(self):
+        """Return participant's full name"""
+        return f"{self.first_name} {self.last_name}".strip()
+    
+    @property
+    def display_name(self):
+        """Return display name (ID + Name)"""
+        return f"{self.participant_id} - {self.full_name}"
     
     def save(self, *args, **kwargs):
         """
@@ -229,7 +250,7 @@ class Enrollment(models.Model):
         ]
     
     def __str__(self):
-        return f"{self.participant.participant_id} - {self.program.name}"
+        return f"{self.participant.full_name} ({self.participant.participant_id}) - {self.program.name}"
     
     @property
     def duration_days(self):
@@ -288,7 +309,7 @@ class ParticipantNote(models.Model):
     enrollment = models.ForeignKey(
         Enrollment,
         on_delete=models.CASCADE,
-        related_name='participant_notes',  # Changed from 'notes' to 'participant_notes'
+        related_name='participant_notes',
         null=True,
         blank=True
     )
@@ -327,4 +348,4 @@ class ParticipantNote(models.Model):
         ordering = ['-note_date', '-created_at']
     
     def __str__(self):
-        return f"{self.participant.participant_id} - {self.note_date}"
+        return f"{self.participant.full_name} ({self.participant.participant_id}) - {self.note_date}"
