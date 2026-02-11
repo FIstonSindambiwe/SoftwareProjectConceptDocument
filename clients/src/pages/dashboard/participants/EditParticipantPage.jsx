@@ -7,7 +7,9 @@ import {
   PhotoIcon,
   VideoCameraIcon,
   XMarkIcon,
-  ExclamationTriangleIcon
+  ExclamationTriangleIcon,
+  UserIcon,
+  IdentificationIcon
 } from '@heroicons/react/24/outline';
 import Layout from '../../../components/layout/Layout';
 import Card from '../../../components/common/Card';
@@ -29,6 +31,7 @@ const EditParticipantPage = () => {
   const [photoPreview, setPhotoPreview] = useState(null);
   const [formError, setFormError] = useState('');
   const [formSuccess, setFormSuccess] = useState('');
+  const [participantId, setParticipantId] = useState('');
   
   // Enhanced Camera state
   const [showCamera, setShowCamera] = useState(false);
@@ -42,6 +45,8 @@ const EditParticipantPage = () => {
   const [selectedCamera, setSelectedCamera] = useState('');
   
   const [formData, setFormData] = useState({
+    first_name: '',
+    last_name: '',
     age: '',
     gender: 'M',
     enrollment_date: '',
@@ -94,12 +99,9 @@ const EditParticipantPage = () => {
       const devices = await navigator.mediaDevices.enumerateDevices();
       const videoDevices = devices.filter(device => device.kind === 'videoinput');
       setAvailableCameras(videoDevices);
-      console.log('Available cameras:', videoDevices);
       
       if (videoDevices.length > 0) {
         setSelectedCamera(videoDevices[0].deviceId);
-      } else {
-        setCameraError('No camera detected on your device.');
       }
     } catch (error) {
       console.error('Error getting cameras:', error);
@@ -112,7 +114,6 @@ const EditParticipantPage = () => {
     try {
       if (navigator.permissions && navigator.permissions.query) {
         const permissions = await navigator.permissions.query({ name: 'camera' });
-        console.log('Camera permission state:', permissions.state);
         
         if (permissions.state === 'denied') {
           setCameraError('Camera access denied. Please allow camera access in browser settings.');
@@ -120,7 +121,6 @@ const EditParticipantPage = () => {
         }
         
         permissions.onchange = () => {
-          console.log('Camera permission changed to:', permissions.state);
           if (permissions.state === 'granted') {
             startCamera();
           }
@@ -135,17 +135,14 @@ const EditParticipantPage = () => {
 
   // Start camera with improved handling
   const startCamera = async () => {
-    // Reset states
     setCameraError('');
     setCameraStatus('starting');
     
-    // Check browser support
     if (!checkBrowserSupport()) {
       setCameraStatus('error');
       return;
     }
     
-    // Check permissions
     const hasPermission = await checkCameraPermissions();
     if (!hasPermission) {
       setCameraStatus('error');
@@ -153,21 +150,12 @@ const EditParticipantPage = () => {
     }
     
     try {
-      // Stop any existing stream first
       if (cameraStream) {
         cameraStream.getTracks().forEach(track => track.stop());
       }
       
-      // Get available cameras
       await getAvailableCameras();
       
-      if (availableCameras.length === 0) {
-        setCameraError('No camera detected. Please connect a camera and try again.');
-        setCameraStatus('error');
-        return;
-      }
-      
-      // Try with simpler constraints
       const constraints = {
         video: {
           deviceId: selectedCamera ? { exact: selectedCamera } : undefined,
@@ -178,58 +166,34 @@ const EditParticipantPage = () => {
         audio: false
       };
       
-      console.log('Requesting camera with constraints:', constraints);
-      
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      console.log('Camera stream obtained:', stream);
-      
       setCameraStream(stream);
       
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         
-        // Set up event listeners
         const video = videoRef.current;
         
         const handleLoadedMetadata = () => {
-          console.log('Video metadata loaded:', video.videoWidth, 'x', video.videoHeight);
           setCameraStatus('active');
           setIsCameraActive(true);
           setCameraError('');
           
-          // Try to play the video
           video.play().catch(playError => {
             console.warn('Video play error:', playError);
           });
         };
         
-        const handleCanPlay = () => {
-          console.log('Video can play');
-        };
-        
-        const handleError = (e) => {
-          console.error('Video element error:', e);
+        video.addEventListener('loadedmetadata', handleLoadedMetadata);
+        video.addEventListener('error', () => {
           setCameraError('Failed to load camera feed.');
           setCameraStatus('error');
-        };
+        });
         
-        // Clear previous event listeners
-        video.removeEventListener('loadedmetadata', handleLoadedMetadata);
-        video.removeEventListener('canplay', handleCanPlay);
-        video.removeEventListener('error', handleError);
-        
-        // Add new event listeners
-        video.addEventListener('loadedmetadata', handleLoadedMetadata);
-        video.addEventListener('canplay', handleCanPlay);
-        video.addEventListener('error', handleError);
-        
-        // Force load
         video.load();
         
-        // Timeout check
         setTimeout(() => {
           if (video.readyState < 1 && cameraStatus === 'starting') {
-            console.warn('Video load timeout');
             setCameraError('Camera feed taking too long to load.');
             setCameraStatus('error');
           }
@@ -251,8 +215,6 @@ const EditParticipantPage = () => {
         errorMessage = 'Camera permission denied. Please allow camera access.';
       } else if (error.name === 'TypeError') {
         errorMessage = 'Camera access is not supported in this browser.';
-      } else if (error.message?.includes('requested device not found')) {
-        errorMessage = 'Camera not found. It may be disconnected.';
       } else {
         errorMessage += error.message || 'Please check your camera settings.';
       }
@@ -264,11 +226,7 @@ const EditParticipantPage = () => {
   // Stop camera
   const stopCamera = () => {
     if (cameraStream) {
-      console.log('Stopping camera stream');
-      cameraStream.getTracks().forEach(track => {
-        console.log('Stopping track:', track.label);
-        track.stop();
-      });
+      cameraStream.getTracks().forEach(track => track.stop());
       setCameraStream(null);
       setIsCameraActive(false);
       setCameraStatus('idle');
@@ -291,45 +249,27 @@ const EditParticipantPage = () => {
       const canvas = canvasRef.current;
       const context = canvas.getContext('2d');
       
-      // Check if video is ready
       if (video.videoWidth === 0 || video.videoHeight === 0) {
         setCameraError('Camera feed not ready. Please wait and try again.');
         return;
       }
       
-      // Set canvas size to match video
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       
-      // Draw video frame to canvas
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
       
-      // Check if image was captured
-      const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-      const hasData = imageData.data.some(value => value !== 0);
-      
-      if (!hasData) {
-        setCameraError('Failed to capture image. Please try again.');
-        return;
-      }
-      
-      // Convert to blob
       canvas.toBlob((blob) => {
         if (blob && blob.size > 0) {
-          // Create file from blob
           const file = new File([blob], `participant-photo-${Date.now()}.jpg`, {
             type: 'image/jpeg',
             lastModified: Date.now()
           });
           
-          // Set photo file and preview
           setPhotoFile(file);
           setPhotoPreview(URL.createObjectURL(blob));
-          
-          // Auto-check photo consent
           setFormData(prev => ({ ...prev, photo_consent_given: true }));
           
-          // Stop camera and close modal
           stopCamera();
           setShowCamera(false);
           setCameraError('');
@@ -377,16 +317,21 @@ const EditParticipantPage = () => {
       setLoading(true);
       const data = await participantService.getParticipant(id);
       
+      // Store participant ID for display
+      setParticipantId(data.participant_id);
+      
       setFormData({
-        age: data.age.toString(),
-        gender: data.gender,
-        enrollment_date: data.enrollment_date,
+        first_name: data.first_name || '',
+        last_name: data.last_name || '',
+        age: data.age?.toString() || '',
+        gender: data.gender || 'M',
+        enrollment_date: data.enrollment_date || '',
         education_level: data.education_level || '',
         special_needs: data.special_needs || '',
         notes: data.notes || '',
-        photo_consent_given: data.photo_consent_given,
-        data_sharing_consent: data.data_sharing_consent,
-        is_active: data.is_active
+        photo_consent_given: data.photo_consent_given || false,
+        data_sharing_consent: data.data_sharing_consent || false,
+        is_active: data.is_active !== undefined ? data.is_active : true
       });
       
       if (data.photo) {
@@ -445,7 +390,6 @@ const EditParticipantPage = () => {
 
   const handleRemovePhoto = async () => {
     try {
-      // If there's an existing photo from the server, delete it
       if (photoPreview && !photoPreview.startsWith('blob:')) {
         await participantService.deleteParticipantPhoto(id);
       }
@@ -465,13 +409,28 @@ const EditParticipantPage = () => {
   const validateForm = () => {
     const newErrors = {};
     
-    if (!formData.age) newErrors.age = 'Age is required';
-    if (formData.age && (formData.age < 5 || formData.age > 25)) {
+    // Validate required fields
+    if (!formData.first_name?.trim()) {
+      newErrors.first_name = 'First name is required';
+    }
+    
+    if (!formData.last_name?.trim()) {
+      newErrors.last_name = 'Last name is required';
+    }
+    
+    if (!formData.age) {
+      newErrors.age = 'Age is required';
+    } else if (formData.age < 5 || formData.age > 25) {
       newErrors.age = 'Age must be between 5 and 25 years';
     }
     
-    if (!formData.gender) newErrors.gender = 'Gender is required';
-    if (!formData.enrollment_date) newErrors.enrollment_date = 'Enrollment date is required';
+    if (!formData.gender) {
+      newErrors.gender = 'Gender is required';
+    }
+    
+    if (!formData.enrollment_date) {
+      newErrors.enrollment_date = 'Enrollment date is required';
+    }
     
     if ((photoFile || photoPreview) && !formData.photo_consent_given) {
       newErrors.photo_consent_given = 'Photo consent is required when a photo is uploaded';
@@ -485,6 +444,12 @@ const EditParticipantPage = () => {
     e.preventDefault();
     
     if (!validateForm()) {
+      // Scroll to first error
+      const firstErrorField = Object.keys(errors)[0];
+      const errorElement = document.querySelector(`[name="${firstErrorField}"]`);
+      if (errorElement) {
+        errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
       return;
     }
     
@@ -493,10 +458,12 @@ const EditParticipantPage = () => {
     setFormSuccess('');
     
     try {
-      // Update participant data
+      // Update participant data with all required fields
       const updateData = {
         ...formData,
-        age: parseInt(formData.age)
+        age: parseInt(formData.age, 10),
+        first_name: formData.first_name.trim(),
+        last_name: formData.last_name.trim()
       };
       
       await participantService.updateParticipant(id, updateData);
@@ -509,13 +476,12 @@ const EditParticipantPage = () => {
           photoFormData.append('photo_consent_given', 'true');
           
           await participantService.uploadParticipantPhoto(id, photoFormData);
+          setFormSuccess('Participant updated successfully! Photo uploaded.');
         } catch (photoError) {
           console.warn('Photo upload failed:', photoError);
           setFormSuccess('Participant updated successfully! Photo upload failed, but you can try again later.');
         }
-      }
-      
-      if (!formSuccess) {
+      } else {
         setFormSuccess('Participant updated successfully!');
       }
       
@@ -576,7 +542,7 @@ const EditParticipantPage = () => {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
           <Button
             variant="outline"
@@ -587,8 +553,19 @@ const EditParticipantPage = () => {
             Back to Participant
           </Button>
           
-          <h1 className="text-2xl font-bold text-gray-900">Edit Participant</h1>
-          <p className="text-gray-600">Update participant information</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Edit Participant</h1>
+              <p className="text-gray-600">Update participant information</p>
+            </div>
+            {participantId && (
+              <div className="bg-blue-50 px-4 py-2 rounded-lg">
+                <p className="text-sm text-blue-800">
+                  <span className="font-medium">Participant ID:</span> {participantId}
+                </p>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Form-level Success Message */}
@@ -611,25 +588,46 @@ const EditParticipantPage = () => {
         {formError && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <p className="text-sm font-medium text-red-800">{formError}</p>
-              </div>
+              <ExclamationTriangleIcon className="h-5 w-5 text-red-400 mr-3 flex-shrink-0" />
+              <p className="text-sm font-medium text-red-800 whitespace-pre-line">{formError}</p>
             </div>
           </div>
         )}
 
         <Card>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6 p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Basic Information */}
               <div className="md:col-span-2">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h2>
+                <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                  <UserIcon className="h-5 w-5 mr-2 text-gray-600" />
+                  Basic Information
+                </h2>
               </div>
+              
+              <Input
+                label="First Name *"
+                name="first_name"
+                type="text"
+                value={formData.first_name}
+                onChange={handleChange}
+                error={errors.first_name}
+                placeholder="Enter participant's first name"
+                required
+                autoComplete="given-name"
+              />
+              
+              <Input
+                label="Last Name *"
+                name="last_name"
+                type="text"
+                value={formData.last_name}
+                onChange={handleChange}
+                error={errors.last_name}
+                placeholder="Enter participant's last name"
+                required
+                autoComplete="family-name"
+              />
               
               <Input
                 label="Age *"
@@ -640,6 +638,7 @@ const EditParticipantPage = () => {
                 value={formData.age}
                 onChange={handleChange}
                 error={errors.age}
+                placeholder="5-25"
                 required
               />
               
@@ -654,6 +653,8 @@ const EditParticipantPage = () => {
                   className={`w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${
                     errors.gender ? 'border-red-300' : 'border-gray-300'
                   }`}
+                  aria-invalid={!!errors.gender}
+                  aria-describedby={errors.gender ? "gender-error" : undefined}
                 >
                   {genderOptions.map(option => (
                     <option key={option.value} value={option.value}>
@@ -662,7 +663,7 @@ const EditParticipantPage = () => {
                   ))}
                 </select>
                 {errors.gender && (
-                  <p className="mt-1 text-sm text-red-600">{errors.gender}</p>
+                  <p id="gender-error" className="mt-1 text-sm text-red-600">{errors.gender}</p>
                 )}
               </div>
               
@@ -696,35 +697,37 @@ const EditParticipantPage = () => {
 
               {/* Status */}
               <div className="md:col-span-2">
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="is_active"
-                    name="is_active"
-                    checked={formData.is_active}
-                    onChange={handleChange}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor="is_active" className="ml-2 block text-sm text-gray-900">
-                    Participant is Active
-                  </label>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="is_active"
+                      name="is_active"
+                      checked={formData.is_active}
+                      onChange={handleChange}
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                    <label htmlFor="is_active" className="ml-2 block text-sm font-medium text-gray-900">
+                      Participant is Active
+                    </label>
+                  </div>
+                  <p className="text-xs text-gray-500 ml-6 mt-1">
+                    Deactivated participants cannot be enrolled in new programs
+                  </p>
                 </div>
-                <p className="text-sm text-gray-500 ml-6 mt-1">
-                  Deactivated participants cannot be enrolled in new programs
-                </p>
               </div>
 
-              {/* Photo Upload */}
+              {/* Photo & Consent Section */}
               <div className="md:col-span-2">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Photo & Consent</h2>
               </div>
               
-              <div className="space-y-4">
+              <div className="md:col-span-2 space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Participant Photo
                   </label>
-                  <div className="flex items-start space-x-4">
+                  <div className="flex flex-col sm:flex-row items-start gap-4">
                     <div className="relative">
                       {photoPreview ? (
                         <div className="relative">
@@ -737,25 +740,24 @@ const EditParticipantPage = () => {
                           <button
                             type="button"
                             onClick={handleRemovePhoto}
-                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                             title="Remove photo"
                           >
                             <TrashIcon className="h-4 w-4" />
                           </button>
                         </div>
                       ) : (
-                        <div className="flex items-center justify-center h-32 w-32 rounded-full bg-gray-100">
+                        <div className="flex items-center justify-center h-32 w-32 rounded-full bg-gray-100 border-2 border-dashed border-gray-300">
                           <CameraIcon className="h-12 w-12 text-gray-400" />
                         </div>
                       )}
                     </div>
-                    <div className="space-y-2">
-                      <div className="flex space-x-2">
-                        {/* Upload from file */}
+                    <div className="flex-1 space-y-3">
+                      <div className="flex flex-wrap gap-2">
                         <label className="cursor-pointer">
                           <input
                             type="file"
-                            accept="image/*"
+                            accept="image/jpeg,image/png,image/jpg"
                             onChange={handleFileChange}
                             className="hidden"
                             id="photo-upload"
@@ -763,14 +765,13 @@ const EditParticipantPage = () => {
                           <Button
                             type="button"
                             variant="outline"
-                            onClick={() => document.getElementById('photo-upload').click()}
+                            onClick={() => document.getElementById('photo-upload')?.click()}
                           >
                             <PhotoIcon className="h-5 w-5 mr-2" />
                             {photoPreview ? 'Change Photo' : 'Upload Photo'}
                           </Button>
                         </label>
                         
-                        {/* Take photo with camera */}
                         <Button
                           type="button"
                           variant="outline"
@@ -792,42 +793,50 @@ const EditParticipantPage = () => {
                   </div>
                 </div>
                 
-                <div className="space-y-3">
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id="photo_consent_given"
-                      name="photo_consent_given"
-                      checked={formData.photo_consent_given}
-                      onChange={handleChange}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                      disabled={!photoFile && !photoPreview}
-                    />
-                    <label htmlFor="photo_consent_given" className="ml-2 block text-sm text-gray-900">
-                      Photo Consent Given
-                    </label>
+                <div className="space-y-3 bg-gray-50 p-4 rounded-lg">
+                  <div className="flex items-start">
+                    <div className="flex items-center h-5">
+                      <input
+                        type="checkbox"
+                        id="photo_consent_given"
+                        name="photo_consent_given"
+                        checked={formData.photo_consent_given}
+                        onChange={handleChange}
+                        disabled={!photoFile && !photoPreview}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded disabled:opacity-50"
+                      />
+                    </div>
+                    <div className="ml-3">
+                      <label htmlFor="photo_consent_given" className="text-sm font-medium text-gray-700">
+                        Photo Consent Given
+                      </label>
+                      <p className="text-xs text-gray-500">
+                        Guardian consent for photo storage and face recognition
+                        {(!photoFile && !photoPreview) && ' (requires a photo to be selected)'}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-xs text-gray-500 ml-6">
-                    Guardian consent for photo storage and face recognition
-                    {(!photoFile && !photoPreview) && ' (requires a photo to be selected)'}
-                  </p>
                   
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id="data_sharing_consent"
-                      name="data_sharing_consent"
-                      checked={formData.data_sharing_consent}
-                      onChange={handleChange}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                    <label htmlFor="data_sharing_consent" className="ml-2 block text-sm text-gray-900">
-                      Data Sharing Consent
-                    </label>
+                  <div className="flex items-start">
+                    <div className="flex items-center h-5">
+                      <input
+                        type="checkbox"
+                        id="data_sharing_consent"
+                        name="data_sharing_consent"
+                        checked={formData.data_sharing_consent}
+                        onChange={handleChange}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      />
+                    </div>
+                    <div className="ml-3">
+                      <label htmlFor="data_sharing_consent" className="text-sm font-medium text-gray-700">
+                        Data Sharing Consent
+                      </label>
+                      <p className="text-xs text-gray-500">
+                        Consent for sharing anonymized data with donors and partners
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-xs text-gray-500 ml-6">
-                    Consent for sharing anonymized data with donors and partners
-                  </p>
                 </div>
                 
                 {errors.photo_consent_given && (
@@ -897,20 +906,25 @@ const EditParticipantPage = () => {
         </Card>
 
         <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-          <h3 className="font-medium text-blue-900">Privacy Note</h3>
-          <p className="text-sm text-blue-700 mt-1">
-            Participant photos and personal data require explicit consent. 
-            Removing a photo will delete it from our face recognition system.
-            All data is handled according to our privacy policy.
-          </p>
+          <div className="flex">
+            <IdentificationIcon className="h-5 w-5 text-blue-400 mr-3 flex-shrink-0" />
+            <div>
+              <h3 className="font-medium text-blue-900">Privacy Note</h3>
+              <p className="text-sm text-blue-700 mt-1">
+                Participant photos and personal data require explicit consent. 
+                Removing a photo will delete it from our face recognition system.
+                All data is handled according to our privacy policy.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Camera Modal */}
       {showCamera && (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white">
               <h3 className="text-lg font-semibold text-gray-900">Take Photo</h3>
               <button
                 type="button"
@@ -919,7 +933,7 @@ const EditParticipantPage = () => {
                   setShowCamera(false);
                   setCameraError('');
                 }}
-                className="text-gray-400 hover:text-gray-500"
+                className="text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 rounded-lg"
               >
                 <XMarkIcon className="h-6 w-6" />
               </button>
@@ -970,7 +984,6 @@ const EditParticipantPage = () => {
 
               {/* Camera Preview */}
               <div className="relative bg-black rounded-lg overflow-hidden aspect-video">
-                {/* Video Element */}
                 <video
                   ref={videoRef}
                   autoPlay
@@ -978,15 +991,13 @@ const EditParticipantPage = () => {
                   muted
                   className="w-full h-full object-cover"
                   style={{
-                    transform: 'scaleX(-1)', // Mirror for selfie view
+                    transform: 'scaleX(-1)',
                     display: isCameraActive ? 'block' : 'none'
                   }}
                 />
                 
-                {/* Camera Preview (when no video) */}
                 <CameraPreview />
                 
-                {/* Hidden canvas for capturing photo */}
                 <canvas ref={canvasRef} className="hidden" />
               </div>
 
@@ -1041,12 +1052,12 @@ const EditParticipantPage = () => {
               {/* Instructions */}
               <div className="mt-6 p-4 bg-blue-50 rounded-lg">
                 <h4 className="font-medium text-blue-900 mb-2">Instructions</h4>
-                <ul className="text-sm text-blue-700 space-y-1">
-                  <li>• Make sure the participant is well-lit and facing the camera</li>
-                  <li>• Position the participant's face in the center of the frame</li>
-                  <li>• Ensure the face is clearly visible (no hats, sunglasses, etc.)</li>
-                  <li>• Click "Take Photo" when ready</li>
-                  <li>• The photo will be mirrored for natural selfie view</li>
+                <ul className="text-sm text-blue-700 space-y-1 list-disc pl-4">
+                  <li>Make sure the participant is well-lit and facing the camera</li>
+                  <li>Position the participant's face in the center of the frame</li>
+                  <li>Ensure the face is clearly visible (no hats, sunglasses, etc.)</li>
+                  <li>Click "Take Photo" when ready</li>
+                  <li>The photo will be mirrored for natural selfie view</li>
                 </ul>
               </div>
 

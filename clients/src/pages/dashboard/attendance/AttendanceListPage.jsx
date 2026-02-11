@@ -21,7 +21,8 @@ import {
   ClockIcon,
   UserIcon,
   BuildingOfficeIcon,
-  DocumentTextIcon
+  DocumentTextIcon,
+  IdentificationIcon
 } from '@heroicons/react/24/outline';
 import Layout from '../../../components/layout/Layout';
 import Card from '../../../components/common/Card';
@@ -54,10 +55,12 @@ const AttendanceListPage = () => {
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [actionMenuPosition, setActionMenuPosition] = useState({ x: 0, y: 0 });
   const [showActionMenu, setShowActionMenu] = useState(false);
+  const [searchInput, setSearchInput] = useState('');
   const [pagination, setPagination] = useState({
     page: 1,
     total_pages: 1,
-    total_count: 0
+    total_count: 0,
+    page_size: 7 // 7 records per page
   });
 
   // Filter State
@@ -89,7 +92,7 @@ const AttendanceListPage = () => {
   // Fetch attendance when filters, page, or debounced search changes
   useEffect(() => {
     fetchAttendance();
-  }, [filters.program, filters.date_from, filters.date_to, filters.status, filters.verified_by_face, pagination.page, debouncedSearch]);
+  }, [filters.program, filters.date_from, filters.date_to, filters.status, filters.verified_by_face, pagination.page, pagination.page_size, debouncedSearch]);
 
   const fetchPrograms = async () => {
     try {
@@ -110,7 +113,7 @@ const AttendanceListPage = () => {
       
       const params = {
         page: pagination.page,
-        page_size: 10
+        page_size: pagination.page_size // Use 7 records per page
       };
       
       if (filters.program) params.program_id = filters.program;
@@ -130,12 +133,35 @@ const AttendanceListPage = () => {
       // Filter valid records
       const validRecords = attendanceList.filter(r => r && r.id);
       
-      setAttendance(validRecords);
-      setPagination({
-        page: response.page || 1,
-        total_pages: response.total_pages || 1,
-        total_count: response.count || response.results?.length || 0
-      });
+      // Debug: Check what fields are available in the first record
+      if (validRecords.length > 0) {
+        console.log('=== ATTENDANCE RECORD DEBUG ===');
+        console.log('First record:', validRecords[0]);
+        console.log('Available fields:', Object.keys(validRecords[0]));
+        console.log('Total records received:', validRecords.length);
+        console.log('Expected page_size:', pagination.page_size);
+        console.log('================================');
+      }
+      
+      // IMPORTANT: Slice the records to ensure we only show page_size records
+      // This is a frontend safeguard in case the backend returns more than requested
+      const startIndex = 0; // Backend should handle pagination, but we enforce it here
+      const endIndex = pagination.page_size;
+      const paginatedRecords = validRecords.slice(startIndex, endIndex);
+      
+      console.log(`Displaying ${paginatedRecords.length} of ${validRecords.length} records`);
+      
+      setAttendance(paginatedRecords);
+      
+      // Calculate total pages based on page_size
+      const totalCount = response.count || response.results?.length || 0;
+      const totalPages = Math.ceil(totalCount / pagination.page_size);
+      
+      setPagination(prev => ({
+        ...prev,
+        total_pages: totalPages || 1,
+        total_count: totalCount
+      }));
       
       if (!debouncedSearch) {
         const statsData = await attendanceService.getAttendanceStats(params);
@@ -157,6 +183,13 @@ const AttendanceListPage = () => {
     setPagination(prev => ({ ...prev, page: 1 }));
   };
 
+  const handleSearchChange = (e) => {
+    const { value } = e.target;
+    setSearchInput(value);
+    setFilters(prev => ({ ...prev, search: value }));
+    setPagination(prev => ({ ...prev, page: 1 }));
+  };
+
   const handleClearFilters = () => {
     setFilters({
       program: '',
@@ -166,6 +199,7 @@ const AttendanceListPage = () => {
       verified_by_face: '',
       search: ''
     });
+    setSearchInput('');
     setPagination(prev => ({ ...prev, page: 1 }));
   };
 
@@ -198,7 +232,7 @@ const AttendanceListPage = () => {
       return;
     }
     
-    if (window.confirm(`Are you sure you want to delete this attendance record? This action cannot be undone.`)) {
+    if (window.confirm(`Are you sure you want to delete this attendance record for ${record.participant_id}? This action cannot be undone.`)) {
       try {
         await attendanceService.deleteAttendanceRecord(record.id);
         setSuccess('Attendance record deleted successfully');
@@ -213,9 +247,25 @@ const AttendanceListPage = () => {
     }
   };
 
+  // Format full name from participant data
+  const formatFullName = (participant) => {
+    if (!participant) return null;
+    
+    const firstName = participant.first_name || participant.participant_first_name || '';
+    const lastName = participant.last_name || participant.participant_last_name || '';
+    
+    if (firstName || lastName) {
+      return `${firstName} ${lastName}`.trim();
+    }
+    
+    return null;
+  };
+
   // Action Menu Component
   const ActionMenu = () => {
     if (!selectedRecord || !showActionMenu) return null;
+
+    const participantName = formatFullName(selectedRecord.participant_details || selectedRecord);
 
     const menuItems = [
       {
@@ -255,17 +305,22 @@ const AttendanceListPage = () => {
         />
         
         <div 
-          className="fixed z-50 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 animate-slideDown"
+          className="fixed z-50 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 animate-slideDown"
           style={{
             top: actionMenuPosition.y,
-            left: actionMenuPosition.x,
-            transform: 'translateX(-100%)'
+            left: Math.max(10, Math.min(actionMenuPosition.x - 200, window.innerWidth - 210)),
           }}
           onClick={(e) => e.stopPropagation()}
         >
           <div className="py-1" role="menu">
             <div className="px-4 py-2 text-xs text-gray-500 border-b border-gray-100">
-              Record #{selectedRecord.id}
+              <div className="font-medium text-gray-700">{selectedRecord.participant_id}</div>
+              {participantName && (
+                <div className="truncate text-gray-600">{participantName}</div>
+              )}
+              <div className="mt-1 text-gray-500">
+                {selectedRecord.date ? new Date(selectedRecord.date).toLocaleDateString() : 'No date'}
+              </div>
             </div>
             {menuItems.map((item, index) => (
               <button
@@ -284,7 +339,7 @@ const AttendanceListPage = () => {
     );
   };
 
-  // Status Badge Component - Exact match from DetailPage
+  // Status Badge Component
   const StatusBadge = ({ present }) => {
     if (present) {
       return (
@@ -302,32 +357,32 @@ const AttendanceListPage = () => {
     );
   };
 
-  // Verification Badge Component - Exact match from DetailPage
+  // Verification Badge Component
   const VerificationBadge = ({ record }) => {
     if (record.verified_by_face) {
-      const quality = attendanceService.getConfidenceLevel?.(record.confidence_score || 0) || 
-                     (record.confidence_score >= 80 ? 'Good' : 
-                      record.confidence_score >= 60 ? 'Fair' : 'Low');
+      const confidence = record.confidence_score || 0;
+      const quality = 
+        confidence >= 80 ? 'Good' : 
+        confidence >= 60 ? 'Fair' : 'Low';
       
       const confidenceColor = 
-        quality === 'Excellent' || quality === 'Good' ? 'green' :
-        quality === 'Fair' || quality === 'Acceptable' ? 'yellow' : 'red';
+        quality === 'Good' ? 'green' :
+        quality === 'Fair' ? 'yellow' : 'red';
       
       return (
         <Badge color={confidenceColor} size="sm" className="flex items-center gap-1">
           <CameraIcon className="h-3 w-3" />
-          <span>Face ({record.confidence_score?.toFixed(1)}%)</span>
+          <span>Face ({confidence.toFixed(1)}%)</span>
         </Badge>
       );
     }
 
-    // Get verification method display - matches DetailPage
     const getMethodDisplay = (method) => {
-      if (!method) return 'Manual Entry';
+      if (!method) return 'Manual';
       
       const methodMap = {
-        'manual': 'Manual Entry',
-        'face': 'Face Recognition',
+        'manual': 'Manual',
+        'face': 'Face',
         'qr': 'QR Code',
         'rfid': 'RFID',
         'biometric': 'Biometric'
@@ -336,33 +391,14 @@ const AttendanceListPage = () => {
       return methodMap[method.toLowerCase()] || method;
     };
 
-    const methodDisplay = getMethodDisplay(record.verification_method);
-    
     return (
       <Badge color="gray" size="sm" className="flex items-center gap-1">
-        <span className="text-xs">{methodDisplay}</span>
+        <span className="text-xs">{getMethodDisplay(record.verification_method)}</span>
       </Badge>
     );
   };
 
-  // Format Date - Exact match from DetailPage
-  const formatDate = (dateString) => {
-    if (!dateString) return null;
-    
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      }); // "Wednesday, February 11, 2026"
-    } catch {
-      return dateString;
-    }
-  };
-
-  // Format Date for table (compact version)
+  // Format Date
   const formatDateCompact = (dateString) => {
     if (!dateString) return null;
     
@@ -373,13 +409,13 @@ const AttendanceListPage = () => {
         month: 'short',
         day: 'numeric',
         year: 'numeric'
-      }); // "Wed, Feb 11, 2026"
+      });
     } catch {
       return dateString;
     }
   };
 
-  // Table Columns - Updated without Record ID, Recorded At, and Recorded By
+  // Table Columns
   const columns = [
     {
       key: 'date',
@@ -390,7 +426,12 @@ const AttendanceListPage = () => {
           <Link 
             to={`/dashboard/attendance/${record.id}`}
             className="text-gray-700 hover:text-blue-600 hover:underline"
-            title={formatDate(value)}
+            title={new Date(value).toLocaleDateString('en-US', { 
+              weekday: 'long', 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric' 
+            })}
           >
             {formatDateCompact(value)}
           </Link>
@@ -398,30 +439,51 @@ const AttendanceListPage = () => {
       )
     },
     {
-      key: 'participant',
-      header: 'Participant',
-      render: (_, record) => (
-        <div className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold">
-            {record.participant_id?.charAt(0) || 'P'}
-          </div>
+      key: 'participant_id',
+      header: 'Participant ID',
+      render: (value, record) => {
+        const participant = record.participant_details || record;
+        const participantId = participant.participant_id || record.participant_id || value;
+        const participantIdFromResponse = record.participant_id || value;
+        
+        const fullName = participant.first_name || participant.last_name 
+          ? `${participant.first_name || ''} ${participant.last_name || ''}`.trim()
+          : null;
+        
+        const participantIdForLink = participant.id || record.participant;
+        
+        if (!participantIdForLink) {
+          return (
+            <div>
+              <span className="text-gray-700 font-medium block">
+                {participantId || participantIdFromResponse || 'No ID'}
+              </span>
+              {fullName && (
+                <span className="text-sm text-gray-500 block truncate max-w-[200px]" title={fullName}>
+                  {fullName}
+                </span>
+              )}
+            </div>
+          );
+        }
+        
+        return (
           <div>
-            {/* Link to Participant Detail Page */}
             <Link 
-              to={`/dashboard/participants/${record.participant}`}
-              className="font-medium text-gray-900 hover:text-blue-600 hover:underline"
-              title="View participant details"
+              to={`/dashboard/participants/${participantIdForLink}`}
+              className="text-blue-600 hover:text-blue-800 font-medium block hover:underline truncate max-w-[200px]"
+              title={`${participantId || participantIdFromResponse} - ${fullName || ''}`}
             >
-              {record.participant_id}
+              {participantId || participantIdFromResponse || 'No ID'}
             </Link>
-            {record.participant_name && (
-              <div className="text-xs text-gray-500">
-                {record.participant_name}
-              </div>
+            {fullName && (
+              <span className="text-sm text-gray-500 block truncate max-w-[200px]" title={fullName}>
+                {fullName}
+              </span>
             )}
           </div>
-        </div>
-      )
+        );
+      }
     },
     {
       key: 'program',
@@ -429,12 +491,16 @@ const AttendanceListPage = () => {
       render: (_, record) => (
         <div className="flex items-start gap-2">
           <BuildingOfficeIcon className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
-          <div>
-            <div className="font-medium text-gray-900">{record.program_name}</div>
+          <div className="min-w-0 flex-1">
+            <div className="font-medium text-gray-900 truncate max-w-[200px]" title={record.program_name}>
+              {record.program_name}
+            </div>
             {record.session_name && (
               <div className="flex items-center gap-1 text-xs text-gray-500 mt-0.5">
-                <DocumentTextIcon className="h-3 w-3" />
-                <span>{record.session_name}</span>
+                <DocumentTextIcon className="h-3 w-3 flex-shrink-0" />
+                <span className="truncate max-w-[180px]" title={record.session_name}>
+                  {record.session_name}
+                </span>
               </div>
             )}
           </div>
@@ -458,7 +524,7 @@ const AttendanceListPage = () => {
       render: (_, record) => (
         <button
           onClick={(e) => handleActionMenuClick(record, e)}
-          className="p-1.5 rounded-md hover:bg-gray-100 transition-colors"
+          className="p-1.5 rounded-md hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
           title="Actions"
         >
           <EllipsisVerticalIcon className="h-5 w-5 text-gray-500" />
@@ -501,6 +567,34 @@ const AttendanceListPage = () => {
     }
   ] : [];
 
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const delta = 2; // Number of pages to show on each side of current page
+    const range = [];
+    const rangeWithDots = [];
+    let l;
+
+    for (let i = 1; i <= pagination.total_pages; i++) {
+      if (i === 1 || i === pagination.total_pages || (i >= pagination.page - delta && i <= pagination.page + delta)) {
+        range.push(i);
+      }
+    }
+
+    range.forEach((i) => {
+      if (l) {
+        if (i - l === 2) {
+          rangeWithDots.push(l + 1);
+        } else if (i - l !== 1) {
+          rangeWithDots.push('...');
+        }
+      }
+      rangeWithDots.push(i);
+      l = i;
+    });
+
+    return rangeWithDots;
+  };
+
   if (loading && attendance.length === 0) {
     return (
       <Layout>
@@ -517,16 +611,16 @@ const AttendanceListPage = () => {
       {/* Floating Action Menu */}
       {showActionMenu && <ActionMenu />}
       
-      <div className="space-y-6">
+      <div className="space-y-6 px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Attendance Records</h1>
             <p className="text-gray-600">
               {isReadOnly ? 'View attendance records' : 'Track and manage participant attendance'}
             </p>
           </div>
-          <div className="flex space-x-3">
+          <div className="flex flex-wrap gap-3">
             <Button
               variant="outline"
               onClick={handleRefresh}
@@ -565,17 +659,15 @@ const AttendanceListPage = () => {
           <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
+                <CheckCircleIcon className="h-5 w-5 text-green-400" />
               </div>
-              <div className="ml-3">
+              <div className="ml-3 flex-1">
                 <p className="text-sm font-medium text-green-800">{success}</p>
               </div>
               <div className="ml-auto pl-3">
                 <button
                   onClick={() => setSuccess('')}
-                  className="text-green-500 hover:text-green-600"
+                  className="text-green-500 hover:text-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 rounded-lg"
                 >
                   <span className="sr-only">Dismiss</span>
                   <XMarkIcon className="h-5 w-5" />
@@ -590,17 +682,15 @@ const AttendanceListPage = () => {
           <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
+                <XCircleIcon className="h-5 w-5 text-red-400" />
               </div>
-              <div className="ml-3">
+              <div className="ml-3 flex-1">
                 <p className="text-sm font-medium text-red-800">{error}</p>
               </div>
               <div className="ml-auto pl-3">
                 <button
                   onClick={() => setError('')}
-                  className="text-red-500 hover:text-red-600"
+                  className="text-red-500 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 rounded-lg"
                 >
                   <span className="sr-only">Dismiss</span>
                   <XMarkIcon className="h-5 w-5" />
@@ -612,18 +702,18 @@ const AttendanceListPage = () => {
 
         {/* Stats Cards */}
         {stats && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {statsCards.map((stat, index) => (
               <Card key={index} className="hover:shadow-md transition-shadow">
                 <div className="flex items-center">
                   <div className={`p-3 rounded-lg ${stat.bgColor} ${stat.iconColor}`}>
                     <stat.icon className="h-6 w-6" />
                   </div>
-                  <div className="ml-4">
-                    <h3 className="text-sm font-medium text-gray-600">{stat.title}</h3>
+                  <div className="ml-4 min-w-0 flex-1">
+                    <h3 className="text-sm font-medium text-gray-600 truncate">{stat.title}</h3>
                     <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
                     {stat.subtitle && (
-                      <p className="text-xs text-gray-500 mt-0.5">{stat.subtitle}</p>
+                      <p className="text-xs text-gray-500 mt-0.5 truncate">{stat.subtitle}</p>
                     )}
                   </div>
                 </div>
@@ -632,9 +722,23 @@ const AttendanceListPage = () => {
           </div>
         )}
 
+        {/* Search Bar */}
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            type="text"
+            value={searchInput}
+            onChange={handleSearchChange}
+            placeholder="Search by participant ID, name, or program..."
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
+
         {/* Filters Section */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center space-x-4">
               <Button
                 variant={showFilters ? "primary" : "outline"}
@@ -643,14 +747,14 @@ const AttendanceListPage = () => {
               >
                 <FunnelIcon className="h-4 w-4 mr-2" />
                 Filters
-                {Object.values(filters).some(value => value !== '' && value !== 'true') && (
+                {Object.values(filters).some(value => value !== '' && value !== 'true' && value !== 'false') && (
                   <span className="ml-2 bg-blue-100 text-blue-600 text-xs px-2 py-0.5 rounded-full">
                     Active
                   </span>
                 )}
               </Button>
               
-              {Object.values(filters).some(value => value !== '' && value !== 'true') && (
+              {Object.values(filters).some(value => value !== '' && value !== 'true' && value !== 'false') && (
                 <Button
                   variant="ghost"
                   size="sm"
@@ -700,7 +804,7 @@ const AttendanceListPage = () => {
                       name="date_from"
                       value={filters.date_from}
                       onChange={handleFilterChange}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="From"
                     />
                     <input
@@ -708,7 +812,7 @@ const AttendanceListPage = () => {
                       name="date_to"
                       value={filters.date_to}
                       onChange={handleFilterChange}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="To"
                     />
                   </div>
@@ -762,12 +866,12 @@ const AttendanceListPage = () => {
                   <CalendarIcon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
                   <h3 className="text-lg font-medium text-gray-900 mb-2">No attendance records found</h3>
                   <p className="text-gray-500 mb-6 max-w-md mx-auto">
-                    {Object.values(filters).some(value => value !== '' && value !== 'true')
+                    {Object.values(filters).some(value => value !== '' && value !== 'true' && value !== 'false')
                       ? 'No records match your current filters. Try adjusting your search criteria.'
                       : 'Start tracking attendance by recording your first check-in.'}
                   </p>
                   <div className="space-x-3">
-                    {Object.values(filters).some(value => value !== '' && value !== 'true') && (
+                    {Object.values(filters).some(value => value !== '' && value !== 'true' && value !== 'false') && (
                       <Button
                         variant="outline"
                         onClick={handleClearFilters}
@@ -776,7 +880,7 @@ const AttendanceListPage = () => {
                         Clear Filters
                       </Button>
                     )}
-                    {canEdit && !Object.values(filters).some(value => value !== '' && value !== 'true') && (
+                    {canEdit && !Object.values(filters).some(value => value !== '' && value !== 'true' && value !== 'false') && (
                       <Button
                         onClick={() => navigate('/dashboard/attendance/check-in')}
                       >
@@ -790,12 +894,15 @@ const AttendanceListPage = () => {
             />
           </div>
           
-          {/* Table Footer */}
+          {/* Enhanced Pagination Controls */}
           {attendance.length > 0 && (
-            <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 bg-gray-50">
+            <div className="flex flex-col sm:flex-row items-center justify-between px-6 py-4 border-t border-gray-200 bg-gray-50 gap-4">
               <div className="text-sm text-gray-700">
-                Showing <span className="font-medium">{attendance.length}</span> of{' '}
-                <span className="font-medium">{pagination.total_count}</span> records
+                Showing <span className="font-medium">{((pagination.page - 1) * pagination.page_size) + 1}</span> to{' '}
+                <span className="font-medium">
+                  {Math.min(pagination.page * pagination.page_size, pagination.total_count)}
+                </span>{' '}
+                of <span className="font-medium">{pagination.total_count}</span> records
               </div>
               
               <div className="flex items-center space-x-2">
@@ -804,25 +911,53 @@ const AttendanceListPage = () => {
                   size="sm"
                   onClick={() => handlePageChange(pagination.page - 1)}
                   disabled={pagination.page === 1}
+                  className="px-3 py-2"
                 >
-                  ← Previous
+                  <ChevronLeftIcon className="h-4 w-4 mr-1" />
+                  Previous
                 </Button>
-                <span className="text-sm text-gray-500 mx-2">
-                  Page {pagination.page} of {pagination.total_pages}
-                </span>
+                
+                {/* Page Numbers */}
+                <div className="hidden md:flex items-center space-x-1">
+                  {getPageNumbers().map((pageNum, index) => (
+                    <button
+                      key={index}
+                      onClick={() => typeof pageNum === 'number' ? handlePageChange(pageNum) : null}
+                      disabled={pageNum === '...'}
+                      className={`
+                        px-3 py-1.5 text-sm font-medium rounded-md transition-colors
+                        ${pageNum === pagination.page 
+                          ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                          : pageNum === '...'
+                            ? 'text-gray-500 cursor-default'
+                            : 'text-gray-700 hover:bg-gray-200'
+                        }
+                        ${pageNum === '...' ? 'cursor-default' : 'cursor-pointer'}
+                      `}
+                    >
+                      {pageNum}
+                    </button>
+                  ))}
+                </div>
+                
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => handlePageChange(pagination.page + 1)}
                   disabled={pagination.page === pagination.total_pages}
+                  className="px-3 py-2"
                 >
-                  Next →
+                  Next
+                  <ChevronRightIcon className="h-4 w-4 ml-1" />
                 </Button>
               </div>
               
+              {/* Page Size Info */}
               <div className="flex items-center text-sm text-gray-500">
                 <InformationCircleIcon className="h-4 w-4 mr-1" />
-                Click date to view details
+                <span>{pagination.page_size} records per page</span>
+                <span className="mx-2">•</span>
+                <span>Click date to view details</span>
               </div>
             </div>
           )}

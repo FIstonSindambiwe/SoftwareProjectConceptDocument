@@ -8,7 +8,12 @@ import {
   CalendarIcon,
   PhotoIcon,
   DocumentTextIcon,
-  ChartBarIcon
+  ChartBarIcon,
+  IdentificationIcon,
+  EnvelopeIcon,
+  PhoneIcon,
+  HomeIcon,
+  ShieldCheckIcon
 } from '@heroicons/react/24/outline';
 import Layout from '../../../components/layout/Layout';
 import Card from '../../../components/common/Card';
@@ -94,7 +99,6 @@ const ParticipantDetailPage = () => {
       setError(null);
       await participantService.addParticipantNote(id, noteData);
       setSuccess('Note added successfully');
-      // Refresh participant data to get updated notes
       fetchParticipantData();
     } catch (err) {
       console.error('Add note error:', err);
@@ -126,7 +130,7 @@ const ParticipantDetailPage = () => {
   };
 
   const handleDeactivate = async () => {
-    if (window.confirm('Are you sure you want to deactivate this participant?')) {
+    if (window.confirm(`Are you sure you want to deactivate ${participant?.full_name || 'this participant'}?`)) {
       try {
         setError(null);
         await participantService.deleteParticipant(id);
@@ -134,6 +138,19 @@ const ParticipantDetailPage = () => {
         setTimeout(() => navigate('/dashboard/participants'), 1500);
       } catch (err) {
         setError(err.message || 'Failed to deactivate participant');
+      }
+    }
+  };
+
+  const handleActivate = async () => {
+    if (window.confirm(`Are you sure you want to reactivate ${participant?.full_name || 'this participant'}?`)) {
+      try {
+        setError(null);
+        await participantService.updateParticipant(id, { is_active: true });
+        setSuccess('Participant reactivated successfully');
+        fetchParticipantData();
+      } catch (err) {
+        setError(err.message || 'Failed to reactivate participant');
       }
     }
   };
@@ -158,7 +175,7 @@ const ParticipantDetailPage = () => {
   if (error && !participant) {
     return (
       <Layout>
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <Button
             variant="outline"
             onClick={() => navigate('/dashboard/participants')}
@@ -170,7 +187,10 @@ const ParticipantDetailPage = () => {
           
           <Card>
             <div className="text-center py-12">
-              <p className="text-red-600">Error loading participant data</p>
+              <div className="flex justify-center mb-4">
+                <IdentificationIcon className="h-12 w-12 text-red-400" />
+              </div>
+              <p className="text-red-600 font-medium">Error loading participant data</p>
               <p className="text-gray-600 mt-2">{error}</p>
               <Button
                 onClick={() => navigate('/dashboard/participants')}
@@ -187,7 +207,7 @@ const ParticipantDetailPage = () => {
 
   return (
     <Layout>
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-6">
           <Button
@@ -214,7 +234,7 @@ const ParticipantDetailPage = () => {
                 <div className="ml-auto pl-3">
                   <button
                     onClick={() => setSuccess('')}
-                    className="text-green-500 hover:text-green-600"
+                    className="text-green-500 hover:text-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 rounded-lg"
                   >
                     <span className="sr-only">Dismiss</span>
                     <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -241,7 +261,7 @@ const ParticipantDetailPage = () => {
                 <div className="ml-auto pl-3">
                   <button
                     onClick={() => setError(null)}
-                    className="text-red-500 hover:text-red-600"
+                    className="text-red-500 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 rounded-lg"
                   >
                     <span className="sr-only">Dismiss</span>
                     <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -253,42 +273,73 @@ const ParticipantDetailPage = () => {
             </div>
           )}
           
-          <div className="flex justify-between items-start">
-            <div>
-              <div className="flex items-center space-x-3">
-                <h1 className="text-2xl font-bold text-gray-900">
-                  {participant.participant_id}
-                </h1>
-                <Badge
-                  color={participant.is_active ? 'green' : 'red'}
-                >
-                  {participant.is_active ? 'Active' : 'Inactive'}
-                </Badge>
-                {stats.faceEncodingStatus?.can_use_face_recognition && (
-                  <Badge color="blue" variant="outline">
-                    <PhotoIcon className="h-4 w-4 mr-1" />
-                    Face Recognition Ready
-                  </Badge>
-                )}
-              </div>
-              <div className="flex items-center space-x-4 mt-2 text-gray-600">
-                <span className="flex items-center">
-                  <UserIcon className="h-5 w-5 mr-1" />
-                  {participant.age} years • {participant.gender_display}
-                </span>
-                <span className="flex items-center">
-                  <CalendarIcon className="h-5 w-5 mr-1" />
-                  Enrolled: {new Date(participant.enrollment_date).toLocaleDateString()}
-                </span>
-                <span className="flex items-center">
-                  <AcademicCapIcon className="h-5 w-5 mr-1" />
-                  {participant.active_enrollments_count} active programs
-                </span>
+          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
+            <div className="flex-1">
+              <div className="flex items-start space-x-4">
+                {/* Profile Photo */}
+                <div className="flex-shrink-0">
+                  {participant?.photo ? (
+                    <img
+                      src={participant.photo}
+                      alt={participant.full_name}
+                      className="h-20 w-20 rounded-full object-cover border-4 border-white shadow"
+                    />
+                  ) : (
+                    <div className="h-20 w-20 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center border-4 border-white shadow">
+                      <UserIcon className="h-10 w-10 text-blue-500" />
+                    </div>
+                  )}
+                </div>
+                
+                <div className="flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h1 className="text-2xl font-bold text-gray-900">
+                      {participant?.full_name || 'Participant'}
+                    </h1>
+                    <Badge
+                      color={participant?.is_active ? 'green' : 'red'}
+                      className="ml-2"
+                    >
+                      {participant?.is_active ? 'Active' : 'Inactive'}
+                    </Badge>
+                    {stats.faceEncodingStatus?.can_use_face_recognition && (
+                      <Badge color="blue" variant="outline">
+                        <PhotoIcon className="h-4 w-4 mr-1" />
+                        Face Recognition Ready
+                      </Badge>
+                    )}
+                  </div>
+                  
+                  <p className="text-lg text-gray-600 mb-2">
+                    {participant?.participant_id}
+                  </p>
+                  
+                  <div className="flex flex-wrap items-center gap-4 mt-2 text-gray-600">
+                    <span className="flex items-center text-sm">
+                      <UserIcon className="h-4 w-4 mr-1 text-gray-400" />
+                      {participant?.age} years • {participant?.gender_display}
+                    </span>
+                    <span className="flex items-center text-sm">
+                      <CalendarIcon className="h-4 w-4 mr-1 text-gray-400" />
+                      Enrolled: {participant?.enrollment_date ? new Date(participant.enrollment_date).toLocaleDateString() : 'N/A'}
+                    </span>
+                    <span className="flex items-center text-sm">
+                      <AcademicCapIcon className="h-4 w-4 mr-1 text-gray-400" />
+                      {participant?.active_enrollments_count || 0} active programs
+                    </span>
+                    {participant?.education_level && (
+                      <span className="flex items-center text-sm">
+                        <ShieldCheckIcon className="h-4 w-4 mr-1 text-gray-400" />
+                        Education: {educationLevels.find(l => l.value === participant.education_level)?.label || participant.education_level}
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
             
-            <div className="flex space-x-3">
-              {user.role !== 'donor' && (
+            <div className="flex space-x-3 lg:self-start">
+              {user?.role !== 'donor' && (
                 <>
                   <Button
                     variant="outline"
@@ -297,13 +348,21 @@ const ParticipantDetailPage = () => {
                     <PencilIcon className="h-5 w-5 mr-2" />
                     Edit
                   </Button>
-                  <Button
-                    variant="danger"
-                    onClick={handleDeactivate}
-                    disabled={!participant.is_active}
-                  >
-                    Deactivate
-                  </Button>
+                  {participant?.is_active ? (
+                    <Button
+                      variant="danger"
+                      onClick={handleDeactivate}
+                    >
+                      Deactivate
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="success"
+                      onClick={handleActivate}
+                    >
+                      Reactivate
+                    </Button>
+                  )}
                 </>
               )}
             </div>
@@ -311,7 +370,7 @@ const ParticipantDetailPage = () => {
         </div>
 
         {/* Tabs */}
-        <div className="mb-6">
+        <div className="mb-6 border-b border-gray-200">
           <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
         </div>
 
@@ -330,7 +389,7 @@ const ParticipantDetailPage = () => {
           {activeTab === 'enrollments' && (
             <EnrollmentsList
               enrollments={stats.enrollments}
-              participantId={participant.id}
+              participantId={participant?.id}
               user={user}
               onEnrollmentUpdated={fetchParticipantData}
             />
@@ -338,7 +397,7 @@ const ParticipantDetailPage = () => {
 
           {activeTab === 'notes' && (
             <NotesList
-              participantId={participant.id}
+              participantId={participant?.id}
               notes={stats.notes}
               onAddNote={handleAddNote}
               user={user}
@@ -353,9 +412,33 @@ const ParticipantDetailPage = () => {
             />
           )}
         </div>
+
+        {/* Additional Info Card */}
+        {activeTab === 'overview' && participant?.special_needs && (
+          <Card className="mt-6">
+            <div className="p-6">
+              <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                <DocumentTextIcon className="h-5 w-5 mr-2 text-gray-600" />
+                Special Needs & Accommodations
+              </h3>
+              <p className="text-gray-700 whitespace-pre-wrap">
+                {participant.special_needs}
+              </p>
+            </div>
+          </Card>
+        )}
       </div>
     </Layout>
   );
 };
+
+// Education levels constant for display
+const educationLevels = [
+  { value: 'none', label: 'No Formal Education' },
+  { value: 'primary', label: 'Primary School' },
+  { value: 'secondary', label: 'Secondary School' },
+  { value: 'vocational', label: 'Vocational Training' },
+  { value: 'university', label: 'University' }
+];
 
 export default ParticipantDetailPage;
