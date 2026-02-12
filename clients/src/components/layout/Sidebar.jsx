@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
+  // Navigation Icons
   HomeIcon,
   UserGroupIcon,
   UsersIcon,
@@ -9,33 +10,55 @@ import {
   ClipboardDocumentCheckIcon,
   ChartBarIcon,
   DocumentTextIcon,
+  
+  // Module Icons
   MapPinIcon,
-  XMarkIcon,
-  ChevronDownIcon,
-  ChevronRightIcon,
   FlagIcon,
   CalendarIcon,
   CameraIcon,
   UserPlusIcon,
   ListBulletIcon,
   BeakerIcon,
-  PresentationChartBarIcon, // Added for General Report
+  PresentationChartLineIcon,
+  
+  // UI Icons
+  XMarkIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
 } from '@heroicons/react/24/outline';
 import authService from '../../services/api/authService';
+import logoImage from '../../assets/images/l-o-g-o.png';
 
 const Sidebar = ({ isOpen, onClose }) => {
   const user = authService.getCurrentUser();
   const userRole = authService.getUserRole();
-  const [isProgramsOpen, setIsProgramsOpen] = useState(false);
-  const [isYouthManagementOpen, setIsYouthManagementOpen] = useState(false);
-  const [isAttendanceOpen, setIsAttendanceOpen] = useState(false);
-  const [isAssessmentsOpen, setIsAssessmentsOpen] = useState(false);
-  const [isReportsOpen, setIsReportsOpen] = useState(false); // New state for Reports dropdown
+  
+  // Dropdown States
+  const [openDropdowns, setOpenDropdowns] = useState({
+    programs: false,
+    youthManagement: false,
+    attendance: false,
+    assessments: false,
+    reports: false
+  });
 
+  // Toggle dropdown
+  const toggleDropdown = (key) => {
+    setOpenDropdowns(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
+  // Navigation Configuration
   const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, roles: ['all'] },
+    { 
+      name: 'Dashboard', 
+      href: '/dashboard', 
+      icon: HomeIcon, 
+      roles: ['all'] 
+    },
     
-    // Users Management
     { 
       name: 'Users', 
       href: '/dashboard/users',
@@ -43,12 +66,12 @@ const Sidebar = ({ isOpen, onClose }) => {
       roles: ['admin'] 
     },
     
-    // Programs Management (Dropdown)
     { 
       name: 'Programs', 
       icon: AcademicCapIcon, 
       roles: ['all'],
       isDropdown: true,
+      dropdownKey: 'programs',
       children: [
         { 
           name: 'Locations', 
@@ -71,12 +94,12 @@ const Sidebar = ({ isOpen, onClose }) => {
       ]
     },
     
-    // Youth Management (Dropdown)
     { 
       name: 'Youth Management', 
       icon: UsersIcon, 
       roles: ['admin', 'teacher', 'program_manager', 'staff', 'donor'],
       isDropdown: true,
+      dropdownKey: 'youthManagement',
       children: [
         { 
           name: 'Participants', 
@@ -93,12 +116,12 @@ const Sidebar = ({ isOpen, onClose }) => {
       ]
     },
 
-    // Attendance Management (Dropdown)
     { 
       name: 'Attendance', 
       icon: ClipboardDocumentCheckIcon, 
       roles: ['admin', 'teacher', 'program_manager', 'staff'],
       isDropdown: true,
+      dropdownKey: 'attendance',
       children: [
         { 
           name: 'Attendance List', 
@@ -127,12 +150,12 @@ const Sidebar = ({ isOpen, onClose }) => {
       ]
     },
     
-    // Assessments (Dropdown)
     { 
       name: 'Assessments', 
       icon: ChartBarIcon, 
       roles: ['admin', 'teacher', 'program_manager', 'donor'],
       isDropdown: true,
+      dropdownKey: 'assessments',
       children: [
         { 
           name: 'All Assessments', 
@@ -149,66 +172,48 @@ const Sidebar = ({ isOpen, onClose }) => {
       ]
     },
     
-    // Reports (Dropdown with General Report)
     { 
       name: 'Reports', 
       icon: DocumentTextIcon, 
       roles: ['all'],
       isDropdown: true,
+      dropdownKey: 'reports',
       children: [
         { 
           name: 'General Report', 
           href: '/dashboard/reports/general',
-          icon: PresentationChartBarIcon, 
-          roles: ['admin', 'program_manager'] // Only Admin and Program Manager can access
+          icon: PresentationChartLineIcon, 
+          roles: ['admin', 'program_manager']
         },
-        // Add more report types here as they're developed
       ]
     },
   ];
 
+  // Role-based access control
   const hasAccess = (item) => {
     if (item.roles.includes('all')) return true;
     return item.roles.includes(userRole);
   };
 
+  // Filter navigation based on user role
   const filteredNavigation = navigation.filter(item => {
     if (!hasAccess(item)) return false;
     if (item.isDropdown && item.children) {
-      // Filter dropdown children
       item.children = item.children.filter(child => hasAccess(child));
-      // Only show dropdown if it has accessible children
       return item.children.length > 0;
     }
     return true;
   });
 
-  const toggleProgramsDropdown = () => {
-    setIsProgramsOpen(!isProgramsOpen);
-  };
-
-  const toggleYouthManagementDropdown = () => {
-    setIsYouthManagementOpen(!isYouthManagementOpen);
-  };
-
-  const toggleAttendanceDropdown = () => {
-    setIsAttendanceOpen(!isAttendanceOpen);
-  };
-
-  const toggleAssessmentsDropdown = () => {
-    setIsAssessmentsOpen(!isAssessmentsOpen);
-  };
-
-  const toggleReportsDropdown = () => {
-    setIsReportsOpen(!isReportsOpen);
-  };
-
-  const renderDropdown = (item, isOpen, toggleFn) => {
+  // Render dropdown menu
+  const renderDropdown = (item) => {
+    const isOpen = openDropdowns[item.dropdownKey];
+    
     return (
       <div key={item.name}>
         {/* Dropdown Header */}
         <button
-          onClick={toggleFn}
+          onClick={() => toggleDropdown(item.dropdownKey)}
           className="w-full flex items-center justify-between gap-4 px-4 py-3 text-sm font-medium rounded-lg transition-all text-slate-300 hover:bg-slate-700 hover:text-white hover:shadow-md"
         >
           <div className="flex items-center gap-4">
@@ -249,9 +254,29 @@ const Sidebar = ({ isOpen, onClose }) => {
     );
   };
 
+  // Render regular link
+  const renderLink = (item) => (
+    <NavLink
+      key={item.name}
+      to={item.href}
+      onClick={() => onClose()}
+      end={item.href === '/dashboard'}
+      className={({ isActive }) =>
+        `flex items-center gap-4 px-4 py-3 text-sm font-medium rounded-lg transition-all
+        ${isActive
+          ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-white shadow-inner border-l-4 border-blue-500'
+          : 'text-slate-300 hover:bg-slate-700/50 hover:text-white hover:shadow-md'
+        }`
+      }
+    >
+      <item.icon className="h-5 w-5 flex-shrink-0" />
+      <span>{item.name}</span>
+    </NavLink>
+  );
+
   return (
     <>
-      {/* Mobile backdrop */}
+      {/* Mobile Backdrop */}
       {isOpen && (
         <div 
           className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-40 lg:hidden"
@@ -270,91 +295,39 @@ const Sidebar = ({ isOpen, onClose }) => {
         `}
       >
         <div className="flex flex-col h-full">
-          {/* Close button for mobile */}
+          {/* Mobile Close Button */}
           <button
             onClick={onClose}
             className="lg:hidden absolute top-4 right-4 text-gray-400 hover:text-white z-10 p-2 rounded-full hover:bg-slate-700 transition-colors"
+            aria-label="Close sidebar"
           >
             <XMarkIcon className="h-5 w-5" />
           </button>
 
-          {/* User Profile Section */}
+          {/* Logo Section */}
           <div className="px-6 py-8 border-b border-slate-700/50">
             <div className="flex flex-col items-center">
-              {/* Avatar */}
-              <div className="w-20 h-20 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center mb-4 shadow-xl ring-4 ring-slate-700/50">
-                <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                </svg>
+              <div className="w-36 h-36 mb-4 flex items-center justify-center">
+                <img 
+                  src={logoImage} 
+                  alt="Youth Impact Visualizer Logo" 
+                  className="w-full h-full object-contain"
+                />
               </div>
-              
-              {/* User Name */}
-              <h3 className="text-white font-bold text-lg uppercase tracking-wide">
-                {user?.username || 'ADMIN USER'}
+              <h3 className="text-white font-bold text-2xl tracking-wide text-center">
+                Youth Impact
               </h3>
-              
-              {/* User Email */}
-              <p className="text-slate-400 text-sm mt-1 truncate max-w-full px-2">
-                {user?.email || 'admin@youthimpact.com'}
+              <p className="text-slate-400 text-xs mt-1 text-center">
+                Track • Measure • Visualize
               </p>
-              
-              {/* Role Badge */}
-              <div className="mt-2 px-3 py-1 bg-slate-700/50 rounded-full">
-                <span className="text-xs text-slate-300 uppercase font-semibold">
-                  {userRole || 'Admin'}
-                </span>
-              </div>
             </div>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
-            {filteredNavigation.map((item) => {
-              // Render dropdown for Programs
-              if (item.name === 'Programs' && item.isDropdown) {
-                return renderDropdown(item, isProgramsOpen, toggleProgramsDropdown);
-              }
-
-              // Render dropdown for Youth Management
-              if (item.name === 'Youth Management' && item.isDropdown) {
-                return renderDropdown(item, isYouthManagementOpen, toggleYouthManagementDropdown);
-              }
-
-              // Render dropdown for Attendance
-              if (item.name === 'Attendance' && item.isDropdown) {
-                return renderDropdown(item, isAttendanceOpen, toggleAttendanceDropdown);
-              }
-
-              // Render dropdown for Assessments
-              if (item.name === 'Assessments' && item.isDropdown) {
-                return renderDropdown(item, isAssessmentsOpen, toggleAssessmentsDropdown);
-              }
-
-              // Render dropdown for Reports
-              if (item.name === 'Reports' && item.isDropdown) {
-                return renderDropdown(item, isReportsOpen, toggleReportsDropdown);
-              }
-
-              // Render normal link (for non-dropdown items)
-              return (
-                <NavLink
-                  key={item.name}
-                  to={item.href}
-                  onClick={() => onClose()}
-                  end={item.href === '/dashboard'}
-                  className={({ isActive }) =>
-                    `flex items-center gap-4 px-4 py-3 text-sm font-medium rounded-lg transition-all
-                    ${isActive
-                      ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-white shadow-inner border-l-4 border-blue-500'
-                      : 'text-slate-300 hover:bg-slate-700/50 hover:text-white hover:shadow-md'
-                    }`
-                  }
-                >
-                  <item.icon className="h-5 w-5 flex-shrink-0" />
-                  <span>{item.name}</span>
-                </NavLink>
-              );
-            })}
+          <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
+            {filteredNavigation.map((item) => 
+              item.isDropdown ? renderDropdown(item) : renderLink(item)
+            )}
           </nav>
 
           {/* Footer */}

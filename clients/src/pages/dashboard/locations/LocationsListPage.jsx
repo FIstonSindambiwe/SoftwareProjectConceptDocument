@@ -8,10 +8,13 @@ import {
   MapPinIcon,
   CheckCircleIcon,
   XCircleIcon,
+  ArrowPathIcon,
+  BuildingOfficeIcon,
 } from '@heroicons/react/24/outline';
 import { toast } from 'react-hot-toast';
 import Layout from '../../../components/layout/Layout';
 import Button from '../../../components/common/Button';
+import Card from '../../../components/common/Card';
 import Spinner from '../../../components/common/Spinner';
 import Badge from '../../../components/common/Badge';
 import LocationStatistics from '../../../components/locations/LocationStatistics';
@@ -22,6 +25,7 @@ const LocationsListPage = () => {
   const navigate = useNavigate();
   const [locations, setLocations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [countryFilter, setCountryFilter] = useState('');
   const [activeFilter, setActiveFilter] = useState('');
@@ -30,31 +34,38 @@ const LocationsListPage = () => {
     loadLocations();
   }, []);
 
-  const loadLocations = async () => {
-    setIsLoading(true);
+  const loadLocations = async (showRefresh = false) => {
+    if (showRefresh) setRefreshing(true);
+    else setIsLoading(true);
+    
     try {
       const params = {};
       if (searchTerm) params.search = searchTerm;
       if (countryFilter) params.country = countryFilter;
-      if (activeFilter) params.is_active = activeFilter;
+      if (activeFilter) params.is_active = activeFilter === 'active';
 
       const data = await programService.getLocations(params);
-      setLocations(data.results || data);
+      setLocations(data.results || data || []);
     } catch (error) {
       console.error('Error loading locations:', error);
       toast.error('Failed to load locations');
       setLocations([]);
     } finally {
       setIsLoading(false);
+      setRefreshing(false);
     }
   };
 
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
-      loadLocations();
+      if (!isLoading) loadLocations();
     }, 300);
     return () => clearTimeout(debounceTimer);
   }, [searchTerm, countryFilter, activeFilter]);
+
+  const handleRefresh = () => {
+    loadLocations(true);
+  };
 
   const handleToggleActive = async (location) => {
     try {
@@ -75,28 +86,64 @@ const LocationsListPage = () => {
     }
   };
 
+  const handleClearFilters = () => {
+    setSearchTerm('');
+    setCountryFilter('');
+    setActiveFilter('');
+  };
+
+  const hasActiveFilters = () => {
+    return searchTerm || countryFilter || activeFilter;
+  };
+
   // Get unique countries for filter
-  const uniqueCountries = [...new Set(locations.map(loc => loc.country))].sort();
+  const uniqueCountries = [...new Set(locations.map(loc => loc.country).filter(Boolean))].sort();
+
+  const formatAddress = (location) => {
+    const parts = [];
+    if (location.address) parts.push(location.address);
+    if (location.city) parts.push(location.city);
+    if (location.state) parts.push(location.state);
+    if (location.postal_code) parts.push(location.postal_code);
+    return parts.length > 0 ? parts.join(', ') : null;
+  };
 
   return (
     <Layout>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Locations</h1>
-            <p className="text-gray-600 mt-1">
-              Manage program locations and facilities
-            </p>
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-indigo-100 rounded-lg">
+              <BuildingOfficeIcon className="h-6 w-6 text-indigo-600" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Locations</h1>
+              <p className="text-sm text-gray-600 mt-1">
+                Manage program locations and facilities
+              </p>
+            </div>
           </div>
-          <Button
-            variant="primary"
-            icon={PlusIcon}
-            onClick={() => navigate('/locations/create')}
-            size="lg"
-          >
-            Add Location
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="flex items-center gap-2"
+            >
+              <ArrowPathIcon className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+              <span className="hidden sm:inline">Refresh</span>
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => navigate('/dashboard/locations/create')}
+              className="flex items-center gap-2"
+            >
+              <PlusIcon className="h-4 w-4" />
+              <span className="hidden sm:inline">Add Location</span>
+              <span className="sm:hidden">Add</span>
+            </Button>
+          </div>
         </div>
 
         {/* Statistics */}
@@ -111,170 +158,220 @@ const LocationsListPage = () => {
           activeFilter={activeFilter}
           setActiveFilter={setActiveFilter}
           countries={uniqueCountries}
+          onClearFilters={handleClearFilters}
         />
 
         {/* Results Count */}
-        <div className="flex items-center justify-between bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200">
+        <Card className="flex items-center justify-between px-6 py-3">
           <div className="text-sm text-gray-600">
             {isLoading ? (
-              <span className="flex items-center">
+              <span className="flex items-center gap-2">
                 <Spinner size="sm" />
-                <span className="ml-2">Loading locations...</span>
+                <span>Loading locations...</span>
               </span>
             ) : (
               <span>
                 Showing <span className="font-semibold text-gray-900">{locations.length}</span> location{locations.length !== 1 ? 's' : ''}
+                {hasActiveFilters() && (
+                  <span className="text-gray-400"> (filtered)</span>
+                )}
               </span>
             )}
           </div>
-        </div>
+          <button 
+            onClick={handleRefresh} 
+            className="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1 lg:hidden"
+            disabled={refreshing}
+          >
+            <ArrowPathIcon className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+            Refresh
+          </button>
+        </Card>
 
         {/* Locations Table */}
         {isLoading ? (
-          <div className="flex justify-center items-center py-20 bg-white rounded-lg shadow">
-            <Spinner size="lg" />
+          <div className="flex justify-center items-center py-20 bg-white rounded-lg border border-gray-200">
+            <div className="flex flex-col items-center gap-4">
+              <Spinner size="lg" />
+              <p className="text-sm text-gray-500">Loading locations...</p>
+            </div>
           </div>
         ) : locations.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-lg shadow-lg border border-gray-200">
-            <div className="text-gray-400 mb-4">
-              <MapPinIcon className="mx-auto h-20 w-20" />
+          <Card className="text-center py-16">
+            <div className="max-w-sm mx-auto">
+              <div className="bg-gray-50 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                <MapPinIcon className="h-10 w-10 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No locations found</h3>
+              <p className="text-sm text-gray-500 mb-6">
+                {hasActiveFilters()
+                  ? 'Try adjusting your filters to find what you\'re looking for.'
+                  : 'Get started by adding your first location.'}
+              </p>
+              {!hasActiveFilters() ? (
+                <Button
+                  variant="primary"
+                  onClick={() => navigate('/dashboard/locations/create')}
+                >
+                  <PlusIcon className="h-4 w-4 mr-2" />
+                  Add Your First Location
+                </Button>
+              ) : (
+                <Button variant="outline" onClick={handleClearFilters}>
+                  Clear Filters
+                </Button>
+              )}
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No locations found</h3>
-            <p className="text-gray-600 mb-6 max-w-md mx-auto">
-              {searchTerm || countryFilter || activeFilter
-                ? 'Try adjusting your filters to find what you\'re looking for.'
-                : 'Get started by adding your first location.'}
-            </p>
-            {!searchTerm && !countryFilter && !activeFilter && (
-              <Button
-                variant="primary"
-                icon={PlusIcon}
-                onClick={() => navigate('/locations/create')}
-              >
-                Add Your First Location
-              </Button>
-            )}
-          </div>
+          </Card>
         ) : (
-          <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+          <Card className="overflow-hidden" padding={false}>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead>
-                  <tr className="bg-gradient-to-r from-gray-50 to-gray-100">
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Location
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Address
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Contact
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Programs
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {locations.map((location, index) => (
-                    <tr 
-                      key={location.id} 
-                      className={`transition-all duration-200 hover:bg-blue-50 hover:shadow-md ${
-                        index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                      }`}
-                    >
-                      <td className="px-6 py-4">
-                        <div>
-                          <div className="text-sm font-semibold text-gray-900">
-                            {location.name}
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {locations.map((location) => {
+                    const address = formatAddress(location);
+                    return (
+                      <tr 
+                        key={location.id} 
+                        className="hover:bg-indigo-50/50 transition-colors group"
+                      >
+                        <td className="px-6 py-4">
+                          <div className="flex items-center">
+                            <div className="h-10 w-10 flex-shrink-0 bg-indigo-100 rounded-lg flex items-center justify-center">
+                              <MapPinIcon className="h-5 w-5 text-indigo-600" />
+                            </div>
+                            <div className="ml-3">
+                              <div className="text-sm font-medium text-gray-900">
+                                {location.name}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                {location.city}, {location.country}
+                              </div>
+                            </div>
                           </div>
-                          <div className="text-xs text-gray-500">
-                            {location.city}, {location.country}
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="text-sm text-gray-900 max-w-xs truncate" title={address}>
+                            {address || <span className="text-gray-400">No address provided</span>}
                           </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900">
-                          {location.address || <span className="text-gray-400">N/A</span>}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm">
-                          {location.contact_person && (
-                            <div className="text-gray-900 font-medium">
-                              {location.contact_person}
-                            </div>
-                          )}
-                          {location.contact_email && (
-                            <div className="text-gray-500 text-xs truncate">
-                              {location.contact_email}
-                            </div>
-                          )}
-                          {location.contact_phone && (
-                            <div className="text-gray-500 text-xs">
-                              {location.contact_phone}
-                            </div>
-                          )}
-                          {!location.contact_person && !location.contact_email && !location.contact_phone && (
-                            <span className="text-gray-400">N/A</span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm font-semibold text-blue-600">
-                          {location.active_programs_count || 0}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <Badge variant={location.is_active ? 'success' : 'default'}>
-                          {location.is_active ? 'Active' : 'Inactive'}
-                        </Badge>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center justify-center space-x-1">
-                          <button
-                            onClick={() => navigate(`/locations/${location.id}`)}
-                            className="p-2.5 text-blue-600 hover:bg-blue-100 rounded-lg transition-all duration-200 hover:scale-110 group"
-                            title="View Details"
-                          >
-                            <EyeIcon className="h-5 w-5 group-hover:scale-110 transition-transform" />
-                          </button>
-                          <button
-                            onClick={() => navigate(`/locations/${location.id}/edit`)}
-                            className="p-2.5 text-amber-600 hover:bg-amber-100 rounded-lg transition-all duration-200 hover:scale-110 group"
-                            title="Edit Location"
-                          >
-                            <PencilIcon className="h-5 w-5 group-hover:scale-110 transition-transform" />
-                          </button>
-                          <button
-                            onClick={() => handleToggleActive(location)}
-                            className={`p-2.5 rounded-lg transition-all duration-200 hover:scale-110 group ${
-                              location.is_active
-                                ? 'text-red-600 hover:bg-red-100'
-                                : 'text-green-600 hover:bg-green-100'
-                            }`}
-                            title={location.is_active ? 'Deactivate' : 'Activate'}
-                          >
-                            {location.is_active ? (
-                              <XCircleIcon className="h-5 w-5 group-hover:scale-110 transition-transform" />
-                            ) : (
-                              <CheckCircleIcon className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="text-sm">
+                            {location.contact_person && (
+                              <div className="text-gray-900 font-medium">
+                                {location.contact_person}
+                              </div>
                             )}
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                            {location.contact_email && (
+                              <div className="text-xs text-gray-500 truncate max-w-[180px]" title={location.contact_email}>
+                                {location.contact_email}
+                              </div>
+                            )}
+                            {location.contact_phone && (
+                              <div className="text-xs text-gray-500">
+                                {location.contact_phone}
+                              </div>
+                            )}
+                            {!location.contact_person && !location.contact_email && !location.contact_phone && (
+                              <span className="text-gray-400 text-sm">No contact</span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="text-sm">
+                            <span className="font-semibold text-indigo-600">
+                              {location.active_programs_count || 0}
+                            </span>
+                            <span className="text-gray-500 text-xs ml-1">
+                              active
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <Badge variant={location.is_active ? 'success' : 'default'} size="sm">
+                            <span className={`mr-1.5 h-2 w-2 rounded-full ${location.is_active ? 'bg-green-500' : 'bg-gray-400'}`} />
+                            {location.is_active ? 'Active' : 'Inactive'}
+                          </Badge>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right">
+                          <div className="flex items-center justify-end gap-1">
+                            {/* View button - icon only */}
+                            <button
+                              onClick={() => navigate(`/dashboard/locations/${location.id}`)}
+                              className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                              title="View Details"
+                            >
+                              <EyeIcon className="h-5 w-5" />
+                            </button>
+                            
+                            {/* Edit button - icon only */}
+                            <button
+                              onClick={() => navigate(`/dashboard/locations/${location.id}/edit`)}
+                              className="p-2 text-gray-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all"
+                              title="Edit Location"
+                            >
+                              <PencilIcon className="h-5 w-5" />
+                            </button>
+                            
+                            {/* Toggle Status button - icon only */}
+                            <button
+                              onClick={() => handleToggleActive(location)}
+                              className={`p-2 rounded-lg transition-all ${
+                                location.is_active
+                                  ? 'text-gray-500 hover:text-red-600 hover:bg-red-50'
+                                  : 'text-gray-500 hover:text-green-600 hover:bg-green-50'
+                              }`}
+                              title={location.is_active ? 'Deactivate' : 'Activate'}
+                            >
+                              {location.is_active ? (
+                                <XCircleIcon className="h-5 w-5" />
+                              ) : (
+                                <CheckCircleIcon className="h-5 w-5" />
+                              )}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
-          </div>
+            
+            {/* Table footer with record count */}
+            <div className="px-6 py-3 bg-gray-50 border-t border-gray-200 text-xs text-gray-500">
+              <div className="flex items-center justify-between">
+                <span>
+                  Showing {locations.length} of {locations.length} locations
+                </span>
+                <span className="text-gray-400">
+                  Last updated: {new Date().toLocaleTimeString()}
+                </span>
+              </div>
+            </div>
+          </Card>
         )}
       </div>
     </Layout>

@@ -8,10 +8,12 @@ import {
   NoSymbolIcon,
   CheckCircleIcon,
   ArrowPathIcon,
+  UserGroupIcon,
 } from '@heroicons/react/24/outline';
 import { toast } from 'react-hot-toast';
 import Layout from '../../../components/layout/Layout';
 import Button from '../../../components/common/Button';
+import Card from '../../../components/common/Card';
 import Spinner from '../../../components/common/Spinner';
 import UserFilter from '../../../components/users/UserFilter';
 import UserStats from '../../../components/users/UserStats';
@@ -44,7 +46,7 @@ const UsersListPage = () => {
       const params = {};
       if (searchTerm) params.search = searchTerm;
       if (roleFilter) params.role = roleFilter;
-      if (statusFilter) params.is_active = statusFilter;
+      if (statusFilter) params.is_active = statusFilter === 'active';
       
       await fetchUsers(params);
     } catch (error) {
@@ -74,7 +76,6 @@ const UsersListPage = () => {
     try {
       const newStatus = !user.is_active;
       
-      // Use the patchUser method directly
       await patchUser(user.id, { is_active: newStatus });
       
       toast.success(
@@ -128,6 +129,7 @@ const UsersListPage = () => {
       admin: 'bg-red-100 text-red-800 border-red-200',
       teacher: 'bg-blue-100 text-blue-800 border-blue-200',
       program_manager: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+      staff: 'bg-purple-100 text-purple-800 border-purple-200',
       donor: 'bg-green-100 text-green-800 border-green-200',
     };
     return colors[role] || 'bg-gray-100 text-gray-800 border-gray-200';
@@ -162,33 +164,53 @@ const UsersListPage = () => {
     return '';
   };
 
+  const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    try {
+      return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    } catch {
+      return '-';
+    }
+  };
+
   return (
     <Layout>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
-            <p className="text-gray-600 mt-1">
-              Manage system users, roles, and permissions
-            </p>
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <UserGroupIcon className="h-6 w-6 text-blue-600" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
+              <p className="text-sm text-gray-600 mt-1">
+                Manage system users, roles, and permissions
+              </p>
+            </div>
           </div>
-          <div className="flex space-x-2">
+          <div className="flex items-center gap-3">
             <Button
               variant="outline"
-              icon={ArrowPathIcon}
               onClick={handleRefresh}
-              isLoading={isLoading}
+              disabled={isLoading}
+              className="flex items-center gap-2"
             >
-              Refresh
+              <ArrowPathIcon className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+              <span className="hidden sm:inline">Refresh</span>
             </Button>
             <Button
               variant="primary"
-              icon={PlusIcon}
-              onClick={() => navigate('/users/create')}
-              size="lg"
+              onClick={() => navigate('/dashboard/users/create')}
+              className="flex items-center gap-2"
             >
-              Add New User
+              <PlusIcon className="h-4 w-4" />
+              <span className="hidden sm:inline">Add New User</span>
+              <span className="sm:hidden">Add</span>
             </Button>
           </div>
         </div>
@@ -208,12 +230,12 @@ const UsersListPage = () => {
         />
 
         {/* Results Count */}
-        <div className="flex items-center justify-between bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200">
+        <Card className="flex items-center justify-between px-6 py-3">
           <div className="text-sm text-gray-600">
             {isLoading ? (
-              <span className="flex items-center">
+              <span className="flex items-center gap-2">
                 <Spinner size="sm" />
-                <span className="ml-2">Loading users...</span>
+                <span>Loading users...</span>
               </span>
             ) : (
               <span>
@@ -224,102 +246,105 @@ const UsersListPage = () => {
               </span>
             )}
           </div>
-        </div>
+          <button 
+            onClick={handleRefresh} 
+            className="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1 lg:hidden"
+            disabled={isLoading}
+          >
+            <ArrowPathIcon className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+            Refresh
+          </button>
+        </Card>
 
         {/* Users Table */}
         {isLoading && localUsers.length === 0 ? (
-          <div className="flex justify-center items-center py-20 bg-white rounded-lg shadow">
-            <Spinner size="lg" />
+          <div className="flex justify-center items-center py-20 bg-white rounded-lg border border-gray-200">
+            <div className="flex flex-col items-center gap-4">
+              <Spinner size="lg" />
+              <p className="text-sm text-gray-500">Loading users...</p>
+            </div>
           </div>
         ) : localUsers.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-lg shadow-lg border border-gray-200">
-            <div className="text-gray-400 mb-4">
-              <svg
-                className="mx-auto h-20 w-20"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-                />
-              </svg>
+          <Card className="text-center py-16">
+            <div className="max-w-sm mx-auto">
+              <div className="bg-gray-50 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                <UserGroupIcon className="h-10 w-10 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No users found</h3>
+              <p className="text-sm text-gray-500 mb-6">
+                {searchTerm || roleFilter || statusFilter
+                  ? 'Try adjusting your filters to find what you\'re looking for.'
+                  : 'Get started by creating your first user account.'}
+              </p>
+              {!searchTerm && !roleFilter && !statusFilter ? (
+                <Button
+                  variant="primary"
+                  onClick={() => navigate('/dashboard/users/create')}
+                >
+                  <PlusIcon className="h-4 w-4 mr-2" />
+                  Create Your First User
+                </Button>
+              ) : (
+                <Button variant="outline" onClick={handleClearFilters}>
+                  Clear Filters
+                </Button>
+              )}
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No users found</h3>
-            <p className="text-gray-600 mb-6 max-w-md mx-auto">
-              {searchTerm || roleFilter || statusFilter
-                ? 'Try adjusting your filters to find what you\'re looking for.'
-                : 'Get started by creating your first user account.'}
-            </p>
-            {!searchTerm && !roleFilter && !statusFilter && (
-              <Button
-                variant="primary"
-                icon={PlusIcon}
-                onClick={() => navigate('/users/create')}
-              >
-                Create Your First User
-              </Button>
-            )}
-          </div>
+          </Card>
         ) : (
-          <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+          <Card className="overflow-hidden" padding={false}>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead>
-                  <tr className="bg-gradient-to-r from-gray-50 to-gray-100">
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       User
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Contact
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Role
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Organization
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Joined
                     </th>
-                    <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {localUsers.map((user, index) => (
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {localUsers.map((user) => (
                     <tr 
                       key={user.id} 
-                      className={`transition-all duration-200 hover:bg-blue-50 hover:shadow-md ${
-                        index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                      }`}
+                      className="hover:bg-blue-50/50 transition-colors group"
                     >
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="h-12 w-12 flex-shrink-0">
+                          <div className="h-10 w-10 flex-shrink-0">
                             {user.avatar ? (
                               <img
-                                className="h-12 w-12 rounded-full ring-2 ring-blue-100"
+                                className="h-10 w-10 rounded-full ring-2 ring-blue-100 object-cover"
                                 src={user.avatar}
                                 alt={getDisplayName(user)}
                               />
                             ) : (
-                              <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center ring-2 ring-blue-100 shadow-md">
-                                <span className="text-white font-bold text-lg">
+                              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center ring-2 ring-blue-100">
+                                <span className="text-white font-semibold text-sm">
                                   {getAvatarInitial(user)}
                                 </span>
                               </div>
                             )}
                           </div>
-                          <div className="ml-4">
-                            <div className="text-sm font-semibold text-gray-900">
+                          <div className="ml-3">
+                            <div className="text-sm font-medium text-gray-900">
                               {getDisplayName(user)}
                             </div>
                             <div className="text-xs text-gray-500">
@@ -328,14 +353,14 @@ const UsersListPage = () => {
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">{user.email || '-'}</div>
                         {user.phone_number && (
                           <div className="text-xs text-gray-500">{user.phone_number}</div>
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border ${getRoleBadgeColor(user.role || '')}`}>
+                        <span className={`px-3 py-1 inline-flex text-xs font-semibold rounded-full border ${getRoleBadgeColor(user.role)}`}>
                           {user.role_display || user.role || 'None'}
                         </span>
                       </td>
@@ -346,57 +371,56 @@ const UsersListPage = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
-                          className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border ${
+                          className={`px-3 py-1 inline-flex text-xs font-semibold rounded-full border ${
                             user.is_active
                               ? 'bg-green-100 text-green-800 border-green-200'
                               : 'bg-gray-100 text-gray-600 border-gray-200'
                           }`}
                         >
-                          {user.is_active ? '● Active' : '○ Inactive'}
+                          <span className={`mr-1.5 h-2 w-2 rounded-full ${user.is_active ? 'bg-green-500' : 'bg-gray-400'}`} />
+                          {user.is_active ? 'Active' : 'Inactive'}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                        {user.date_joined 
-                          ? new Date(user.date_joined).toLocaleDateString('en-US', {
-                              year: 'numeric',
-                              month: 'short',
-                              day: 'numeric'
-                            })
-                          : '-'
-                        }
+                        {formatDate(user.date_joined)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center justify-center space-x-1">
+                      <td className="px-6 py-4 whitespace-nowrap text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          {/* View button - icon only */}
                           <button
-                            onClick={() => navigate(`/users/${user.id}`)}
-                            className="p-2.5 text-blue-600 hover:bg-blue-100 rounded-lg transition-all duration-200 hover:scale-110 group"
+                            onClick={() => navigate(`/dashboard/users/${user.id}`)}
+                            className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
                             title="View Details"
                           >
-                            <EyeIcon className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                            <EyeIcon className="h-5 w-5" />
                           </button>
+                          
+                          {/* Edit button - icon only */}
                           <button
-                            onClick={() => navigate(`/users/${user.id}/edit`)}
-                            className="p-2.5 text-amber-600 hover:bg-amber-100 rounded-lg transition-all duration-200 hover:scale-110 group"
+                            onClick={() => navigate(`/dashboard/users/${user.id}/edit`)}
+                            className="p-2 text-gray-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all"
                             title="Edit User"
                           >
-                            <PencilIcon className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                            <PencilIcon className="h-5 w-5" />
                           </button>
+                          
+                          {/* Toggle Status button - icon only */}
                           <button
                             onClick={() => handleToggleStatus(user)}
                             disabled={updatingUser === user.id}
-                            className={`p-2.5 rounded-lg transition-all duration-200 hover:scale-110 group disabled:opacity-50 disabled:cursor-not-allowed ${
+                            className={`p-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                               user.is_active
-                                ? 'text-red-600 hover:bg-red-100'
-                                : 'text-green-600 hover:bg-green-100'
+                                ? 'text-gray-500 hover:text-red-600 hover:bg-red-50'
+                                : 'text-gray-500 hover:text-green-600 hover:bg-green-50'
                             }`}
                             title={user.is_active ? 'Deactivate User' : 'Activate User'}
                           >
                             {updatingUser === user.id ? (
                               <Spinner size="sm" />
                             ) : user.is_active ? (
-                              <NoSymbolIcon className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                              <NoSymbolIcon className="h-5 w-5" />
                             ) : (
-                              <CheckCircleIcon className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                              <CheckCircleIcon className="h-5 w-5" />
                             )}
                           </button>
                         </div>
@@ -406,7 +430,19 @@ const UsersListPage = () => {
                 </tbody>
               </table>
             </div>
-          </div>
+            
+            {/* Table footer with record count */}
+            <div className="px-6 py-3 bg-gray-50 border-t border-gray-200 text-xs text-gray-500">
+              <div className="flex items-center justify-between">
+                <span>
+                  Showing {localUsers.length} of {localUsers.length} users
+                </span>
+                <span className="text-gray-400">
+                  Last updated: {new Date().toLocaleTimeString()}
+                </span>
+              </div>
+            </div>
+          </Card>
         )}
       </div>
     </Layout>
