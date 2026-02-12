@@ -17,6 +17,8 @@ import {
   CalendarIcon,
   CameraIcon,
   UserPlusIcon,
+  ListBulletIcon,
+  BeakerIcon,
 } from '@heroicons/react/24/outline';
 import authService from '../../services/api/authService';
 
@@ -26,6 +28,7 @@ const Sidebar = ({ isOpen, onClose }) => {
   const [isProgramsOpen, setIsProgramsOpen] = useState(false);
   const [isYouthManagementOpen, setIsYouthManagementOpen] = useState(false);
   const [isAttendanceOpen, setIsAttendanceOpen] = useState(false);
+  const [isAssessmentsOpen, setIsAssessmentsOpen] = useState(false);
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, roles: ['all'] },
@@ -122,12 +125,26 @@ const Sidebar = ({ isOpen, onClose }) => {
       ]
     },
     
-    // Assessments
+    // NEW: Assessments (Dropdown)
     { 
       name: 'Assessments', 
-      href: '/dashboard/assessments',
       icon: ChartBarIcon, 
-      roles: ['admin', 'teacher', 'program_manager'] 
+      roles: ['admin', 'teacher', 'program_manager', 'donor'],
+      isDropdown: true,
+      children: [
+        { 
+          name: 'All Assessments', 
+          href: '/dashboard/assessments',
+          icon: ListBulletIcon, 
+          roles: ['admin', 'teacher', 'program_manager', 'donor'] 
+        },
+        { 
+          name: 'Indicators', 
+          href: '/dashboard/assessments/indicators',
+          icon: BeakerIcon, 
+          roles: ['admin', 'teacher', 'program_manager', 'donor'] 
+        },
+      ]
     },
     
     // Reports
@@ -165,6 +182,10 @@ const Sidebar = ({ isOpen, onClose }) => {
 
   const toggleAttendanceDropdown = () => {
     setIsAttendanceOpen(!isAttendanceOpen);
+  };
+
+  const toggleAssessmentsDropdown = () => {
+    setIsAssessmentsOpen(!isAssessmentsOpen);
   };
 
   const renderDropdown = (item, isOpen, toggleFn) => {
@@ -287,6 +308,11 @@ const Sidebar = ({ isOpen, onClose }) => {
               // Render dropdown for Attendance
               if (item.name === 'Attendance' && item.isDropdown) {
                 return renderDropdown(item, isAttendanceOpen, toggleAttendanceDropdown);
+              }
+
+              // NEW: Render dropdown for Assessments
+              if (item.name === 'Assessments' && item.isDropdown) {
+                return renderDropdown(item, isAssessmentsOpen, toggleAssessmentsDropdown);
               }
 
               // Render normal link (for non-dropdown items)

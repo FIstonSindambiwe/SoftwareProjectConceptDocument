@@ -48,6 +48,16 @@ import MilestoneDetailPage from './pages/dashboard/milestones/MilestoneDetailPag
 import CreateMilestonePage from './pages/dashboard/milestones/CreateMilestonePage';
 import EditMilestonePage from './pages/dashboard/milestones/EditMilestonePage';
 
+
+// Assessments
+import AssessmentsListPage from './pages/dashboard/assessments/AssessmentsListPage';
+import AssessmentDetailPage from './pages/dashboard/assessments/AssessmentDetailPage';
+import AssessmentEditPage from './pages/dashboard/assessments/AssessmentEditPage';
+import CreateAssessmentPage from './pages/dashboard/assessments/CreateAssessmentPage';
+import IndicatorsListPage from './pages/dashboard/assessments/IndicatorsListPage';
+
+
+
 // Profile
 import ProfilePage from './pages/dashboard/profile/ProfilePage';
 import ChangePasswordPage from './pages/dashboard/profile/ChangePasswordPage';
@@ -339,15 +349,24 @@ function App() {
           } 
         />
 
-        {/* Protected Routes - Assessments (Admin, Teacher, Program Manager) */}
-        <Route 
-          path="/dashboard/assessments" 
-          element={
-            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']}>
-              <ComingSoonPage pageName="Assessments" />
-            </ProtectedRoute>
-          } 
-        />
+         {/* ── Assessments ──
+              Same ordering rule: named paths before /:id.
+              Donors can view but not create/edit.          */}
+        <Route path="/dashboard/assessments" element={
+          <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'donor']}><AssessmentsListPage /></ProtectedRoute>
+        } />
+        <Route path="/dashboard/assessments/create" element={
+          <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']}><CreateAssessmentPage /></ProtectedRoute>
+        } />
+        <Route path="/dashboard/assessments/indicators" element={
+          <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'donor']}><IndicatorsListPage /></ProtectedRoute>
+        } />
+        <Route path="/dashboard/assessments/:id" element={
+          <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'donor']}><AssessmentDetailPage /></ProtectedRoute>
+        } />
+        <Route path="/dashboard/assessments/:id/edit" element={
+          <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']}><AssessmentEditPage /></ProtectedRoute>
+        } />
 
         {/* Protected Routes - Reports (All authenticated users) */}
         <Route 
