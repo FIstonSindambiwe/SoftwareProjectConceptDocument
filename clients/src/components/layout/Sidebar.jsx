@@ -19,6 +19,7 @@ import {
   UserPlusIcon,
   ListBulletIcon,
   BeakerIcon,
+  PresentationChartBarIcon, // Added for General Report
 } from '@heroicons/react/24/outline';
 import authService from '../../services/api/authService';
 
@@ -29,6 +30,7 @@ const Sidebar = ({ isOpen, onClose }) => {
   const [isYouthManagementOpen, setIsYouthManagementOpen] = useState(false);
   const [isAttendanceOpen, setIsAttendanceOpen] = useState(false);
   const [isAssessmentsOpen, setIsAssessmentsOpen] = useState(false);
+  const [isReportsOpen, setIsReportsOpen] = useState(false); // New state for Reports dropdown
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, roles: ['all'] },
@@ -125,7 +127,7 @@ const Sidebar = ({ isOpen, onClose }) => {
       ]
     },
     
-    // NEW: Assessments (Dropdown)
+    // Assessments (Dropdown)
     { 
       name: 'Assessments', 
       icon: ChartBarIcon, 
@@ -147,12 +149,21 @@ const Sidebar = ({ isOpen, onClose }) => {
       ]
     },
     
-    // Reports
+    // Reports (Dropdown with General Report)
     { 
       name: 'Reports', 
-      href: '/dashboard/reports',
       icon: DocumentTextIcon, 
-      roles: ['all'] 
+      roles: ['all'],
+      isDropdown: true,
+      children: [
+        { 
+          name: 'General Report', 
+          href: '/dashboard/reports/general',
+          icon: PresentationChartBarIcon, 
+          roles: ['admin', 'program_manager'] // Only Admin and Program Manager can access
+        },
+        // Add more report types here as they're developed
+      ]
     },
   ];
 
@@ -165,7 +176,7 @@ const Sidebar = ({ isOpen, onClose }) => {
     if (!hasAccess(item)) return false;
     if (item.isDropdown && item.children) {
       // Filter dropdown children
-      item.children = item.children.filter(hasAccess);
+      item.children = item.children.filter(child => hasAccess(child));
       // Only show dropdown if it has accessible children
       return item.children.length > 0;
     }
@@ -186,6 +197,10 @@ const Sidebar = ({ isOpen, onClose }) => {
 
   const toggleAssessmentsDropdown = () => {
     setIsAssessmentsOpen(!isAssessmentsOpen);
+  };
+
+  const toggleReportsDropdown = () => {
+    setIsReportsOpen(!isReportsOpen);
   };
 
   const renderDropdown = (item, isOpen, toggleFn) => {
@@ -215,7 +230,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                 key={child.name}
                 to={child.href}
                 onClick={() => onClose()}
-                end={child.href === '/dashboard/attendance'}
+                end={child.href === '/dashboard/attendance' || child.href === '/dashboard/reports/general'}
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all
                   ${isActive
@@ -310,9 +325,14 @@ const Sidebar = ({ isOpen, onClose }) => {
                 return renderDropdown(item, isAttendanceOpen, toggleAttendanceDropdown);
               }
 
-              // NEW: Render dropdown for Assessments
+              // Render dropdown for Assessments
               if (item.name === 'Assessments' && item.isDropdown) {
                 return renderDropdown(item, isAssessmentsOpen, toggleAssessmentsDropdown);
+              }
+
+              // Render dropdown for Reports
+              if (item.name === 'Reports' && item.isDropdown) {
+                return renderDropdown(item, isReportsOpen, toggleReportsDropdown);
               }
 
               // Render normal link (for non-dropdown items)

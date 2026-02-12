@@ -14,11 +14,13 @@
     "axios": "^1.13.4",
     "classnames": "^2.5.1",
     "leaflet": "^1.9.4",
+    "lucide-react": "^0.563.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-hot-toast": "^2.6.0",
     "react-router-dom": "^7.13.0",
     "react-toastify": "^11.0.5",
+    "recharts": "^3.7.0",
     "sonner": "^2.0.7"
   },
   "devDependencies": {
