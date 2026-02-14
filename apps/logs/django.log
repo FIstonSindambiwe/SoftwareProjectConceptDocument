@@ -8187,3 +8187,23 @@ INFO 2026-02-12 21:27:02,030 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 
 INFO 2026-02-12 21:27:02,030 log "GET /api/v1/programs/locations/stats/ HTTP/1.1" 200 265
 INFO 2026-02-12 21:27:02,044 log "GET /api/v1/programs/locations/stats/ HTTP/1.1" 200 265
 INFO 2026-02-12 21:27:02,085 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+WARNING 2026-02-12 22:02:13,660 log Unauthorized: /api/v1/programs/locations/
+WARNING 2026-02-12 22:02:13,661 log Unauthorized: /api/v1/programs/locations/stats/
+WARNING 2026-02-12 22:02:13,662 log "GET /api/v1/programs/locations/ HTTP/1.1" 401 172
+WARNING 2026-02-12 22:02:13,662 log "GET /api/v1/programs/locations/stats/ HTTP/1.1" 401 172
+WARNING 2026-02-12 22:02:13,665 log Unauthorized: /api/v1/programs/locations/
+WARNING 2026-02-12 22:02:13,667 log Unauthorized: /api/v1/programs/locations/stats/
+INFO 2026-02-12 22:02:13,668 log "OPTIONS /api/v1/auth/refresh/ HTTP/1.1" 200 0
+INFO 2026-02-12 22:02:13,668 log "OPTIONS /api/v1/auth/refresh/ HTTP/1.1" 200 0
+WARNING 2026-02-12 22:02:13,668 log "GET /api/v1/programs/locations/ HTTP/1.1" 401 172
+WARNING 2026-02-12 22:02:13,669 log "GET /api/v1/programs/locations/stats/ HTTP/1.1" 401 172
+INFO 2026-02-12 22:02:13,672 log "OPTIONS /api/v1/auth/refresh/ HTTP/1.1" 200 0
+INFO 2026-02-12 22:02:13,673 log "OPTIONS /api/v1/auth/refresh/ HTTP/1.1" 200 0
+INFO 2026-02-12 22:02:13,729 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-12 22:02:13,731 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-12 22:02:13,733 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-12 22:02:13,735 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-02-12 22:02:13,801 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-12 22:02:13,803 log "GET /api/v1/programs/locations/stats/ HTTP/1.1" 200 265
+INFO 2026-02-12 22:02:13,882 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-02-12 22:02:13,884 log "GET /api/v1/programs/locations/stats/ HTTP/1.1" 200 265
