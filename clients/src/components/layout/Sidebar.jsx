@@ -20,6 +20,7 @@ import {
   ListBulletIcon,
   BeakerIcon,
   PresentationChartLineIcon,
+  BuildingOfficeIcon, // NEW - For Rooms
   
   // UI Icons
   XMarkIcon,
@@ -106,6 +107,12 @@ const Sidebar = ({ isOpen, onClose }) => {
           href: '/dashboard/participants',
           icon: UsersIcon, 
           roles: ['admin', 'teacher', 'program_manager', 'staff', 'donor'] 
+        },
+        { 
+          name: 'Rooms', 
+          href: '/dashboard/participants/rooms',
+          icon: BuildingOfficeIcon, 
+          roles: ['admin', 'program_manager'] 
         },
         { 
           name: 'Enrollments', 
@@ -288,7 +295,7 @@ const Sidebar = ({ isOpen, onClose }) => {
       <aside 
         className={`
           fixed top-0 left-0 h-full w-64 
-          bg-gradient-to-b from-slate-800 via-slate-900 to-slate-950
+          bg-slate-900
           transform transition-transform duration-300 ease-in-out z-50
           lg:translate-x-0 shadow-2xl
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}

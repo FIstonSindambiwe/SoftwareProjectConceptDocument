@@ -1,3 +1,4 @@
+// src/pages/dashboard/attendance/AttendanceListPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
@@ -22,7 +23,9 @@ import {
   UserIcon,
   BuildingOfficeIcon,
   DocumentTextIcon,
-  IdentificationIcon
+  IdentificationIcon,
+  HomeIcon,
+  ShieldCheckIcon
 } from '@heroicons/react/24/outline';
 import Layout from '../../../components/layout/Layout';
 import Card from '../../../components/common/Card';
@@ -32,16 +35,23 @@ import Badge from '../../../components/common/Badge';
 import Spinner from '../../../components/common/Spinner';
 import attendanceService from '../../../services/api/attendanceService';
 import programService from '../../../services/api/programService';
+import roomService from '../../../services/api/roomService';
 import useAuth from '../../../hooks/useAuth';
 
 const AttendanceListPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   
-  // Permission checks matching route patterns
+  // Permission checks
   const userRole = user?.role;
+  const isTeacher = userRole === 'teacher';
+  const isAdmin = userRole === 'admin';
+  const isProgramManager = userRole === 'program_manager';
+  const isStaff = userRole === 'staff';
+  const isDonor = userRole === 'donor';
+  
   const canEdit = ['admin', 'teacher', 'program_manager', 'staff'].includes(userRole);
-  const isReadOnly = userRole === 'donor';
+  const isReadOnly = isDonor;
   
   // State Management
   const [attendance, setAttendance] = useState([]);
@@ -62,6 +72,10 @@ const AttendanceListPage = () => {
     total_count: 0
   });
 
+  // Teacher-specific state
+  const [teacherRooms, setTeacherRooms] = useState([]);
+  const [loadingRooms, setLoadingRooms] = useState(false);
+
   // Filter State
   const [filters, setFilters] = useState({
     program: '',
@@ -69,7 +83,8 @@ const AttendanceListPage = () => {
     date_to: '',
     status: '',
     verified_by_face: '',
-    search: ''
+    search: '',
+    room: '' // Add room filter
   });
 
   // Simple debounce implementation
@@ -83,6 +98,31 @@ const AttendanceListPage = () => {
     return () => clearTimeout(timer);
   }, [filters.search]);
 
+  // Fetch teacher's assigned rooms if user is teacher
+  useEffect(() => {
+    if (isTeacher) {
+      fetchTeacherRooms();
+    }
+  }, [isTeacher]);
+
+  const fetchTeacherRooms = async () => {
+    try {
+      setLoadingRooms(true);
+      const response = await roomService.getRooms({ teacher: user.id, is_active: true, page_size: 100 });
+      const rooms = response.results || response || [];
+      setTeacherRooms(rooms);
+      
+      // Auto-select first room if only one
+      if (rooms.length === 1) {
+        setFilters(prev => ({ ...prev, room: rooms[0].id.toString() }));
+      }
+    } catch (err) {
+      console.error('Error fetching teacher rooms:', err);
+    } finally {
+      setLoadingRooms(false);
+    }
+  };
+
   // Fetch programs on mount
   useEffect(() => {
     fetchPrograms();
@@ -91,7 +131,7 @@ const AttendanceListPage = () => {
   // Fetch attendance when filters, page, or debounced search changes
   useEffect(() => {
     fetchAttendance();
-  }, [filters.program, filters.date_from, filters.date_to, filters.status, filters.verified_by_face, pagination.page, debouncedSearch]);
+  }, [filters.program, filters.date_from, filters.date_to, filters.status, filters.verified_by_face, filters.room, pagination.page, debouncedSearch]);
 
   const fetchPrograms = async () => {
     try {
@@ -114,6 +154,29 @@ const AttendanceListPage = () => {
         page: pagination.page,
         page_size: 10
       };
+      
+      // If teacher, filter by their rooms
+      if (isTeacher) {
+        if (teacherRooms.length > 0) {
+          if (filters.room) {
+            // Filter by specific room
+            params.room_id = filters.room;
+          } else {
+            // Filter by all teacher's rooms
+            params.room_ids = teacherRooms.map(r => r.id).join(',');
+          }
+        } else {
+          // No rooms assigned - show empty state
+          setAttendance([]);
+          setPagination({
+            page: 1,
+            total_pages: 1,
+            total_count: 0
+          });
+          setLoading(false);
+          return;
+        }
+      }
       
       if (filters.program) params.program_id = filters.program;
       if (filters.date_from) params.date_from = filters.date_from;
@@ -140,8 +203,22 @@ const AttendanceListPage = () => {
       });
       
       if (!debouncedSearch) {
-        const statsData = await attendanceService.getAttendanceStats(params);
-        setStats(statsData);
+        try {
+          const statsData = await attendanceService.getAttendanceStats(params);
+          setStats(statsData);
+        } catch (statsErr) {
+          console.warn('Could not fetch stats:', statsErr);
+          // Set default stats if API fails
+          setStats({
+            total_records: validRecords.length,
+            present_count: validRecords.filter(r => r.present).length,
+            face_verified_count: validRecords.filter(r => r.verified_by_face).length,
+            attendance_rate: validRecords.length > 0 
+              ? Math.round((validRecords.filter(r => r.present).length / validRecords.length) * 100)
+              : 0,
+            active_programs_count: programs.length
+          });
+        }
       }
       
     } catch (err) {
@@ -173,7 +250,8 @@ const AttendanceListPage = () => {
       date_to: '',
       status: '',
       verified_by_face: '',
-      search: ''
+      search: '',
+      room: isTeacher && teacherRooms.length === 1 ? teacherRooms[0].id.toString() : ''
     });
     setSearchInput('');
     setPagination(prev => ({ ...prev, page: 1 }));
@@ -237,6 +315,79 @@ const AttendanceListPage = () => {
     return null;
   };
 
+  // Render teacher info banner
+  const renderTeacherInfo = () => {
+    if (!isTeacher) return null;
+    
+    if (loadingRooms) {
+      return (
+        <Card className="bg-blue-50 border-blue-200">
+          <div className="p-4">
+            <div className="flex items-center">
+              <Spinner size="sm" className="mr-3" />
+              <p className="text-sm text-blue-800">Loading your assigned rooms...</p>
+            </div>
+          </div>
+        </Card>
+      );
+    }
+    
+    if (teacherRooms.length === 0) {
+      return (
+        <Card className="bg-yellow-50 border-yellow-200">
+          <div className="p-4">
+            <div className="flex items-center">
+              <ShieldCheckIcon className="h-5 w-5 text-yellow-600 mr-3" />
+              <div>
+                <p className="text-sm font-medium text-yellow-800">No Rooms Assigned</p>
+                <p className="text-xs text-yellow-700 mt-1">
+                  You don't have any rooms assigned yet. Please contact an administrator to assign rooms.
+                </p>
+              </div>
+            </div>
+          </div>
+        </Card>
+      );
+    }
+    
+    return (
+      <Card className="bg-blue-50 border-blue-200">
+        <div className="p-4">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex items-center">
+              <HomeIcon className="h-5 w-5 text-blue-600 mr-3" />
+              <div>
+                <p className="text-sm font-medium text-blue-800">
+                  Your Assigned Rooms: {teacherRooms.length}
+                </p>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {teacherRooms.map(room => (
+                    <span 
+                      key={room.id}
+                      className="inline-flex items-center px-2.5 py-1 rounded-md bg-white text-xs text-blue-700 border border-blue-200"
+                    >
+                      {room.name}
+                      {room.current_enrollment_count > 0 && (
+                        <span className="ml-1 text-blue-400">
+                          ({room.current_enrollment_count})
+                        </span>
+                      )}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+            {teacherRooms.length > 1 && (
+              <p className="text-xs text-blue-600 bg-white px-3 py-1.5 rounded-full">
+                Use room filter to view attendance for specific rooms
+              </p>
+            )}
+          </div>
+        </div>
+      </Card>
+    );
+  };
+
   // Action Menu Component
   const ActionMenu = () => {
     if (!selectedRecord || !showActionMenu) return null;
@@ -297,6 +448,12 @@ const AttendanceListPage = () => {
               <div className="mt-1 text-gray-500">
                 {selectedRecord.date ? new Date(selectedRecord.date).toLocaleDateString() : 'No date'}
               </div>
+              {selectedRecord.room_name && (
+                <div className="mt-1 text-gray-400 flex items-center">
+                  <HomeIcon className="h-3 w-3 mr-1" />
+                  {selectedRecord.room_name}
+                </div>
+              )}
             </div>
             {menuItems.map((item, index) => (
               <button
@@ -391,7 +548,7 @@ const AttendanceListPage = () => {
     }
   };
 
-  // Table Columns - Updated to match reference format
+  // Table Columns
   const columns = [
     {
       key: 'date',
@@ -418,24 +575,20 @@ const AttendanceListPage = () => {
       key: 'participant_id',
       header: 'Participant ID',
       render: (value, record) => {
-        // Get participant details from either direct fields or nested participant_details
         const participant = record.participant_details || record;
         const participantId = participant.participant_id || record.participant_id || value;
-        const participantIdFromResponse = record.participant_id || value;
         
-        // Format full name exactly as in reference
         const fullName = participant.first_name || participant.last_name 
           ? `${participant.first_name || ''} ${participant.last_name || ''}`.trim()
           : null;
         
-        // Check if we have a valid participant ID to link to
         const participantIdForLink = participant.id || record.participant;
         
         if (!participantIdForLink) {
           return (
             <div>
               <span className="text-gray-700 font-medium block">
-                {participantId || participantIdFromResponse || 'No ID'}
+                {participantId || 'No ID'}
               </span>
               {fullName && (
                 <span className="text-sm text-gray-500 block truncate max-w-[200px]" title={fullName}>
@@ -451,9 +604,9 @@ const AttendanceListPage = () => {
             <Link 
               to={`/dashboard/participants/${participantIdForLink}`}
               className="text-blue-600 hover:text-blue-800 font-medium block hover:underline truncate max-w-[200px]"
-              title={`${participantId || participantIdFromResponse} - ${fullName || ''}`}
+              title={`${participantId} - ${fullName || ''}`}
             >
-              {participantId || participantIdFromResponse || 'No ID'}
+              {participantId || 'No ID'}
             </Link>
             {fullName && (
               <span className="text-sm text-gray-500 block truncate max-w-[200px]" title={fullName}>
@@ -461,6 +614,23 @@ const AttendanceListPage = () => {
               </span>
             )}
           </div>
+        );
+      }
+    },
+    {
+      key: 'room',
+      header: 'Room',
+      render: (_, record) => {
+        const roomName = record.room_name || record.room?.name;
+        return roomName ? (
+          <div className="flex items-center">
+            <HomeIcon className="h-4 w-4 text-gray-400 mr-1 flex-shrink-0" />
+            <span className="text-sm text-gray-600 truncate max-w-[150px]" title={roomName}>
+              {roomName}
+            </span>
+          </div>
+        ) : (
+          <span className="text-gray-400">—</span>
         );
       }
     },
@@ -568,7 +738,11 @@ const AttendanceListPage = () => {
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Attendance Records</h1>
             <p className="text-gray-600">
-              {isReadOnly ? 'View attendance records' : 'Track and manage participant attendance'}
+              {isTeacher 
+                ? 'View attendance for participants in your assigned rooms'
+                : isReadOnly 
+                  ? 'View attendance records'
+                  : 'Track and manage participant attendance'}
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -580,7 +754,7 @@ const AttendanceListPage = () => {
               <ArrowPathIcon className={`h-5 w-5 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
               Refresh
             </Button>
-            {canEdit && (
+            {canEdit && !isTeacher && ( // Teachers use the check-in page from their room view
               <>
                 <Button
                   variant="outline"
@@ -602,8 +776,24 @@ const AttendanceListPage = () => {
                 </Button>
               </>
             )}
+            {isTeacher && teacherRooms.length > 0 && (
+              <Button
+                variant="primary"
+                onClick={() => {
+                  // Navigate to check-in with pre-filtered room
+                  const roomId = filters.room || teacherRooms[0].id;
+                  navigate(`/dashboard/attendance/check-in?room=${roomId}`);
+                }}
+              >
+                <CameraIcon className="h-5 w-5 mr-2" />
+                Take Attendance
+              </Button>
+            )}
           </div>
         </div>
+
+        {/* Teacher Info Banner */}
+        {renderTeacherInfo()}
 
         {/* Success Message */}
         {success && (
@@ -651,8 +841,8 @@ const AttendanceListPage = () => {
           </div>
         )}
 
-        {/* Stats Cards */}
-        {stats && (
+        {/* Stats Cards - Only show for non-teachers or if teacher has data */}
+        {stats && (canEdit || attendance.length > 0) && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {statsCards.map((stat, index) => (
               <Card key={index} className="hover:shadow-md transition-shadow">
@@ -698,14 +888,14 @@ const AttendanceListPage = () => {
               >
                 <FunnelIcon className="h-4 w-4 mr-2" />
                 Filters
-                {Object.values(filters).some(value => value !== '' && value !== 'true' && value !== 'false') && (
+                {Object.values(filters).some(value => value !== '' && value !== 'true' && value !== 'false' && value !== (isTeacher && teacherRooms.length === 1 ? teacherRooms[0].id.toString() : '')) && (
                   <span className="ml-2 bg-blue-100 text-blue-600 text-xs px-2 py-0.5 rounded-full">
                     Active
                   </span>
                 )}
               </Button>
               
-              {Object.values(filters).some(value => value !== '' && value !== 'true' && value !== 'false') && (
+              {Object.values(filters).some(value => value !== '' && value !== 'true' && value !== 'false' && value !== (isTeacher && teacherRooms.length === 1 ? teacherRooms[0].id.toString() : '')) && (
                 <Button
                   variant="ghost"
                   size="sm"
@@ -725,7 +915,29 @@ const AttendanceListPage = () => {
           {/* Filter Panel */}
           {showFilters && (
             <Card className="animate-slideDown p-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Room Filter - Show for teachers and admins */}
+                {(isTeacher || isAdmin || isProgramManager) && teacherRooms.length > 0 && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Room
+                    </label>
+                    <select
+                      name="room"
+                      value={filters.room}
+                      onChange={handleFilterChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="">All My Rooms</option>
+                      {teacherRooms.map(room => (
+                        <option key={room.id} value={room.id}>
+                          {room.name} ({room.current_enrollment_count}/{room.capacity})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Program
@@ -743,30 +955,6 @@ const AttendanceListPage = () => {
                       </option>
                     ))}
                   </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Date Range
-                  </label>
-                  <div className="flex gap-2">
-                    <input
-                      type="date"
-                      name="date_from"
-                      value={filters.date_from}
-                      onChange={handleFilterChange}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="From"
-                    />
-                    <input
-                      type="date"
-                      name="date_to"
-                      value={filters.date_to}
-                      onChange={handleFilterChange}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="To"
-                    />
-                  </div>
                 </div>
 
                 <div>
@@ -800,6 +988,30 @@ const AttendanceListPage = () => {
                     <option value="no">Manual Entry</option>
                   </select>
                 </div>
+
+                <div className="md:col-span-2 lg:col-span-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Date Range
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="date"
+                      name="date_from"
+                      value={filters.date_from}
+                      onChange={handleFilterChange}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="From"
+                    />
+                    <input
+                      type="date"
+                      name="date_to"
+                      value={filters.date_to}
+                      onChange={handleFilterChange}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="To"
+                    />
+                  </div>
+                </div>
               </div>
             </Card>
           )}
@@ -817,12 +1029,16 @@ const AttendanceListPage = () => {
                   <CalendarIcon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
                   <h3 className="text-lg font-medium text-gray-900 mb-2">No attendance records found</h3>
                   <p className="text-gray-500 mb-6 max-w-md mx-auto">
-                    {Object.values(filters).some(value => value !== '' && value !== 'true' && value !== 'false')
-                      ? 'No records match your current filters. Try adjusting your search criteria.'
-                      : 'Start tracking attendance by recording your first check-in.'}
+                    {isTeacher && teacherRooms.length === 0
+                      ? 'You don\'t have any rooms assigned yet.'
+                      : Object.values(filters).some(value => value !== '' && value !== 'true' && value !== 'false' && value !== (isTeacher && teacherRooms.length === 1 ? teacherRooms[0].id.toString() : ''))
+                        ? 'No records match your current filters. Try adjusting your search criteria.'
+                        : isTeacher
+                          ? 'No attendance records found in your rooms.'
+                          : 'Start tracking attendance by recording your first check-in.'}
                   </p>
                   <div className="space-x-3">
-                    {Object.values(filters).some(value => value !== '' && value !== 'true' && value !== 'false') && (
+                    {Object.values(filters).some(value => value !== '' && value !== 'true' && value !== 'false' && value !== (isTeacher && teacherRooms.length === 1 ? teacherRooms[0].id.toString() : '')) && (
                       <Button
                         variant="outline"
                         onClick={handleClearFilters}
@@ -831,12 +1047,23 @@ const AttendanceListPage = () => {
                         Clear Filters
                       </Button>
                     )}
-                    {canEdit && !Object.values(filters).some(value => value !== '' && value !== 'true' && value !== 'false') && (
+                    {canEdit && !isTeacher && !Object.values(filters).some(value => value !== '' && value !== 'true' && value !== 'false') && (
                       <Button
                         onClick={() => navigate('/dashboard/attendance/check-in')}
                       >
                         <CameraIcon className="h-5 w-5 mr-2" />
                         Face Check-in
+                      </Button>
+                    )}
+                    {isTeacher && teacherRooms.length > 0 && (
+                      <Button
+                        onClick={() => {
+                          const roomId = filters.room || teacherRooms[0].id;
+                          navigate(`/dashboard/attendance/check-in?room=${roomId}`);
+                        }}
+                      >
+                        <CameraIcon className="h-5 w-5 mr-2" />
+                        Take Attendance
                       </Button>
                     )}
                   </div>

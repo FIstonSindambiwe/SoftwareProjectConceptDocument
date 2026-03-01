@@ -6,7 +6,7 @@ import { FiEye, FiEyeOff } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
 import Button from '../../components/common/Button';
 import authService from '../../services/api/authService';
-import youthImage from '../../assets/images/bckgnd.png';
+import youthImage from '../../assets/images/background.jpeg';
 import logoImage from '../../assets/images/l-o-g-o.png';
 
 // Typewriter Text Component
@@ -217,18 +217,18 @@ const LoginPage = () => {
           
           {/* Left Side - Youth Impact Visualizer (Brand/Features) */}
           <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
-            {/* Background Image */}
+            {/* Background Image - Pure/Clear */}
             <div className="absolute inset-0">
               <img 
                 src={youthImage} 
                 alt="Youth Impact Visualizer" 
                 className="w-full h-full object-cover"
               />
-              {/* Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-900/80 to-purple-900/70"></div>
+              {/* Optional: Very light overlay for text readability - Remove this div to see 100% pure image */}
+              {/* <div className="absolute inset-0 bg-black/10"></div> */}
             </div>
 
-            {/* Content */}
+            {/* Content with text shadow for readability */}
             <div className="relative z-10 flex flex-col justify-center px-16 text-white">
               {/* Brand Name (No Logo) */}
               <div className="mb-12 animate-slide-in-left">
@@ -237,20 +237,20 @@ const LoginPage = () => {
 
               {/* Tagline */}
               <div className="mb-12">
-                <h2 className="text-4xl font-bold mb-4 leading-tight">
+                <h2 className="text-4xl font-bold mb-4 leading-tight" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
                   <TypewriterText 
                     text="Track, Measure, and Visualize Program Impact" 
                     delay={80}
                   />
                 </h2>
-                <p className="text-blue-100 text-lg leading-relaxed animate-fade-in-up animation-delay-200">
+                <p className="text-white text-lg leading-relaxed animate-fade-in-up animation-delay-200" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.5)' }}>
                   Comprehensive youth program management platform designed 
                   to track participant progress and measure meaningful outcomes.
                 </p>
               </div>
 
               {/* Features */}
-              <div className="space-y-4">
+              <div className="space-y-4" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.5)' }}>
                 <div className="animate-fade-in-up animation-delay-400">
                   <FeatureItem 
                     icon={CheckCircleIcon}
@@ -278,7 +278,7 @@ const LoginPage = () => {
               </div>
 
               {/* Footer */}
-              <div className="mt-auto pt-12 text-blue-100 text-sm">
+              <div className="mt-auto pt-12 text-white text-sm" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
                 <p>© 2025 Youth Impact Visualizer. All rights reserved.</p>
               </div>
             </div>

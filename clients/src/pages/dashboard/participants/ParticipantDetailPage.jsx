@@ -1,3 +1,4 @@
+// src/pages/dashboard/participants/ParticipantDetailPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
@@ -10,10 +11,8 @@ import {
   DocumentTextIcon,
   ChartBarIcon,
   IdentificationIcon,
-  EnvelopeIcon,
-  PhoneIcon,
-  HomeIcon,
-  ShieldCheckIcon
+  ShieldCheckIcon,
+  ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
 import Layout from '../../../components/layout/Layout';
 import Card from '../../../components/common/Card';
@@ -25,8 +24,18 @@ import ParticipantInfo from '../../../components/participants/ParticipantInfo';
 import EnrollmentsList from '../../../components/participants/EnrollmentsList';
 import NotesList from '../../../components/participants/NotesList';
 import ProgressReport from '../../../components/participants/ProgressReport';
+import ErrorBoundary from '../../../components/common/ErrorBoundary';
 import useAuth from '../../../hooks/useAuth';
 import participantService from '../../../services/api/participantService';
+
+// Education levels constant for display
+const educationLevels = [
+  { value: 'none', label: 'No Formal Education' },
+  { value: 'primary', label: 'Primary School' },
+  { value: 'secondary', label: 'Secondary School' },
+  { value: 'vocational', label: 'Vocational Training' },
+  { value: 'university', label: 'University' }
+];
 
 const ParticipantDetailPage = () => {
   const { id } = useParams();
@@ -45,25 +54,64 @@ const ParticipantDetailPage = () => {
     notes: []
   });
 
+  // Check if user can edit (not donor)
+  const canEdit = user?.role !== 'donor';
+
   const fetchParticipantData = async () => {
     try {
       setLoading(true);
       setError(null);
       
-      const [participantData, enrollmentsData, progressData, faceStatus, notesData] = await Promise.all([
-        participantService.getParticipant(id),
-        participantService.getParticipantEnrollments(id),
-        participantService.getParticipantProgress(id).catch(() => null),
-        participantService.getFaceEncodingStatus(id).catch(() => null),
-        participantService.getParticipantNotes({ participant: id }).catch(() => ({ results: [] }))
-      ]);
-      
+      // First get the participant data
+      const participantData = await participantService.getParticipant(id);
       setParticipant(participantData);
+      
+      // Then fetch related data based on what's available in the participant data
+      const promises = [
+        // Fetch enrollments - use the correct endpoint
+        participantService.getEnrollments({ participant: id })
+          .catch(err => {
+            console.warn('Could not fetch enrollments:', err);
+            return { results: [] };
+          }),
+        
+        // Fetch notes
+        participantService.getParticipantNotes({ participant: id })
+          .catch(err => {
+            console.warn('Could not fetch notes:', err);
+            return { results: [] };
+          })
+      ];
+      
+      // Only fetch face encoding status if photo exists
+      if (participantData.photo) {
+        promises.push(
+          participantService.getFaceEncodingStatus(id)
+            .catch(err => {
+              console.warn('Could not fetch face encoding status:', err);
+              return null;
+            })
+        );
+      } else {
+        promises.push(Promise.resolve(null));
+      }
+      
+      // Fetch progress report (if endpoint exists)
+      promises.push(
+        participantService.getParticipantProgress(id)
+          .catch(err => {
+            console.warn('Could not fetch progress:', err);
+            return null;
+          })
+      );
+      
+      const [enrollmentsData, notesData, faceStatus, progressData] = await Promise.all(promises);
+      
       setStats({
         enrollments: enrollmentsData.results || enrollmentsData || [],
-        progress: progressData,
+        notes: notesData.results || notesData || [],
         faceEncodingStatus: faceStatus,
-        notes: notesData.results || notesData || []
+        progress: progressData
       });
       
     } catch (err) {
@@ -146,7 +194,7 @@ const ParticipantDetailPage = () => {
     if (window.confirm(`Are you sure you want to reactivate ${participant?.full_name || 'this participant'}?`)) {
       try {
         setError(null);
-        await participantService.updateParticipant(id, { is_active: true });
+        await participantService.patchParticipant(id, { is_active: true });
         setSuccess('Participant reactivated successfully');
         fetchParticipantData();
       } catch (err) {
@@ -188,16 +236,21 @@ const ParticipantDetailPage = () => {
           <Card>
             <div className="text-center py-12">
               <div className="flex justify-center mb-4">
-                <IdentificationIcon className="h-12 w-12 text-red-400" />
+                <ExclamationTriangleIcon className="h-12 w-12 text-red-400" />
               </div>
               <p className="text-red-600 font-medium">Error loading participant data</p>
               <p className="text-gray-600 mt-2">{error}</p>
-              <Button
-                onClick={() => navigate('/dashboard/participants')}
-                className="mt-4"
-              >
-                Return to Participants List
-              </Button>
+              <div className="flex justify-center space-x-4 mt-6">
+                <Button onClick={fetchParticipantData}>
+                  Try Again
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => navigate('/dashboard/participants')}
+                >
+                  Return to List
+                </Button>
+              </div>
             </div>
           </Card>
         </div>
@@ -207,238 +260,250 @@ const ParticipantDetailPage = () => {
 
   return (
     <Layout>
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-6">
-          <Button
-            variant="outline"
-            onClick={() => navigate('/dashboard/participants')}
-            className="mb-4"
-          >
-            <ArrowLeftIcon className="h-5 w-5 mr-2" />
-            Back to Participants
-          </Button>
-          
-          {/* Success Message */}
-          {success && (
-            <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm font-medium text-green-800">{success}</p>
-                </div>
-                <div className="ml-auto pl-3">
-                  <button
-                    onClick={() => setSuccess('')}
-                    className="text-green-500 hover:text-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 rounded-lg"
-                  >
-                    <span className="sr-only">Dismiss</span>
-                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Error Message */}
-          {error && (
-            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm font-medium text-red-800">{error}</p>
-                </div>
-                <div className="ml-auto pl-3">
-                  <button
-                    onClick={() => setError(null)}
-                    className="text-red-500 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 rounded-lg"
-                  >
-                    <span className="sr-only">Dismiss</span>
-                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-          
-          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
-            <div className="flex-1">
-              <div className="flex items-start space-x-4">
-                {/* Profile Photo */}
-                <div className="flex-shrink-0">
-                  {participant?.photo ? (
-                    <img
-                      src={participant.photo}
-                      alt={participant.full_name}
-                      className="h-20 w-20 rounded-full object-cover border-4 border-white shadow"
-                    />
-                  ) : (
-                    <div className="h-20 w-20 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center border-4 border-white shadow">
-                      <UserIcon className="h-10 w-10 text-blue-500" />
-                    </div>
-                  )}
-                </div>
-                
-                <div className="flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h1 className="text-2xl font-bold text-gray-900">
-                      {participant?.full_name || 'Participant'}
-                    </h1>
-                    <Badge
-                      color={participant?.is_active ? 'green' : 'red'}
-                      className="ml-2"
-                    >
-                      {participant?.is_active ? 'Active' : 'Inactive'}
-                    </Badge>
-                    {stats.faceEncodingStatus?.can_use_face_recognition && (
-                      <Badge color="blue" variant="outline">
-                        <PhotoIcon className="h-4 w-4 mr-1" />
-                        Face Recognition Ready
-                      </Badge>
-                    )}
-                  </div>
-                  
-                  <p className="text-lg text-gray-600 mb-2">
-                    {participant?.participant_id}
-                  </p>
-                  
-                  <div className="flex flex-wrap items-center gap-4 mt-2 text-gray-600">
-                    <span className="flex items-center text-sm">
-                      <UserIcon className="h-4 w-4 mr-1 text-gray-400" />
-                      {participant?.age} years • {participant?.gender_display}
-                    </span>
-                    <span className="flex items-center text-sm">
-                      <CalendarIcon className="h-4 w-4 mr-1 text-gray-400" />
-                      Enrolled: {participant?.enrollment_date ? new Date(participant.enrollment_date).toLocaleDateString() : 'N/A'}
-                    </span>
-                    <span className="flex items-center text-sm">
-                      <AcademicCapIcon className="h-4 w-4 mr-1 text-gray-400" />
-                      {participant?.active_enrollments_count || 0} active programs
-                    </span>
-                    {participant?.education_level && (
-                      <span className="flex items-center text-sm">
-                        <ShieldCheckIcon className="h-4 w-4 mr-1 text-gray-400" />
-                        Education: {educationLevels.find(l => l.value === participant.education_level)?.label || participant.education_level}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
+      <ErrorBoundary fallback={<div>Something went wrong loading the participant details.</div>}>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Header */}
+          <div className="mb-6">
+            <Button
+              variant="outline"
+              onClick={() => navigate('/dashboard/participants')}
+              className="mb-4"
+            >
+              <ArrowLeftIcon className="h-5 w-5 mr-2" />
+              Back to Participants
+            </Button>
             
-            <div className="flex space-x-3 lg:self-start">
-              {user?.role !== 'donor' && (
-                <>
-                  <Button
-                    variant="outline"
-                    onClick={() => navigate(`/dashboard/participants/${id}/edit`)}
-                  >
-                    <PencilIcon className="h-5 w-5 mr-2" />
-                    Edit
-                  </Button>
-                  {participant?.is_active ? (
-                    <Button
-                      variant="danger"
-                      onClick={handleDeactivate}
+            {/* Success Message */}
+            {success && (
+              <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-green-800">{success}</p>
+                  </div>
+                  <div className="ml-auto pl-3">
+                    <button
+                      onClick={() => setSuccess('')}
+                      className="text-green-500 hover:text-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 rounded-lg"
                     >
-                      Deactivate
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="success"
-                      onClick={handleActivate}
+                      <span className="sr-only">Dismiss</span>
+                      <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Error Message */}
+            {error && (
+              <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-red-800">{error}</p>
+                  </div>
+                  <div className="ml-auto pl-3">
+                    <button
+                      onClick={() => setError(null)}
+                      className="text-red-500 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 rounded-lg"
                     >
-                      Reactivate
+                      <span className="sr-only">Dismiss</span>
+                      <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
+              <div className="flex-1">
+                <div className="flex items-start space-x-4">
+                  {/* Profile Photo - Safe rendering with null check */}
+                  <div className="flex-shrink-0">
+                    {participant?.photo ? (
+                      <img
+                        src={participant.photo}
+                        alt={participant.full_name || 'Participant'}
+                        className="h-20 w-20 rounded-full object-cover border-4 border-white shadow"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.style.display = 'none';
+                          e.target.parentElement.innerHTML = `
+                            <div class="h-20 w-20 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center border-4 border-white shadow">
+                              <svg class="h-10 w-10 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                              </svg>
+                            </div>
+                          `;
+                        }}
+                      />
+                    ) : (
+                      <div className="h-20 w-20 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center border-4 border-white shadow">
+                        <UserIcon className="h-10 w-10 text-blue-500" />
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h1 className="text-2xl font-bold text-gray-900">
+                        {participant?.full_name || 'Participant'}
+                      </h1>
+                      <Badge
+                        color={participant?.is_active ? 'green' : 'red'}
+                        className="ml-2"
+                      >
+                        {participant?.is_active ? 'Active' : 'Inactive'}
+                      </Badge>
+                      {stats.faceEncodingStatus?.can_use_face_recognition && (
+                        <Badge color="blue" variant="outline">
+                          <PhotoIcon className="h-4 w-4 mr-1" />
+                          Face Recognition Ready
+                        </Badge>
+                      )}
+                    </div>
+                    
+                    <p className="text-lg text-gray-600 mb-2">
+                      {participant?.participant_id}
+                    </p>
+                    
+                    <div className="flex flex-wrap items-center gap-4 mt-2 text-gray-600">
+                      <span className="flex items-center text-sm">
+                        <UserIcon className="h-4 w-4 mr-1 text-gray-400" />
+                        {participant?.age} years • {participant?.gender_display}
+                      </span>
+                      <span className="flex items-center text-sm">
+                        <CalendarIcon className="h-4 w-4 mr-1 text-gray-400" />
+                        Enrolled: {participant?.enrollment_date ? new Date(participant.enrollment_date).toLocaleDateString() : 'N/A'}
+                      </span>
+                      <span className="flex items-center text-sm">
+                        <AcademicCapIcon className="h-4 w-4 mr-1 text-gray-400" />
+                        {participant?.active_enrollments_count || 0} active programs
+                      </span>
+                      {participant?.education_level && (
+                        <span className="flex items-center text-sm">
+                          <ShieldCheckIcon className="h-4 w-4 mr-1 text-gray-400" />
+                          Education: {educationLevels.find(l => l.value === participant.education_level)?.label || participant.education_level}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex space-x-3 lg:self-start">
+                {canEdit && (
+                  <>
+                    <Button
+                      variant="outline"
+                      onClick={() => navigate(`/dashboard/participants/${id}/edit`)}
+                    >
+                      <PencilIcon className="h-5 w-5 mr-2" />
+                      Edit
                     </Button>
-                  )}
-                </>
-              )}
+                    {participant?.is_active ? (
+                      <Button
+                        variant="danger"
+                        onClick={handleDeactivate}
+                      >
+                        Deactivate
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="success"
+                        onClick={handleActivate}
+                      >
+                        Reactivate
+                      </Button>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
           </div>
+
+          {/* Tabs */}
+          <div className="mb-6 border-b border-gray-200">
+            <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+          </div>
+
+          {/* Tab Content */}
+          <div className="space-y-6">
+            {activeTab === 'overview' && participant && (
+              <ErrorBoundary fallback={<div>Error loading participant info</div>}>
+                <ParticipantInfo
+                  participant={participant}
+                  stats={stats}
+                  onUploadPhoto={handleUploadPhoto}
+                  onUpdateFaceEncoding={handleUpdateFaceEncoding}
+                  user={user}
+                />
+              </ErrorBoundary>
+            )}
+
+            {activeTab === 'enrollments' && (
+              <ErrorBoundary fallback={<div>Error loading enrollments</div>}>
+                <EnrollmentsList
+                  enrollments={stats.enrollments}
+                  participantId={participant?.id}
+                  user={user}
+                  onEnrollmentUpdated={fetchParticipantData}
+                />
+              </ErrorBoundary>
+            )}
+
+            {activeTab === 'notes' && (
+              <ErrorBoundary fallback={<div>Error loading notes</div>}>
+                <NotesList
+                  participantId={participant?.id}
+                  notes={stats.notes}
+                  onAddNote={handleAddNote}
+                  user={user}
+                />
+              </ErrorBoundary>
+            )}
+
+            {activeTab === 'progress' && (
+              <ErrorBoundary fallback={<div>Error loading progress report</div>}>
+                <ProgressReport
+                  progress={stats.progress}
+                  participant={participant}
+                  enrollments={stats.enrollments}
+                />
+              </ErrorBoundary>
+            )}
+          </div>
+
+          {/* Additional Info Card */}
+          {activeTab === 'overview' && participant?.special_needs && (
+            <Card className="mt-6">
+              <div className="p-6">
+                <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                  <DocumentTextIcon className="h-5 w-5 mr-2 text-gray-600" />
+                  Special Needs & Accommodations
+                </h3>
+                <p className="text-gray-700 whitespace-pre-wrap">
+                  {participant.special_needs}
+                </p>
+              </div>
+            </Card>
+          )}
         </div>
-
-        {/* Tabs */}
-        <div className="mb-6 border-b border-gray-200">
-          <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
-        </div>
-
-        {/* Tab Content */}
-        <div className="space-y-6">
-          {activeTab === 'overview' && (
-            <ParticipantInfo
-              participant={participant}
-              stats={stats}
-              onUploadPhoto={handleUploadPhoto}
-              onUpdateFaceEncoding={handleUpdateFaceEncoding}
-              user={user}
-            />
-          )}
-
-          {activeTab === 'enrollments' && (
-            <EnrollmentsList
-              enrollments={stats.enrollments}
-              participantId={participant?.id}
-              user={user}
-              onEnrollmentUpdated={fetchParticipantData}
-            />
-          )}
-
-          {activeTab === 'notes' && (
-            <NotesList
-              participantId={participant?.id}
-              notes={stats.notes}
-              onAddNote={handleAddNote}
-              user={user}
-            />
-          )}
-
-          {activeTab === 'progress' && (
-            <ProgressReport
-              progress={stats.progress}
-              participant={participant}
-              enrollments={stats.enrollments}
-            />
-          )}
-        </div>
-
-        {/* Additional Info Card */}
-        {activeTab === 'overview' && participant?.special_needs && (
-          <Card className="mt-6">
-            <div className="p-6">
-              <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                <DocumentTextIcon className="h-5 w-5 mr-2 text-gray-600" />
-                Special Needs & Accommodations
-              </h3>
-              <p className="text-gray-700 whitespace-pre-wrap">
-                {participant.special_needs}
-              </p>
-            </div>
-          </Card>
-        )}
-      </div>
+      </ErrorBoundary>
     </Layout>
   );
 };
-
-// Education levels constant for display
-const educationLevels = [
-  { value: 'none', label: 'No Formal Education' },
-  { value: 'primary', label: 'Primary School' },
-  { value: 'secondary', label: 'Secondary School' },
-  { value: 'vocational', label: 'Vocational Training' },
-  { value: 'university', label: 'University' }
-];
 
 export default ParticipantDetailPage;

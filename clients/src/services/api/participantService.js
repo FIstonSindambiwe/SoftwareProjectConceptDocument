@@ -50,8 +50,19 @@ const participantService = {
       return response.data;
     } catch (error) {
       console.error('Error creating room:', error);
-      console.error('Error response:', error.response?.data);
-      throw error.response?.data || error;
+      console.error('Error response:', error.response);
+      console.error('Error response data:', error.response?.data);
+      console.error('Error response status:', error.response?.status);
+      console.error('Error message:', error.message);
+      
+      // Return the full error object with response data
+      if (error.response?.data) {
+        throw error.response.data;
+      } else if (error.response) {
+        throw { error: `HTTP ${error.response.status}: ${error.response.statusText}` };
+      } else {
+        throw { error: error.message || 'Network error occurred' };
+      }
     }
   },
 

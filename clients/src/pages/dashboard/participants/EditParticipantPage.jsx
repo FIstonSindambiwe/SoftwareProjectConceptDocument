@@ -1,3 +1,4 @@
+// src/pages/dashboard/participants/EditParticipantPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
@@ -9,15 +10,20 @@ import {
   XMarkIcon,
   ExclamationTriangleIcon,
   UserIcon,
-  IdentificationIcon
+  IdentificationIcon,
+  HomeIcon,
+  AcademicCapIcon,
+  ShieldCheckIcon
 } from '@heroicons/react/24/outline';
 import Layout from '../../../components/layout/Layout';
 import Card from '../../../components/common/Card';
 import Button from '../../../components/common/Button';
 import Input from '../../../components/common/Input';
 import Spinner from '../../../components/common/Spinner';
+import Badge from '../../../components/common/Badge';
 import useAuth from '../../../hooks/useAuth';
 import participantService from '../../../services/api/participantService';
+import roomService from '../../../services/api/roomService';
 
 const EditParticipantPage = () => {
   const { id } = useParams();
@@ -25,6 +31,7 @@ const EditParticipantPage = () => {
   const navigate = useNavigate();
   
   const [loading, setLoading] = useState(true);
+  const [roomsLoading, setRoomsLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
   const [photoFile, setPhotoFile] = useState(null);
@@ -32,6 +39,8 @@ const EditParticipantPage = () => {
   const [formError, setFormError] = useState('');
   const [formSuccess, setFormSuccess] = useState('');
   const [participantId, setParticipantId] = useState('');
+  const [rooms, setRooms] = useState([]);
+  const [teacherRooms, setTeacherRooms] = useState([]);
   
   // Enhanced Camera state
   const [showCamera, setShowCamera] = useState(false);
@@ -49,6 +58,7 @@ const EditParticipantPage = () => {
     last_name: '',
     age: '',
     gender: 'M',
+    room: '',
     enrollment_date: '',
     education_level: '',
     special_needs: '',
@@ -57,6 +67,13 @@ const EditParticipantPage = () => {
     data_sharing_consent: false,
     is_active: true
   });
+
+  // Check user permissions
+  const isTeacher = user?.role === 'teacher';
+  const isAdmin = user?.role === 'admin';
+  const isProgramManager = user?.role === 'program_manager';
+  const canEdit = !['donor', 'teacher'].includes(user?.role); // Teachers can view but not edit
+  const canViewAll = isAdmin || isProgramManager;
 
   const educationLevels = [
     { value: '', label: 'Select education level' },
@@ -73,6 +90,34 @@ const EditParticipantPage = () => {
     { value: 'O', label: 'Other' },
     { value: 'N', label: 'Prefer not to say' }
   ];
+
+  // Fetch rooms
+  useEffect(() => {
+    fetchRooms();
+  }, []);
+
+  const fetchRooms = async () => {
+    try {
+      setRoomsLoading(true);
+      
+      // If teacher, only fetch their assigned rooms
+      if (isTeacher) {
+        const response = await roomService.getRooms({ teacher: user.id, is_active: true });
+        const teacherRoomsData = response.results || response;
+        setTeacherRooms(teacherRoomsData);
+        setRooms(teacherRoomsData);
+      } else {
+        // For admins/program managers, fetch all active rooms
+        const response = await roomService.getRooms({ is_active: true, page_size: 1000 });
+        setRooms(response.results || response);
+      }
+    } catch (err) {
+      console.error('Error fetching rooms:', err);
+      setFormError('Failed to load rooms. Please refresh the page.');
+    } finally {
+      setRoomsLoading(false);
+    }
+  };
 
   // Check browser compatibility
   const checkBrowserSupport = () => {
@@ -317,6 +362,18 @@ const EditParticipantPage = () => {
       setLoading(true);
       const data = await participantService.getParticipant(id);
       
+      // Check if teacher has access to this participant
+      if (isTeacher && data.room) {
+        const hasAccess = teacherRooms.some(room => room.id === data.room);
+        if (!hasAccess) {
+          setFormError('You do not have permission to edit this participant.');
+          setTimeout(() => {
+            navigate('/dashboard/participants');
+          }, 2000);
+          return;
+        }
+      }
+      
       // Store participant ID for display
       setParticipantId(data.participant_id);
       
@@ -325,6 +382,7 @@ const EditParticipantPage = () => {
         last_name: data.last_name || '',
         age: data.age?.toString() || '',
         gender: data.gender || 'M',
+        room: data.room?.toString() || '',
         enrollment_date: data.enrollment_date || '',
         education_level: data.education_level || '',
         special_needs: data.special_needs || '',
@@ -428,6 +486,10 @@ const EditParticipantPage = () => {
       newErrors.gender = 'Gender is required';
     }
     
+    if (!formData.room) {
+      newErrors.room = 'Room assignment is required';
+    }
+    
     if (!formData.enrollment_date) {
       newErrors.enrollment_date = 'Enrollment date is required';
     }
@@ -462,6 +524,7 @@ const EditParticipantPage = () => {
       const updateData = {
         ...formData,
         age: parseInt(formData.age, 10),
+        room: parseInt(formData.room, 10),
         first_name: formData.first_name.trim(),
         last_name: formData.last_name.trim()
       };
@@ -500,9 +563,20 @@ const EditParticipantPage = () => {
         if (data.detail) {
           errorMessage = data.detail;
         } else if (typeof data === 'object') {
-          errorMessage = Object.entries(data)
-            .map(([field, messages]) => `${field}: ${Array.isArray(messages) ? messages.join(', ') : messages}`)
-            .join('\n');
+          // Set field-specific errors
+          Object.entries(data).forEach(([field, messages]) => {
+            if (field !== 'non_field_errors') {
+              setErrors(prev => ({ ...prev, [field]: Array.isArray(messages) ? messages[0] : messages }));
+            }
+          });
+          
+          if (data.non_field_errors) {
+            errorMessage = Array.isArray(data.non_field_errors) 
+              ? data.non_field_errors[0] 
+              : data.non_field_errors;
+          } else {
+            errorMessage = 'Please check the form for errors';
+          }
         }
       } else if (err.message) {
         errorMessage = err.message;
@@ -530,7 +604,30 @@ const EditParticipantPage = () => {
     return null;
   };
 
-  if (loading) {
+  // Permission warning
+  const PermissionWarning = () => {
+    if (isTeacher && !canEdit) {
+      return (
+        <Card className="bg-yellow-50 border-yellow-200 mb-6">
+          <div className="p-4">
+            <div className="flex items-center">
+              <ShieldCheckIcon className="h-5 w-5 text-yellow-600 mr-3" />
+              <div>
+                <p className="text-sm font-medium text-yellow-800">View-Only Mode</p>
+                <p className="text-xs text-yellow-700 mt-1">
+                  As a teacher, you can view participant details but cannot make changes. 
+                  Contact an administrator if you need to update information.
+                </p>
+              </div>
+            </div>
+          </div>
+        </Card>
+      );
+    }
+    return null;
+  };
+
+  if (loading || roomsLoading) {
     return (
       <Layout>
         <div className="flex justify-center items-center h-64">
@@ -556,7 +653,9 @@ const EditParticipantPage = () => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Edit Participant</h1>
-              <p className="text-gray-600">Update participant information</p>
+              <p className="text-gray-600">
+                {canEdit ? 'Update participant information' : 'View participant information'}
+              </p>
             </div>
             {participantId && (
               <div className="bg-blue-50 px-4 py-2 rounded-lg">
@@ -567,6 +666,9 @@ const EditParticipantPage = () => {
             )}
           </div>
         </div>
+
+        {/* Permission Warning */}
+        <PermissionWarning />
 
         {/* Form-level Success Message */}
         {formSuccess && (
@@ -615,6 +717,7 @@ const EditParticipantPage = () => {
                 placeholder="Enter participant's first name"
                 required
                 autoComplete="given-name"
+                disabled={!canEdit}
               />
               
               <Input
@@ -627,6 +730,7 @@ const EditParticipantPage = () => {
                 placeholder="Enter participant's last name"
                 required
                 autoComplete="family-name"
+                disabled={!canEdit}
               />
               
               <Input
@@ -640,6 +744,7 @@ const EditParticipantPage = () => {
                 error={errors.age}
                 placeholder="5-25"
                 required
+                disabled={!canEdit}
               />
               
               <div>
@@ -650,11 +755,10 @@ const EditParticipantPage = () => {
                   name="gender"
                   value={formData.gender}
                   onChange={handleChange}
+                  disabled={!canEdit}
                   className={`w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${
                     errors.gender ? 'border-red-300' : 'border-gray-300'
-                  }`}
-                  aria-invalid={!!errors.gender}
-                  aria-describedby={errors.gender ? "gender-error" : undefined}
+                  } ${!canEdit ? 'bg-gray-50 cursor-not-allowed' : ''}`}
                 >
                   {genderOptions.map(option => (
                     <option key={option.value} value={option.value}>
@@ -663,7 +767,64 @@ const EditParticipantPage = () => {
                   ))}
                 </select>
                 {errors.gender && (
-                  <p id="gender-error" className="mt-1 text-sm text-red-600">{errors.gender}</p>
+                  <p className="mt-1 text-sm text-red-600">{errors.gender}</p>
+                )}
+              </div>
+
+              {/* Room Assignment */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Room Assignment *
+                </label>
+                <select
+                  name="room"
+                  value={formData.room}
+                  onChange={handleChange}
+                  disabled={!canEdit || roomsLoading}
+                  className={`w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${
+                    errors.room ? 'border-red-300' : 'border-gray-300'
+                  } ${!canEdit ? 'bg-gray-50 cursor-not-allowed' : ''}`}
+                  required
+                >
+                  <option value="">
+                    {roomsLoading ? 'Loading rooms...' : 'Select a room'}
+                  </option>
+                  {rooms.map(room => {
+                    const isFull = room.current_enrollment_count >= room.capacity;
+                    const isCurrentRoom = room.id === parseInt(formData.room);
+                    
+                    // Allow selection of current room even if full
+                    const disabled = !isCurrentRoom && isFull && canEdit;
+                    
+                    return (
+                      <option 
+                        key={room.id} 
+                        value={room.id} 
+                        disabled={disabled}
+                      >
+                        {room.name} - {room.program_name} 
+                        ({room.current_enrollment_count}/{room.capacity})
+                        {isFull && !isCurrentRoom && ' (Full)'}
+                        {isCurrentRoom && ' (Current)'}
+                      </option>
+                    );
+                  })}
+                </select>
+                {errors.room && (
+                  <p className="mt-1 text-sm text-red-600">{errors.room}</p>
+                )}
+                {rooms.length === 0 && !roomsLoading && canEdit && (
+                  <p className="mt-2 text-sm text-amber-600">
+                    No active rooms available. Please{' '}
+                    <button
+                      type="button"
+                      onClick={() => navigate('/dashboard/participants/rooms/create')}
+                      className="text-blue-600 hover:underline"
+                    >
+                      create a room
+                    </button>{' '}
+                    first.
+                  </p>
                 )}
               </div>
               
@@ -674,7 +835,9 @@ const EditParticipantPage = () => {
                 value={formData.enrollment_date}
                 onChange={handleChange}
                 error={errors.enrollment_date}
+                max={new Date().toISOString().split('T')[0]}
                 required
+                disabled={!canEdit}
               />
               
               <div>
@@ -685,7 +848,10 @@ const EditParticipantPage = () => {
                   name="education_level"
                   value={formData.education_level}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  disabled={!canEdit}
+                  className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${
+                    !canEdit ? 'bg-gray-50 cursor-not-allowed' : ''
+                  }`}
                 >
                   {educationLevels.map(option => (
                     <option key={option.value} value={option.value}>
@@ -697,7 +863,7 @@ const EditParticipantPage = () => {
 
               {/* Status */}
               <div className="md:col-span-2">
-                <div className="bg-gray-50 p-4 rounded-lg">
+                <div className={`bg-gray-50 p-4 rounded-lg ${!canEdit ? 'opacity-75' : ''}`}>
                   <div className="flex items-center">
                     <input
                       type="checkbox"
@@ -705,7 +871,8 @@ const EditParticipantPage = () => {
                       name="is_active"
                       checked={formData.is_active}
                       onChange={handleChange}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      disabled={!canEdit}
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded disabled:opacity-50"
                     />
                     <label htmlFor="is_active" className="ml-2 block text-sm font-medium text-gray-900">
                       Participant is Active
@@ -735,16 +902,17 @@ const EditParticipantPage = () => {
                             src={photoPreview}
                             alt="Participant"
                             className="h-32 w-32 rounded-full object-cover border-4 border-white shadow"
-                            style={{ transform: 'scaleX(-1)' }}
                           />
-                          <button
-                            type="button"
-                            onClick={handleRemovePhoto}
-                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                            title="Remove photo"
-                          >
-                            <TrashIcon className="h-4 w-4" />
-                          </button>
+                          {canEdit && (
+                            <button
+                              type="button"
+                              onClick={handleRemovePhoto}
+                              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                              title="Remove photo"
+                            >
+                              <TrashIcon className="h-4 w-4" />
+                            </button>
+                          )}
                         </div>
                       ) : (
                         <div className="flex items-center justify-center h-32 w-32 rounded-full bg-gray-100 border-2 border-dashed border-gray-300">
@@ -752,48 +920,57 @@ const EditParticipantPage = () => {
                         </div>
                       )}
                     </div>
-                    <div className="flex-1 space-y-3">
-                      <div className="flex flex-wrap gap-2">
-                        <label className="cursor-pointer">
-                          <input
-                            type="file"
-                            accept="image/jpeg,image/png,image/jpg"
-                            onChange={handleFileChange}
-                            className="hidden"
-                            id="photo-upload"
-                          />
+                    
+                    {canEdit && (
+                      <div className="flex-1 space-y-3">
+                        <div className="flex flex-wrap gap-2">
+                          <label className="cursor-pointer">
+                            <input
+                              type="file"
+                              accept="image/jpeg,image/png,image/jpg"
+                              onChange={handleFileChange}
+                              className="hidden"
+                              id="photo-upload"
+                            />
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() => document.getElementById('photo-upload')?.click()}
+                            >
+                              <PhotoIcon className="h-5 w-5 mr-2" />
+                              {photoPreview ? 'Change Photo' : 'Upload Photo'}
+                            </Button>
+                          </label>
+                          
                           <Button
                             type="button"
                             variant="outline"
-                            onClick={() => document.getElementById('photo-upload')?.click()}
+                            onClick={() => setShowCamera(true)}
                           >
-                            <PhotoIcon className="h-5 w-5 mr-2" />
-                            {photoPreview ? 'Change Photo' : 'Upload Photo'}
+                            <VideoCameraIcon className="h-5 w-5 mr-2" />
+                            Take Photo
                           </Button>
-                        </label>
-                        
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => setShowCamera(true)}
-                        >
-                          <VideoCameraIcon className="h-5 w-5 mr-2" />
-                          Take Photo
-                        </Button>
-                      </div>
-                      <p className="text-xs text-gray-500">
-                        JPEG or PNG, max 5MB. Photo will be used for face recognition attendance.
-                      </p>
-                      {photoPreview && (
-                        <p className="text-xs text-green-600">
-                          ✓ Photo uploaded. Mirror effect applied for natural selfie view.
+                        </div>
+                        <p className="text-xs text-gray-500">
+                          JPEG or PNG, max 5MB. Photo will be used for face recognition attendance.
                         </p>
-                      )}
-                    </div>
+                        {photoPreview && (
+                          <p className="text-xs text-green-600">
+                            ✓ Photo uploaded. Mirror effect applied for natural selfie view.
+                          </p>
+                        )}
+                      </div>
+                    )}
+                    
+                    {!canEdit && photoPreview && (
+                      <div className="flex-1">
+                        <p className="text-sm text-gray-600">Current photo displayed</p>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
-                <div className="space-y-3 bg-gray-50 p-4 rounded-lg">
+                <div className={`space-y-3 bg-gray-50 p-4 rounded-lg ${!canEdit ? 'opacity-75' : ''}`}>
                   <div className="flex items-start">
                     <div className="flex items-center h-5">
                       <input
@@ -802,7 +979,7 @@ const EditParticipantPage = () => {
                         name="photo_consent_given"
                         checked={formData.photo_consent_given}
                         onChange={handleChange}
-                        disabled={!photoFile && !photoPreview}
+                        disabled={(!photoFile && !photoPreview) || !canEdit}
                         className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded disabled:opacity-50"
                       />
                     </div>
@@ -812,7 +989,7 @@ const EditParticipantPage = () => {
                       </label>
                       <p className="text-xs text-gray-500">
                         Guardian consent for photo storage and face recognition
-                        {(!photoFile && !photoPreview) && ' (requires a photo to be selected)'}
+                        {(!photoFile && !photoPreview) && ' (requires a photo)'}
                       </p>
                     </div>
                   </div>
@@ -825,7 +1002,8 @@ const EditParticipantPage = () => {
                         name="data_sharing_consent"
                         checked={formData.data_sharing_consent}
                         onChange={handleChange}
-                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        disabled={!canEdit}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded disabled:opacity-50"
                       />
                     </div>
                     <div className="ml-3">
@@ -857,8 +1035,11 @@ const EditParticipantPage = () => {
                   name="special_needs"
                   value={formData.special_needs}
                   onChange={handleChange}
+                  disabled={!canEdit}
                   rows="3"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${
+                    !canEdit ? 'bg-gray-50 cursor-not-allowed' : ''
+                  }`}
                   placeholder="Any special needs, disabilities, or accommodations required..."
                 />
               </div>
@@ -871,8 +1052,11 @@ const EditParticipantPage = () => {
                   name="notes"
                   value={formData.notes}
                   onChange={handleChange}
+                  disabled={!canEdit}
                   rows="3"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${
+                    !canEdit ? 'bg-gray-50 cursor-not-allowed' : ''
+                  }`}
                   placeholder="Any observations or important information..."
                 />
               </div>
@@ -888,19 +1072,21 @@ const EditParticipantPage = () => {
               >
                 Cancel
               </Button>
-              <Button
-                type="submit"
-                disabled={saving}
-              >
-                {saving ? (
-                  <>
-                    <Spinner size="sm" className="mr-2" />
-                    Saving...
-                  </>
-                ) : (
-                  'Save Changes'
-                )}
-              </Button>
+              {canEdit && (
+                <Button
+                  type="submit"
+                  disabled={saving}
+                >
+                  {saving ? (
+                    <>
+                      <Spinner size="sm" className="mr-2" />
+                      Saving...
+                    </>
+                  ) : (
+                    'Save Changes'
+                  )}
+                </Button>
+              )}
             </div>
           </form>
         </Card>

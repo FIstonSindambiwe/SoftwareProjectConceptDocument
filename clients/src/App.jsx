@@ -33,6 +33,12 @@ import ParticipantDetailPage from './pages/dashboard/participants/ParticipantDet
 import CreateParticipantPage from './pages/dashboard/participants/CreateParticipantPage';
 import EditParticipantPage from './pages/dashboard/participants/EditParticipantPage';
 
+// Rooms (NEW)
+import RoomsListPage from './pages/dashboard/Rooms/RoomsListPage';
+import CreateRoomPage from './pages/dashboard/Rooms/CreateRoomPage';
+import EditRoomPage from './pages/dashboard/Rooms/EditRoomPage';
+import RoomParticipantsPage from './pages/dashboard/Rooms/RoomParticipantsPage';
+
 // Attendance
 import AttendanceListPage from './pages/dashboard/attendance/AttendanceListPage';
 import FaceCheckInPage from './pages/dashboard/attendance/FaceCheckInPage';
@@ -258,6 +264,43 @@ function App() {
               <EditMilestonePage />
             </ProtectedRoute>
           }
+        />
+
+        {/* ================================
+            ROOMS ROUTES (NEW)
+            Admin and Program Manager can manage rooms
+            ================================ */}
+        <Route 
+          path="/dashboard/participants/rooms" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher']}>
+              <RoomsListPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard/participants/rooms/create" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'program_manager']}>
+              <CreateRoomPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard/participants/rooms/:id/edit" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher']}>
+              <EditRoomPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard/participants/rooms/:id/participants" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher', 'staff']}>
+              <RoomParticipantsPage />
+            </ProtectedRoute>
+          } 
         />
 
         {/* Protected Routes - Participants (All authenticated users can view, Admin/Teacher/PM can edit) */}

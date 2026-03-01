@@ -1,3 +1,4 @@
+// src/pages/dashboard/attendance/BulkAttendancePage.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -7,7 +8,9 @@ import {
   XCircleIcon,
   PlusIcon,
   TrashIcon,
-  ExclamationTriangleIcon
+  ExclamationTriangleIcon,
+  HomeIcon,
+  ShieldCheckIcon
 } from '@heroicons/react/24/outline';
 import { toast } from 'react-hot-toast';
 import Layout from '../../../components/layout/Layout';
@@ -18,9 +21,21 @@ import Spinner from '../../../components/common/Spinner';
 import attendanceService from '../../../services/api/attendanceService';
 import programService from '../../../services/api/programService';
 import participantService from '../../../services/api/participantService';
+import roomService from '../../../services/api/roomService';
+import useAuth from '../../../hooks/useAuth';
 
 const BulkAttendancePage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  
+  // Permission checks
+  const userRole = user?.role;
+  const isTeacher = userRole === 'teacher';
+  const isAdmin = userRole === 'admin';
+  const isProgramManager = userRole === 'program_manager';
+  const isStaff = userRole === 'staff';
+  
+  const canEdit = ['admin', 'teacher', 'program_manager', 'staff'].includes(userRole);
   
   const [programs, setPrograms] = useState([]);
   const [participants, setParticipants] = useState([]);
@@ -30,18 +45,33 @@ const BulkAttendancePage = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   
+  // Teacher-specific state
+  const [teacherRooms, setTeacherRooms] = useState([]);
+  const [loadingRooms, setLoadingRooms] = useState(false);
+  const [rooms, setRooms] = useState([]);
+  
   // Get today's date
   const today = new Date().toISOString().split('T')[0];
   
   const [formData, setFormData] = useState({
     program: '',
     date: today, // Fixed to today's date
-    session_name: ''
+    session_name: '',
+    room: '' // Add room filter for teachers
   });
 
   const [attendanceRecords, setAttendanceRecords] = useState([]);
   const [existingAttendance, setExistingAttendance] = useState([]); // Track existing records
   const [checkingExisting, setCheckingExisting] = useState(false);
+
+  // Fetch teacher's assigned rooms if user is teacher
+  useEffect(() => {
+    if (isTeacher) {
+      fetchTeacherRooms();
+    } else if (isAdmin || isProgramManager) {
+      fetchAllRooms();
+    }
+  }, [isTeacher, isAdmin, isProgramManager]);
 
   useEffect(() => {
     fetchPrograms();
@@ -53,7 +83,35 @@ const BulkAttendancePage = () => {
       fetchSessions();
       checkExistingAttendance();
     }
-  }, [formData.program, formData.date]);
+  }, [formData.program, formData.date, formData.room]);
+
+  const fetchTeacherRooms = async () => {
+    try {
+      setLoadingRooms(true);
+      const response = await roomService.getRooms({ teacher: user.id, is_active: true, page_size: 100 });
+      const rooms = response.results || response || [];
+      setTeacherRooms(rooms);
+      
+      // Auto-select first room if only one
+      if (rooms.length === 1) {
+        setFormData(prev => ({ ...prev, room: rooms[0].id.toString() }));
+      }
+    } catch (err) {
+      console.error('Error fetching teacher rooms:', err);
+      toast.error('Failed to load your assigned rooms');
+    } finally {
+      setLoadingRooms(false);
+    }
+  };
+
+  const fetchAllRooms = async () => {
+    try {
+      const response = await roomService.getRooms({ is_active: true, page_size: 100 });
+      setRooms(response.results || response || []);
+    } catch (err) {
+      console.error('Error fetching rooms:', err);
+    }
+  };
 
   const fetchPrograms = async () => {
     try {
@@ -72,17 +130,36 @@ const BulkAttendancePage = () => {
       setLoading(true);
       setError(''); // Clear previous errors
       
-      // Get participants enrolled in the selected program
-      const participantsData = await participantService.getParticipants({
+      const params = {
         enrolled_program: formData.program,
         is_active: 'true'
-      });
+      };
+      
+      // If teacher, filter by room
+      if (isTeacher && formData.room) {
+        params.room = formData.room;
+      } else if (isTeacher && teacherRooms.length > 0 && !formData.room) {
+        // If teacher has rooms but no room selected, show message
+        setError('Please select a room to view participants');
+        setParticipants([]);
+        setAttendanceRecords([]);
+        setLoading(false);
+        return;
+      }
+      
+      // Get participants enrolled in the selected program
+      const participantsData = await participantService.getParticipants(params);
       
       const participantsList = participantsData.results || participantsData || [];
       
       if (participantsList.length === 0) {
-        setError('No active participants are enrolled in this program. Please enroll participants first.');
-        toast('This program has no enrolled participants', {
+        let message = 'No active participants are enrolled in this program.';
+        if (isTeacher && formData.room) {
+          const room = teacherRooms.find(r => r.id === parseInt(formData.room));
+          message = `No active participants in ${room?.name || 'this room'}.`;
+        }
+        setError(message);
+        toast(message, {
           icon: 'ℹ️',
           duration: 4000
         });
@@ -96,7 +173,8 @@ const BulkAttendancePage = () => {
         participant_pid: p.participant_id,
         participant_name: `${p.first_name || ''} ${p.last_name || ''}`.trim() || p.participant_id,
         present: false,
-        hasExistingRecord: false // Will be updated by checkExistingAttendance
+        hasExistingRecord: false, // Will be updated by checkExistingAttendance
+        room_name: p.room_name
       }));
       setAttendanceRecords(records);
     } catch (error) {
@@ -137,13 +215,20 @@ const BulkAttendancePage = () => {
     try {
       setCheckingExisting(true);
       
-      // Fetch existing attendance records for this program and date
-      const response = await attendanceService.getAttendanceRecords({
+      const params = {
         program_id: formData.program,
         date_from: formData.date,
         date_to: formData.date,
         page_size: 1000 // Get all records for the day
-      });
+      };
+      
+      // If teacher, filter by room
+      if (isTeacher && formData.room) {
+        params.room_id = formData.room;
+      }
+      
+      // Fetch existing attendance records for this program and date
+      const response = await attendanceService.getAttendanceRecords(params);
       
       const existingRecords = response.results || response || [];
       setExistingAttendance(existingRecords);
@@ -164,8 +249,14 @@ const BulkAttendancePage = () => {
       // Show appropriate message based on existing records
       if (existingRecords.length > 0) {
         const programName = programs.find(p => p.id === parseInt(formData.program))?.name || 'this program';
+        let location = '';
+        if (isTeacher && formData.room) {
+          const room = teacherRooms.find(r => r.id === parseInt(formData.room));
+          location = ` in ${room?.name}`;
+        }
+        
         toast(
-          `${existingRecords.length} participant${existingRecords.length > 1 ? 's' : ''} already have attendance recorded for ${programName} today`,
+          `${existingRecords.length} participant${existingRecords.length > 1 ? 's' : ''} already have attendance recorded for ${programName} today${location}`,
           { 
             icon: '⚠️',
             duration: 5000,
@@ -269,6 +360,79 @@ const BulkAttendancePage = () => {
     );
   };
 
+  // Render teacher info banner
+  const renderTeacherInfo = () => {
+    if (!isTeacher) return null;
+    
+    if (loadingRooms) {
+      return (
+        <Card className="bg-blue-50 border-blue-200">
+          <div className="p-4">
+            <div className="flex items-center">
+              <Spinner size="sm" className="mr-3" />
+              <p className="text-sm text-blue-800">Loading your assigned rooms...</p>
+            </div>
+          </div>
+        </Card>
+      );
+    }
+    
+    if (teacherRooms.length === 0) {
+      return (
+        <Card className="bg-yellow-50 border-yellow-200">
+          <div className="p-4">
+            <div className="flex items-center">
+              <ShieldCheckIcon className="h-5 w-5 text-yellow-600 mr-3" />
+              <div>
+                <p className="text-sm font-medium text-yellow-800">No Rooms Assigned</p>
+                <p className="text-xs text-yellow-700 mt-1">
+                  You don't have any rooms assigned yet. Please contact an administrator to assign rooms.
+                </p>
+              </div>
+            </div>
+          </div>
+        </Card>
+      );
+    }
+    
+    return (
+      <Card className="bg-blue-50 border-blue-200">
+        <div className="p-4">
+          <div className="flex items-center flex-wrap gap-4">
+            <div className="flex items-center">
+              <HomeIcon className="h-5 w-5 text-blue-600 mr-3" />
+              <div>
+                <p className="text-sm font-medium text-blue-800">
+                  Your Assigned Rooms: {teacherRooms.length}
+                </p>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {teacherRooms.map(room => (
+                    <span 
+                      key={room.id}
+                      className="inline-flex items-center px-2.5 py-1 rounded-md bg-white text-xs text-blue-700 border border-blue-200"
+                    >
+                      {room.name}
+                      {room.current_enrollment_count > 0 && (
+                        <span className="ml-1 text-blue-400">
+                          ({room.current_enrollment_count})
+                        </span>
+                      )}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+            {teacherRooms.length > 1 && !formData.room && (
+              <p className="text-xs text-blue-600 bg-white px-3 py-1.5 rounded-full">
+                Please select a room to view participants
+              </p>
+            )}
+          </div>
+        </div>
+      </Card>
+    );
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -286,9 +450,10 @@ const BulkAttendancePage = () => {
       toast.error(errorMessage);
       return;
     }
-    
-    if (!formData.date) {
-      const errorMessage = 'Date is required for attendance recording.';
+
+    // Validate room selection for teachers
+    if (isTeacher && !formData.room) {
+      const errorMessage = 'Please select a room to record attendance.';
       setError(errorMessage);
       toast.error(errorMessage);
       return;
@@ -312,8 +477,6 @@ const BulkAttendancePage = () => {
       
       if (totalPresent === 0) {
         errorMessage = 'No participants marked as present. Please select at least one participant to record attendance.';
-      } else if (alreadyRecordedCount === totalPresent) {
-        errorMessage = `All ${totalPresent} selected participant${totalPresent > 1 ? 's' : ''} already have attendance recorded for today. No new records to save.`;
       } else {
         errorMessage = 'No new attendance records to save. All selected participants already have records for today.';
       }
@@ -408,7 +571,13 @@ const BulkAttendancePage = () => {
 
       // Show appropriate success/error messages
       if (successCount > 0) {
-        const successMsg = `Successfully recorded attendance for ${successCount} participant${successCount > 1 ? 's' : ''}`;
+        let location = '';
+        if (isTeacher && formData.room) {
+          const room = teacherRooms.find(r => r.id === parseInt(formData.room));
+          location = ` in ${room?.name}`;
+        }
+        
+        const successMsg = `Successfully recorded attendance for ${successCount} participant${successCount > 1 ? 's' : ''}${location}`;
         setSuccess(successMsg);
         toast.success(successMsg, { duration: 4000 });
       }
@@ -532,6 +701,28 @@ const BulkAttendancePage = () => {
   const alreadyRecordedCount = attendanceRecords.filter(r => r.hasExistingRecord).length;
   const canRecordCount = attendanceRecords.filter(r => r.present && !r.hasExistingRecord).length;
 
+  // Check if user has permission to access this page
+  if (!canEdit) {
+    return (
+      <Layout>
+        <div className="max-w-6xl mx-auto space-y-6">
+          <Card>
+            <div className="text-center py-12">
+              <ShieldCheckIcon className="h-16 w-16 text-red-400 mx-auto mb-4" />
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
+              <p className="text-gray-600 mb-6">
+                You don't have permission to access the bulk attendance page.
+              </p>
+              <Button onClick={() => navigate('/dashboard/attendance')}>
+                Return to Attendance
+              </Button>
+            </div>
+          </Card>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       <div className="max-w-6xl mx-auto space-y-6">
@@ -547,10 +738,15 @@ const BulkAttendancePage = () => {
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Bulk Attendance Recording</h1>
             <p className="mt-1 text-sm text-gray-500">
-              Record attendance for multiple participants at once (today only)
+              {isTeacher 
+                ? 'Record attendance for participants in your assigned rooms (today only)'
+                : 'Record attendance for multiple participants at once (today only)'}
             </p>
           </div>
         </div>
+
+        {/* Teacher Info Banner */}
+        {renderTeacherInfo()}
 
         {/* Date Restriction Notice */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -562,6 +758,7 @@ const BulkAttendancePage = () => {
                 <p>• Attendance can only be recorded for <strong>today's date</strong></p>
                 <p>• Each participant can only have <strong>one attendance record per date</strong></p>
                 <p>• Past and future dates are not allowed</p>
+                {isTeacher && <p>• You can only record attendance for <strong>participants in your assigned rooms</strong></p>}
               </div>
             </div>
           </div>
@@ -573,8 +770,31 @@ const BulkAttendancePage = () => {
             Session Details
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {/* Room Selection for Teachers */}
+            {isTeacher && teacherRooms.length > 0 && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Room *
+                </label>
+                <select
+                  name="room"
+                  value={formData.room}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  disabled={submitting || loadingRooms}
+                >
+                  <option value="">Select Room</option>
+                  {teacherRooms.map(room => (
+                    <option key={room.id} value={room.id}>
+                      {room.name} ({room.current_enrollment_count}/{room.capacity})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            <div className={isTeacher ? '' : 'md:col-span-2'}>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Program *
               </label>
@@ -658,6 +878,15 @@ const BulkAttendancePage = () => {
           </div>
         )}
 
+        {success && (
+          <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+            <div className="flex items-center">
+              <CheckCircleIcon className="h-5 w-5 text-green-600 mr-2" />
+              <p className="text-sm text-green-800">{success}</p>
+            </div>
+          </div>
+        )}
+
         {/* Existing Attendance Warning */}
         {alreadyRecordedCount > 0 && formData.program && (
           <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
@@ -676,18 +905,23 @@ const BulkAttendancePage = () => {
         )}
 
         {/* Attendance List */}
-        {formData.program && (
+        {formData.program && (!isTeacher || formData.room) && (
           <Card>
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-gray-900">
                 Participants ({attendanceRecords.length})
+                {formData.room && isTeacher && (
+                  <span className="ml-2 text-sm font-normal text-gray-500">
+                    in {teacherRooms.find(r => r.id === parseInt(formData.room))?.name}
+                  </span>
+                )}
               </h3>
               <div className="flex space-x-2">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={markAllPresent}
-                  disabled={submitting || checkingExisting}
+                  disabled={submitting || checkingExisting || attendanceRecords.length === 0}
                 >
                   Mark All Present
                 </Button>
@@ -695,7 +929,7 @@ const BulkAttendancePage = () => {
                   variant="outline"
                   size="sm"
                   onClick={markAllAbsent}
-                  disabled={submitting || checkingExisting}
+                  disabled={submitting || checkingExisting || attendanceRecords.length === 0}
                 >
                   Mark All Absent
                 </Button>
@@ -734,15 +968,18 @@ const BulkAttendancePage = () => {
                 <UserGroupIcon className="h-12 w-12 text-gray-400 mx-auto mb-3" />
                 {formData.program ? (
                   <div>
-                    <p className="text-lg font-medium text-gray-900 mb-2">No Enrolled Participants</p>
+                    <p className="text-lg font-medium text-gray-900 mb-2">No Participants Found</p>
                     <p className="text-sm text-gray-500 mb-4">
-                      This program has no active participants enrolled. To record attendance, you need to:
+                      {isTeacher && formData.room
+                        ? `No participants in this room.`
+                        : 'This program has no active participants enrolled.'}
                     </p>
                     <div className="text-sm text-gray-600 text-left max-w-md mx-auto bg-gray-50 p-4 rounded-lg">
                       <ol className="list-decimal list-inside space-y-1">
                         <li>Go to the Participants page</li>
                         <li>Create or select a participant</li>
                         <li>Enroll them in this program</li>
+                        {isTeacher && <li>Assign them to your room</li>}
                         <li>Return here to record attendance</li>
                       </ol>
                     </div>
@@ -758,7 +995,9 @@ const BulkAttendancePage = () => {
                   <div>
                     <p className="text-lg font-medium text-gray-900 mb-2">Select a Program</p>
                     <p className="text-sm text-gray-500">
-                      Choose a program from the dropdown above to view enrolled participants and record attendance.
+                      {isTeacher && !formData.room
+                        ? 'Select a room and program from the dropdowns above to view enrolled participants.'
+                        : 'Choose a program from the dropdown above to view enrolled participants and record attendance.'}
                     </p>
                   </div>
                 )}
@@ -791,9 +1030,17 @@ const BulkAttendancePage = () => {
                         <p className="font-medium text-gray-900">
                           {record.participant_name}
                         </p>
-                        <p className="text-sm text-gray-500">
-                          {record.participant_pid}
-                        </p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm text-gray-500">
+                            {record.participant_pid}
+                          </p>
+                          {record.room_name && (
+                            <span className="text-xs text-gray-400 flex items-center">
+                              <HomeIcon className="h-3 w-3 mr-1" />
+                              {record.room_name}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -820,7 +1067,7 @@ const BulkAttendancePage = () => {
               <div className="mt-6 flex justify-end">
                 <Button
                   onClick={handleSubmit}
-                  disabled={submitting || !formData.program || !formData.date || canRecordCount === 0 || checkingExisting}
+                  disabled={submitting || !formData.program || !formData.date || canRecordCount === 0 || checkingExisting || (isTeacher && !formData.room)}
                   size="lg"
                 >
                   {submitting ? (
@@ -846,16 +1093,32 @@ const BulkAttendancePage = () => {
             Instructions
           </h3>
           <div className="space-y-2 text-sm text-gray-600">
-            <p>1. Select the program for attendance recording</p>
-            <p>2. Date is automatically set to today (cannot be changed)</p>
-            <p>3. Optionally select or enter a session name</p>
-            <p>4. Click on each participant to toggle their attendance status</p>
-            <p>5. Use "Mark All Present" or "Mark All Absent" for quick selection</p>
-            <p>6. Participants with existing records are marked in yellow and cannot be modified</p>
-            <p>7. Click "Record Attendance" to save new records only</p>
+            {isTeacher ? (
+              <>
+                <p>1. Select your room from the dropdown</p>
+                <p>2. Select the program for attendance recording</p>
+                <p>3. Date is automatically set to today (cannot be changed)</p>
+                <p>4. Optionally select or enter a session name</p>
+                <p>5. Click on each participant to toggle their attendance status</p>
+                <p>6. Use "Mark All Present" or "Mark All Absent" for quick selection</p>
+                <p>7. Participants with existing records are marked in yellow and cannot be modified</p>
+                <p>8. Click "Record Attendance" to save new records only</p>
+              </>
+            ) : (
+              <>
+                <p>1. Select the program for attendance recording</p>
+                <p>2. Date is automatically set to today (cannot be changed)</p>
+                <p>3. Optionally select or enter a session name</p>
+                <p>4. Click on each participant to toggle their attendance status</p>
+                <p>5. Use "Mark All Present" or "Mark All Absent" for quick selection</p>
+                <p>6. Participants with existing records are marked in yellow and cannot be modified</p>
+                <p>7. Click "Record Attendance" to save new records only</p>
+              </>
+            )}
             <p className="mt-4 text-xs text-gray-500 bg-gray-50 p-3 rounded">
               <strong>Important:</strong> Attendance can only be recorded once per participant per date. 
               You cannot record attendance for past or future dates. Only enrolled participants in the selected program are displayed.
+              {isTeacher && ' You can only record attendance for participants in your assigned rooms.'}
             </p>
           </div>
         </Card>
