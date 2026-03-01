@@ -41,7 +41,7 @@ class Room(models.Model):
         null=True,
         blank=True,
         related_name='assigned_rooms',
-        limit_choices_to={'role__in': ['admin', 'program_manager', 'data_entry']},
+        limit_choices_to={'role__in': ['admin', 'program_manager', 'data_entry', 'teacher']},  # Add 'teacher' here
         help_text=_("Teacher/facilitator assigned to this room")
     )
     
