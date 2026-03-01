@@ -33,6 +33,12 @@ import ParticipantDetailPage from './pages/dashboard/participants/ParticipantDet
 import CreateParticipantPage from './pages/dashboard/participants/CreateParticipantPage';
 import EditParticipantPage from './pages/dashboard/participants/EditParticipantPage';
 
+// Enrollments (NEW)
+import EnrollmentsListPage from './pages/dashboard/enrollments/EnrollmentsListPage';
+import EnrollmentDetailPage from './pages/dashboard/enrollments/EnrollmentDetailPage';
+import CreateEnrollmentPage from './pages/dashboard/enrollments/CreateEnrollmentPage';
+import EditEnrollmentPage from './pages/dashboard/enrollments/EditEnrollmentPage';
+
 // Rooms (NEW)
 import RoomsListPage from './pages/dashboard/Rooms/RoomsListPage';
 import CreateRoomPage from './pages/dashboard/Rooms/CreateRoomPage';
@@ -303,6 +309,67 @@ function App() {
           } 
         />
 
+        {/* ================================
+            ENROLLMENTS ROUTES (NEW)
+            ================================ */}
+        <Route 
+          path="/dashboard/enrollments" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher', 'staff']}>
+              <EnrollmentsListPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard/enrollments/create" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher', 'staff']}>
+              <CreateEnrollmentPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard/enrollments/:id" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher', 'staff', 'donor']}>
+              <EnrollmentDetailPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard/enrollments/:id/edit" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher', 'staff']}>
+              <EditEnrollmentPage />
+            </ProtectedRoute>
+          } 
+        />
+        {/* Special enrollment actions */}
+        <Route 
+          path="/dashboard/enrollments/:id/dropout" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher']}>
+              <ComingSoonPage pageName="Record Dropout" />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard/enrollments/:id/award-scholarship" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'program_manager']}>
+              <ComingSoonPage pageName="Award Scholarship" />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard/enrollments/:id/temporary-leave" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher']}>
+              <ComingSoonPage pageName="Temporary Leave" />
+            </ProtectedRoute>
+          } 
+        />
+
         {/* Protected Routes - Participants (All authenticated users can view, Admin/Teacher/PM can edit) */}
         <Route 
           path="/dashboard/participants" 
@@ -433,9 +500,8 @@ function App() {
           } 
         />
 
-   
-         {/* ── Reports ──
-             General Report accessible to Admin, Program Manager, Director */}
+        {/* ── Reports ──
+            General Report accessible to Admin, Program Manager, Director */}
         <Route 
           path="/dashboard/reports/general" 
           element={
@@ -444,7 +510,6 @@ function App() {
             </ProtectedRoute>
           } 
         />
-        
 
         {/* Protected Routes - Profile (All authenticated users) */}
         <Route 
