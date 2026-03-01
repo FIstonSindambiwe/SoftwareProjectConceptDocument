@@ -2,6 +2,163 @@
 import api from './axiosConfig';
 
 const participantService = {
+  // ==================== ROOMS ====================
+
+  /**
+   * Get list of all rooms
+   * GET /api/v1/participants/rooms/
+   */
+  async getRooms(params = {}) {
+    try {
+      console.log('Fetching rooms with params:', params);
+      const response = await api.get('/participants/rooms/', { params });
+      console.log('Rooms fetched successfully:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching rooms:', error);
+      console.error('Error response:', error.response?.data);
+      throw error.response?.data || error;
+    }
+  },
+
+  /**
+   * Get single room by ID
+   * GET /api/v1/participants/rooms/{id}/
+   */
+  async getRoom(id) {
+    try {
+      console.log('Fetching room:', id);
+      const response = await api.get(`/participants/rooms/${id}/`);
+      console.log('Room fetched successfully:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching room:', error);
+      console.error('Error response:', error.response?.data);
+      throw error.response?.data || error;
+    }
+  },
+
+  /**
+   * Create new room
+   * POST /api/v1/participants/rooms/
+   */
+  async createRoom(roomData) {
+    try {
+      console.log('Creating room with data:', roomData);
+      const response = await api.post('/participants/rooms/', roomData);
+      console.log('Room created successfully:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error creating room:', error);
+      console.error('Error response:', error.response?.data);
+      throw error.response?.data || error;
+    }
+  },
+
+  /**
+   * Update room - Full update
+   * PUT /api/v1/participants/rooms/{id}/
+   */
+  async updateRoom(id, roomData) {
+    try {
+      console.log('Updating room (PUT):', id, roomData);
+      const response = await api.put(`/participants/rooms/${id}/`, roomData);
+      console.log('Room updated successfully:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error updating room (PUT):', error);
+      console.error('Error response:', error.response?.data);
+      throw error.response?.data || error;
+    }
+  },
+
+  /**
+   * Partial update room
+   * PATCH /api/v1/participants/rooms/{id}/
+   */
+  async patchRoom(id, roomData) {
+    try {
+      console.log('Patching room:', id, roomData);
+      const response = await api.patch(`/participants/rooms/${id}/`, roomData);
+      console.log('Room patched successfully:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error patching room:', error);
+      console.error('Error response:', error.response?.data);
+      throw error.response?.data || error;
+    }
+  },
+
+  /**
+   * Delete room
+   * DELETE /api/v1/participants/rooms/{id}/
+   */
+  async deleteRoom(id) {
+    try {
+      console.log('Deleting room:', id);
+      const response = await api.delete(`/participants/rooms/${id}/`);
+      console.log('Room deleted successfully');
+      return response.data;
+    } catch (error) {
+      console.error('Error deleting room:', error);
+      console.error('Error response:', error.response?.data);
+      throw error.response?.data || error;
+    }
+  },
+
+  /**
+   * Get participants in a room
+   * GET /api/v1/participants/rooms/{id}/participants/
+   */
+  async getRoomParticipants(id) {
+    try {
+      console.log('Fetching room participants:', id);
+      const response = await api.get(`/participants/rooms/${id}/participants/`);
+      console.log('Room participants fetched:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching room participants:', error);
+      console.error('Error response:', error.response?.data);
+      throw error.response?.data || error;
+    }
+  },
+
+  /**
+   * Assign teacher to room
+   * POST /api/v1/participants/rooms/{id}/assign_teacher/
+   */
+  async assignTeacherToRoom(roomId, teacherId) {
+    try {
+      console.log('Assigning teacher to room:', roomId, teacherId);
+      const response = await api.post(`/participants/rooms/${roomId}/assign_teacher/`, {
+        teacher_id: teacherId
+      });
+      console.log('Teacher assigned successfully:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error assigning teacher:', error);
+      console.error('Error response:', error.response?.data);
+      throw error.response?.data || error;
+    }
+  },
+
+  /**
+   * Get room statistics
+   * GET /api/v1/participants/rooms/stats/
+   */
+  async getRoomStats() {
+    try {
+      console.log('Fetching room statistics');
+      const response = await api.get('/participants/rooms/stats/');
+      console.log('Room stats fetched:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching room stats:', error);
+      console.error('Error response:', error.response?.data);
+      throw error.response?.data || error;
+    }
+  },
+
   // ==================== PARTICIPANTS ====================
 
   /**
@@ -360,17 +517,17 @@ const participantService = {
   },
 
   /**
-   * Mark enrollment as completed
-   * POST /api/v1/participants/enrollments/{id}/complete/
+   * Mark participant as successfully finished the program
+   * POST /api/v1/participants/enrollments/{id}/finish/
    */
-  async completeEnrollment(id) {
+  async finishProgram(id, finishData = {}) {
     try {
-      console.log('Completing enrollment:', id);
-      const response = await api.post(`/participants/enrollments/${id}/complete/`);
-      console.log('Enrollment completed successfully:', response.data);
+      console.log('Marking enrollment as finished:', id, finishData);
+      const response = await api.post(`/participants/enrollments/${id}/finish/`, finishData);
+      console.log('Enrollment marked as finished:', response.data);
       return response.data;
     } catch (error) {
-      console.error('Error completing enrollment:', error);
+      console.error('Error marking enrollment as finished:', error);
       console.error('Error response:', error.response?.data);
       throw error.response?.data || error;
     }
@@ -380,16 +537,31 @@ const participantService = {
    * Mark participant as dropped out
    * POST /api/v1/participants/enrollments/{id}/dropout/
    */
-  async dropoutEnrollment(id, reason = '') {
+  async markDropout(id, dropoutData) {
     try {
-      console.log('Marking enrollment as dropout:', id, reason);
-      const response = await api.post(`/participants/enrollments/${id}/dropout/`, {
-        reason
-      });
+      console.log('Marking enrollment as dropout:', id, dropoutData);
+      const response = await api.post(`/participants/enrollments/${id}/dropout/`, dropoutData);
       console.log('Enrollment marked as dropout:', response.data);
       return response.data;
     } catch (error) {
       console.error('Error marking dropout:', error);
+      console.error('Error response:', error.response?.data);
+      throw error.response?.data || error;
+    }
+  },
+
+  /**
+   * Award scholarship to participant
+   * POST /api/v1/participants/enrollments/{id}/award_scholarship/
+   */
+  async awardScholarship(id, scholarshipData) {
+    try {
+      console.log('Awarding scholarship to enrollment:', id, scholarshipData);
+      const response = await api.post(`/participants/enrollments/${id}/award_scholarship/`, scholarshipData);
+      console.log('Scholarship awarded successfully:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error awarding scholarship:', error);
       console.error('Error response:', error.response?.data);
       throw error.response?.data || error;
     }
