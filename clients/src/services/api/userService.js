@@ -38,16 +38,52 @@ const userService = {
 
   /**
    * Create new user (Admin only)
+   * Password is auto-generated if not provided
    * POST /api/v1/auth/
    */
   async createUser(userData) {
     try {
-      console.log('Creating user with data:', userData);
+      console.log('Creating user with data:', {
+        ...userData,
+        password: userData.password ? '***' : 'auto-generated',
+        password_confirm: userData.password_confirm ? '***' : undefined
+      });
+      
       const response = await api.post('/auth/', userData);
-      console.log('User created successfully:', response.data);
+      
+      console.log('User created successfully:', {
+        id: response.data.id,
+        username: response.data.username,
+        email: response.data.email,
+        email_sent: response.data.email_sent,
+        temp_password: response.data.temp_password || undefined
+      });
+      
+      // Show warning if email wasn't sent
+      if (response.data.email_sent === false) {
+        console.warn('User created but welcome email failed to send');
+      }
+      
       return response.data;
     } catch (error) {
       console.error('Error creating user:', error);
+      console.error('Error response:', error.response?.data);
+      throw error.response?.data || error;
+    }
+  },
+
+  /**
+   * Reset user password (Admin only)
+   * POST /api/v1/auth/{id}/reset_password/
+   */
+  async resetUserPassword(userId) {
+    try {
+      console.log('Resetting password for user:', userId);
+      const response = await api.post(`/auth/${userId}/reset_password/`);
+      console.log('Password reset successfully:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error resetting password:', error);
       console.error('Error response:', error.response?.data);
       throw error.response?.data || error;
     }
@@ -79,7 +115,7 @@ const userService = {
   },
 
   /**
-   * Partial update user (Admin or self) - CLEAN VERSION
+   * Partial update user (Admin or self)
    * PATCH /api/v1/auth/{id}/
    */
   async patchUser(id, userData) {
@@ -100,6 +136,13 @@ const userService = {
       
       if (response.data && 'is_active' in response.data) {
         console.log('✅ is_active updated to:', response.data.is_active);
+      }
+      
+      // Update local storage if updating current user
+      if (currentUser && currentUser.id === id) {
+        const updatedUser = { ...currentUser, ...response.data };
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        console.log('Updated current user in localStorage');
       }
       
       return response.data;
@@ -157,39 +200,7 @@ const userService = {
     }
   },
 
-  // /**
-  //  * Get current user profile
-  //  * GET /api/v1/auth/me/
-  //  */
-  // async getCurrentProfile() {
-  //   try {
-  //     const response = await api.get('/auth/me/');
-  //     return response.data;
-  //   } catch (error) {
-  //     console.error('Error fetching profile:', error);
-  //     console.error('Error response:', error.response?.data);
-  //     throw error.response?.data || error;
-  //   }
-  // },
-
-  // /**
-  //  * Update current user profile
-  //  * PUT /api/v1/auth/update_profile/
-  //  */
-  // async updateProfile(userData) {
-  //   try {
-  //     console.log('Updating profile with data:', userData);
-  //     const response = await api.put('/auth/update_profile/', userData);
-  //     console.log('Profile updated successfully:', response.data);
-  //     return response.data;
-  //   } catch (error) {
-  //     console.error('Error updating profile:', error);
-  //     console.error('Error response:', error.response?.data);
-  //     throw error.response?.data || error;
-  //   }
-  // },
-
-   /**
+  /**
    * Update current user profile
    * PUT /api/v1/auth/update_profile/
    */
@@ -198,6 +209,12 @@ const userService = {
       console.log('Updating profile with data:', userData);
       const response = await api.put('/auth/update_profile/', userData);
       console.log('Profile updated successfully:', response.data);
+      
+      // Update user in localStorage
+      const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+      const updatedUser = { ...currentUser, ...response.data };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      
       return response.data;
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -230,6 +247,12 @@ const userService = {
       console.log('Patching profile with data:', userData);
       const response = await api.patch('/auth/update_profile/', userData);
       console.log('Profile patched successfully:', response.data);
+      
+      // Update user in localStorage
+      const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+      const updatedUser = { ...currentUser, ...response.data };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      
       return response.data;
     } catch (error) {
       console.error('Error patching profile:', error);
@@ -247,6 +270,10 @@ const userService = {
       console.log('Changing password...');
       const response = await api.post('/auth/change_password/', passwordData);
       console.log('Password changed successfully');
+      
+      // Clear must_change_password flag from localStorage if present
+      localStorage.removeItem('must_change_password');
+      
       return response.data;
     } catch (error) {
       console.error('Error changing password:', error);
@@ -266,7 +293,8 @@ const userService = {
     } catch (error) {
       console.error('Error fetching stats:', error);
       console.error('Error response:', error.response?.data);
-      throw error.response?.data || error;
+      // Return null instead of throwing to handle gracefully
+      return null;
     }
   },
 
@@ -344,6 +372,38 @@ const userService = {
       throw error.response?.data || error;
     }
   },
+  
+  /**
+   * Resend welcome email to user (Admin only)
+   * POST /api/v1/auth/{id}/resend_welcome_email/
+   */
+  async resendWelcomeEmail(userId) {
+    try {
+      console.log('Resending welcome email to user:', userId);
+      const response = await api.post(`/auth/${userId}/resend_welcome_email/`);
+      console.log('Welcome email resent successfully:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error resending welcome email:', error);
+      console.error('Error response:', error.response?.data);
+      throw error.response?.data || error;
+    }
+  },
+  
+  /**
+   * Check email status for a user
+   * GET /api/v1/auth/{id}/email_status/
+   */
+  async getEmailStatus(userId) {
+    try {
+      const response = await api.get(`/auth/${userId}/email_status/`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching email status:', error);
+      console.error('Error response:', error.response?.data);
+      throw error.response?.data || error;
+    }
+  }
 };
 
 export default userService;

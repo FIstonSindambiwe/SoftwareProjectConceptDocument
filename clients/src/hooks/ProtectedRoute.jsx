@@ -11,14 +11,26 @@ import useAuth from '../hooks/useAuth';
  * <ProtectedRoute allowedRoles={['admin']}>
  *   <UsersPage />
  * </ProtectedRoute>
+ * 
+ * <ProtectedRoute requireFullAuth={true}>
+ *   <Dashboard />
+ * </ProtectedRoute>
  */
 const ProtectedRoute = ({ 
   children, 
   allowedRoles = [], 
   requireAuth = true,
+  requireFullAuth = true,  // New: Require fully authenticated (password changed)
   redirectTo = '/login',
+  changePasswordPath = '/change-password',
 }) => {
-  const { isAuthenticated, user, isLoading } = useAuth();
+  const { 
+    isAuthenticated, 
+    user, 
+    isLoading,
+    mustChangePassword,
+    isFullyAuthenticated 
+  } = useAuth();
   const location = useLocation();
 
   // Show loading state
@@ -35,7 +47,18 @@ const ProtectedRoute = ({
 
   // Check authentication
   if (requireAuth && !isAuthenticated) {
+    // Store the attempted location for redirect after login
     return <Navigate to={redirectTo} state={{ from: location }} replace />;
+  }
+
+  // Check if user must change password and we're requiring full authentication
+  if (requireFullAuth && isAuthenticated && mustChangePassword) {
+    // Allow access to change password page only
+    if (location.pathname !== changePasswordPath) {
+      return <Navigate to={changePasswordPath} state={{ from: location }} replace />;
+    }
+    // Allow rendering children only if on change password page
+    return children;
   }
 
   // Check role-based access

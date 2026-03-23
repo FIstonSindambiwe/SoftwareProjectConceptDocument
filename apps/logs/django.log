@@ -10178,3 +10178,1236 @@ INFO 2026-03-02 01:31:47,900 log "GET /api/v1/indicators/?page_size=1000 HTTP/1.
 INFO 2026-03-02 01:31:47,912 log "GET /api/v1/programs/programs/?page_size=1000 HTTP/1.1" 200 639
 INFO 2026-03-02 01:31:47,927 log "GET /api/v1/attendance/records/?page_size=1000 HTTP/1.1" 200 2428
 INFO 2026-03-02 01:31:47,948 log "GET /api/v1/participants/participants/?page_size=1000 HTTP/1.1" 200 3835
+INFO 2026-03-02 01:42:20,946 log "OPTIONS /api/v1/auth/logout/ HTTP/1.1" 200 0
+WARNING 2026-03-02 01:42:20,955 log Bad Request: /api/v1/auth/logout/
+WARNING 2026-03-02 01:42:20,956 log "POST /api/v1/auth/logout/ HTTP/1.1" 400 42
+INFO 2026-03-18 00:28:08,397 autoreload Watching for file changes with StatReloader
+INFO 2026-03-18 00:29:08,074 log "OPTIONS /api/v1/auth/login/ HTTP/1.1" 200 0
+INFO 2026-03-18 00:29:08,462 log "POST /api/v1/auth/login/ HTTP/1.1" 200 912
+INFO 2026-03-18 00:29:09,065 log "OPTIONS /api/v1/programs/programs/stats/ HTTP/1.1" 200 0
+INFO 2026-03-18 00:29:09,067 log "OPTIONS /api/v1/participants/participants/stats/ HTTP/1.1" 200 0
+INFO 2026-03-18 00:29:09,069 log "OPTIONS /api/v1/attendance/records/stats/ HTTP/1.1" 200 0
+INFO 2026-03-18 00:29:09,069 log "OPTIONS /api/v1/attendance/records/?date_from=2026-03-10&date_to=2026-03-17 HTTP/1.1" 200 0
+INFO 2026-03-18 00:29:09,072 log "OPTIONS /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 0
+INFO 2026-03-18 00:29:09,074 log "OPTIONS /api/v1/participants/participants/stats/ HTTP/1.1" 200 0
+INFO 2026-03-18 00:29:09,074 log "OPTIONS /api/v1/attendance/records/?date_from=2026-03-10&date_to=2026-03-17 HTTP/1.1" 200 0
+INFO 2026-03-18 00:29:09,078 log "OPTIONS /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 0
+INFO 2026-03-18 00:29:09,078 log "OPTIONS /api/v1/attendance/records/stats/ HTTP/1.1" 200 0
+INFO 2026-03-18 00:29:09,084 log "OPTIONS /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 0
+INFO 2026-03-18 00:29:09,080 log "OPTIONS /api/v1/programs/programs/stats/ HTTP/1.1" 200 0
+INFO 2026-03-18 00:29:09,088 log "OPTIONS /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 0
+INFO 2026-03-18 00:29:09,147 log "OPTIONS /api/v1/auth/stats/ HTTP/1.1" 200 0
+WARNING 2026-03-18 00:29:09,158 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-18 00:29:09,159 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-18 00:29:09,181 log "GET /api/v1/attendance/records/?date_from=2026-03-10&date_to=2026-03-17 HTTP/1.1" 200 52
+INFO 2026-03-18 00:29:09,182 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-18 00:29:09,183 log "OPTIONS /api/v1/assessments/stats/ HTTP/1.1" 200 0
+INFO 2026-03-18 00:29:09,205 log "OPTIONS /api/v1/assessments/?ordering=-assessment_date&page_size=200 HTTP/1.1" 200 0
+INFO 2026-03-18 00:29:09,214 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-18 00:29:09,230 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-18 00:29:09,243 log "GET /api/v1/auth/stats/ HTTP/1.1" 200 158
+WARNING 2026-03-18 00:29:09,246 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-18 00:29:09,248 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-18 00:29:09,271 log "GET /api/v1/attendance/records/?date_from=2026-03-10&date_to=2026-03-17 HTTP/1.1" 200 52
+INFO 2026-03-18 00:29:09,279 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-18 00:29:09,285 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-18 00:29:09,312 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-18 00:29:09,337 log "GET /api/v1/assessments/?ordering=-assessment_date&page_size=200 HTTP/1.1" 200 199
+WARNING 2026-03-18 00:29:09,349 log Not Found: /api/v1/participants/participants/stats/
+INFO 2026-03-18 00:29:09,350 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+WARNING 2026-03-18 00:29:09,350 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-18 00:29:09,357 log "GET /api/v1/attendance/records/?date_from=2026-03-10&date_to=2026-03-17 HTTP/1.1" 200 52
+INFO 2026-03-18 00:29:09,406 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-18 00:29:09,418 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-18 00:29:09,426 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-18 00:29:09,429 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-18 00:29:09,481 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-18 00:29:09,516 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-18 00:30:08,036 log "OPTIONS /api/v1/auth/ HTTP/1.1" 200 0
+INFO 2026-03-18 00:30:08,036 log "OPTIONS /api/v1/auth/ HTTP/1.1" 200 0
+INFO 2026-03-18 00:30:08,044 log "GET /api/v1/auth/ HTTP/1.1" 200 863
+INFO 2026-03-18 00:30:08,045 log "GET /api/v1/auth/stats/ HTTP/1.1" 200 158
+INFO 2026-03-18 00:30:08,053 log "GET /api/v1/auth/stats/ HTTP/1.1" 200 158
+INFO 2026-03-18 00:30:08,105 log "GET /api/v1/auth/ HTTP/1.1" 200 863
+INFO 2026-03-18 00:30:08,346 log "GET /api/v1/auth/ HTTP/1.1" 200 863
+INFO 2026-03-18 00:30:29,118 log "OPTIONS /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 0
+INFO 2026-03-18 00:30:29,118 log "OPTIONS /api/v1/participants/participants/?limit=100&is_active=true HTTP/1.1" 200 0
+INFO 2026-03-18 00:30:29,120 log "OPTIONS /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 0
+INFO 2026-03-18 00:30:29,121 log "OPTIONS /api/v1/participants/enrollments/?page=1&page_size=10 HTTP/1.1" 200 0
+INFO 2026-03-18 00:30:29,121 log "OPTIONS /api/v1/participants/participants/?limit=100&is_active=true HTTP/1.1" 200 0
+INFO 2026-03-18 00:30:29,123 log "OPTIONS /api/v1/participants/enrollments/?page=1&page_size=10 HTTP/1.1" 200 0
+INFO 2026-03-18 00:30:29,160 log "GET /api/v1/participants/enrollments/?page=1&page_size=10 HTTP/1.1" 200 1991
+INFO 2026-03-18 00:30:29,165 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 639
+INFO 2026-03-18 00:30:29,175 log "GET /api/v1/participants/participants/?limit=100&is_active=true HTTP/1.1" 200 2253
+INFO 2026-03-18 00:30:29,227 log "OPTIONS /api/v1/participants/enrollments/stats/ HTTP/1.1" 200 0
+INFO 2026-03-18 00:30:29,245 log "GET /api/v1/participants/enrollments/?page=1&page_size=10 HTTP/1.1" 200 1991
+INFO 2026-03-18 00:30:29,259 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 639
+INFO 2026-03-18 00:30:29,276 log "GET /api/v1/participants/participants/?limit=100&is_active=true HTTP/1.1" 200 2253
+INFO 2026-03-18 00:30:29,283 log "GET /api/v1/participants/enrollments/stats/ HTTP/1.1" 200 300
+INFO 2026-03-18 00:30:29,341 log "GET /api/v1/participants/enrollments/stats/ HTTP/1.1" 200 300
+INFO 2026-03-18 00:30:42,700 log "OPTIONS /api/v1/programs/programs/active/ HTTP/1.1" 200 0
+INFO 2026-03-18 00:30:42,700 log "OPTIONS /api/v1/programs/programs/active/ HTTP/1.1" 200 0
+INFO 2026-03-18 00:30:42,712 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 589
+INFO 2026-03-18 00:30:42,768 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 589
+INFO 2026-03-18 00:31:02,486 log "OPTIONS /api/v1/participants/rooms/?is_active=true&page_size=100 HTTP/1.1" 200 0
+INFO 2026-03-18 00:31:02,512 log "GET /api/v1/participants/rooms/?is_active=true&page_size=100 HTTP/1.1" 200 417
+INFO 2026-03-18 00:31:02,514 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 589
+INFO 2026-03-18 00:31:02,525 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 589
+INFO 2026-03-18 00:31:06,326 log "OPTIONS /api/v1/attendance/records/?program_id=2&date_from=2026-03-17&date_to=2026-03-17&page_size=1000 HTTP/1.1" 200 0
+INFO 2026-03-18 00:31:06,326 log "OPTIONS /api/v1/participants/participants/?enrolled_program=2&is_active=true HTTP/1.1" 200 0
+INFO 2026-03-18 00:31:06,327 log "OPTIONS /api/v1/attendance/sessions/?program=2&session_date=2026-03-17&is_cancelled=false HTTP/1.1" 200 0
+INFO 2026-03-18 00:31:06,341 log "GET /api/v1/attendance/records/?program_id=2&date_from=2026-03-17&date_to=2026-03-17&page_size=1000 HTTP/1.1" 200 52
+INFO 2026-03-18 00:31:06,356 log "GET /api/v1/attendance/sessions/?program=2&session_date=2026-03-17&is_cancelled=false HTTP/1.1" 200 52
+INFO 2026-03-18 00:31:06,363 log "GET /api/v1/participants/participants/?enrolled_program=2&is_active=true HTTP/1.1" 200 2253
+INFO 2026-03-18 00:31:12,317 log "OPTIONS /api/v1/auth/?page_size=1000 HTTP/1.1" 200 0
+INFO 2026-03-18 00:31:12,317 log "OPTIONS /api/v1/assessments/?page_size=1000 HTTP/1.1" 200 0
+INFO 2026-03-18 00:31:12,318 log "OPTIONS /api/v1/attendance/records/?page_size=1000 HTTP/1.1" 200 0
+INFO 2026-03-18 00:31:12,318 log "OPTIONS /api/v1/participants/participants/?page_size=1000 HTTP/1.1" 200 0
+INFO 2026-03-18 00:31:12,318 log "OPTIONS /api/v1/indicators/?page_size=1000 HTTP/1.1" 200 0
+INFO 2026-03-18 00:31:12,318 log "OPTIONS /api/v1/programs/programs/?page_size=1000 HTTP/1.1" 200 0
+INFO 2026-03-18 00:31:12,357 log "GET /api/v1/auth/?page_size=1000 HTTP/1.1" 200 863
+INFO 2026-03-18 00:31:12,377 log "GET /api/v1/indicators/?page_size=1000 HTTP/1.1" 200 1801
+INFO 2026-03-18 00:31:12,386 log "GET /api/v1/programs/programs/?page_size=1000 HTTP/1.1" 200 639
+INFO 2026-03-18 00:31:12,393 log "GET /api/v1/assessments/?page_size=1000 HTTP/1.1" 200 199
+INFO 2026-03-18 00:31:12,403 log "GET /api/v1/attendance/records/?page_size=1000 HTTP/1.1" 200 2428
+INFO 2026-03-18 00:31:12,415 log "GET /api/v1/participants/participants/?page_size=1000 HTTP/1.1" 200 3835
+INFO 2026-03-18 00:32:39,445 log "OPTIONS /api/v1/assessments/?ordering=-assessment_date HTTP/1.1" 200 0
+INFO 2026-03-18 00:32:39,446 log "OPTIONS /api/v1/assessments/?ordering=-assessment_date HTTP/1.1" 200 0
+INFO 2026-03-18 00:32:39,446 log "OPTIONS /api/v1/programs/programs/ HTTP/1.1" 200 0
+INFO 2026-03-18 00:32:39,446 log "OPTIONS /api/v1/assessments/?ordering=-assessment_date HTTP/1.1" 200 0
+INFO 2026-03-18 00:32:39,447 log "OPTIONS /api/v1/indicators/active/ HTTP/1.1" 200 0
+INFO 2026-03-18 00:32:39,452 log "OPTIONS /api/v1/indicators/active/ HTTP/1.1" 200 0
+INFO 2026-03-18 00:32:39,454 log "OPTIONS /api/v1/assessments/?ordering=-assessment_date HTTP/1.1" 200 0
+INFO 2026-03-18 00:32:39,459 log "OPTIONS /api/v1/programs/programs/ HTTP/1.1" 200 0
+INFO 2026-03-18 00:32:39,470 log "GET /api/v1/indicators/active/ HTTP/1.1" 200 1751
+INFO 2026-03-18 00:32:39,482 log "GET /api/v1/assessments/?ordering=-assessment_date HTTP/1.1" 200 199
+INFO 2026-03-18 00:32:39,482 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-18 00:32:39,495 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 639
+INFO 2026-03-18 00:32:39,505 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-18 00:32:39,519 log "GET /api/v1/indicators/active/ HTTP/1.1" 200 1751
+INFO 2026-03-18 00:32:39,536 log "GET /api/v1/assessments/?ordering=-assessment_date HTTP/1.1" 200 199
+INFO 2026-03-18 00:32:39,557 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 639
+INFO 2026-03-18 00:32:39,568 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-18 00:32:39,587 log "GET /api/v1/assessments/?ordering=-assessment_date HTTP/1.1" 200 199
+INFO 2026-03-18 00:32:39,623 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-18 00:32:39,643 log "GET /api/v1/assessments/?ordering=-assessment_date HTTP/1.1" 200 199
+INFO 2026-03-18 00:32:45,252 log "OPTIONS /api/v1/indicators/ HTTP/1.1" 200 0
+INFO 2026-03-18 00:32:45,252 log "OPTIONS /api/v1/indicators/ HTTP/1.1" 200 0
+INFO 2026-03-18 00:32:45,265 log "GET /api/v1/indicators/ HTTP/1.1" 200 1801
+INFO 2026-03-18 00:32:45,317 log "GET /api/v1/indicators/ HTTP/1.1" 200 1801
+INFO 2026-03-18 00:40:31,538 log "GET /api/v1/auth/ HTTP/1.1" 200 863
+INFO 2026-03-18 00:40:31,540 log "GET /api/v1/auth/stats/ HTTP/1.1" 200 158
+INFO 2026-03-18 00:40:31,548 log "GET /api/v1/auth/ HTTP/1.1" 200 863
+INFO 2026-03-18 00:40:31,552 log "GET /api/v1/auth/stats/ HTTP/1.1" 200 158
+INFO 2026-03-18 00:40:31,838 log "GET /api/v1/auth/ HTTP/1.1" 200 863
+INFO 2026-03-18 00:40:35,829 log "OPTIONS /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 0
+INFO 2026-03-18 00:40:35,829 log "OPTIONS /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 0
+INFO 2026-03-18 00:40:35,853 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 639
+INFO 2026-03-18 00:40:35,853 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 2428
+INFO 2026-03-18 00:40:35,869 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 639
+INFO 2026-03-18 00:40:35,902 log "OPTIONS /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 0
+INFO 2026-03-18 00:40:35,913 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 2428
+INFO 2026-03-18 00:40:35,919 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 149
+INFO 2026-03-18 00:40:35,987 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 149
+INFO 2026-03-18 00:40:39,356 log "GET /api/v1/indicators/ HTTP/1.1" 200 1801
+INFO 2026-03-18 00:40:39,370 log "GET /api/v1/indicators/ HTTP/1.1" 200 1801
+INFO 2026-03-18 00:40:41,967 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 639
+INFO 2026-03-18 00:40:41,971 log "GET /api/v1/participants/enrollments/?page=1&page_size=10 HTTP/1.1" 200 1991
+INFO 2026-03-18 00:40:42,008 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 639
+INFO 2026-03-18 00:40:42,017 log "GET /api/v1/participants/enrollments/?page=1&page_size=10 HTTP/1.1" 200 1991
+INFO 2026-03-18 00:40:42,017 log "GET /api/v1/participants/participants/?limit=100&is_active=true HTTP/1.1" 200 2253
+INFO 2026-03-18 00:40:42,036 log "GET /api/v1/participants/enrollments/stats/ HTTP/1.1" 200 300
+INFO 2026-03-18 00:40:42,056 log "GET /api/v1/participants/participants/?limit=100&is_active=true HTTP/1.1" 200 2253
+INFO 2026-03-18 00:40:42,085 log "GET /api/v1/participants/enrollments/stats/ HTTP/1.1" 200 300
+INFO 2026-03-18 00:40:46,134 log "OPTIONS /api/v1/participants/rooms/?page=1&page_size=10 HTTP/1.1" 200 0
+INFO 2026-03-18 00:40:46,140 log "OPTIONS /api/v1/participants/rooms/?page=1&page_size=10 HTTP/1.1" 200 0
+INFO 2026-03-18 00:40:46,142 log "OPTIONS /api/v1/participants/rooms/?page_size=1000 HTTP/1.1" 200 0
+INFO 2026-03-18 00:40:46,142 log "OPTIONS /api/v1/participants/rooms/?page_size=1000 HTTP/1.1" 200 0
+INFO 2026-03-18 00:40:46,170 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 639
+INFO 2026-03-18 00:40:46,170 log "GET /api/v1/participants/rooms/?page=1&page_size=10 HTTP/1.1" 200 417
+INFO 2026-03-18 00:40:46,178 log "GET /api/v1/participants/rooms/?page_size=1000 HTTP/1.1" 200 417
+INFO 2026-03-18 00:40:46,195 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 639
+INFO 2026-03-18 00:40:46,232 log "GET /api/v1/participants/rooms/?page=1&page_size=10 HTTP/1.1" 200 417
+INFO 2026-03-18 00:40:46,238 log "GET /api/v1/participants/rooms/?page_size=1000 HTTP/1.1" 200 417
+INFO 2026-03-18 00:40:46,291 log "GET /api/v1/participants/rooms/?page_size=1000 HTTP/1.1" 200 417
+INFO 2026-03-18 00:40:46,345 log "GET /api/v1/participants/rooms/?page_size=1000 HTTP/1.1" 200 417
+INFO 2026-03-18 00:40:52,079 log "GET /api/v1/participants/enrollments/?page=1&page_size=10 HTTP/1.1" 200 1991
+INFO 2026-03-18 00:40:52,085 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 639
+INFO 2026-03-18 00:40:52,162 log "GET /api/v1/participants/participants/?limit=100&is_active=true HTTP/1.1" 200 2253
+INFO 2026-03-18 00:40:52,170 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 639
+INFO 2026-03-18 00:40:52,184 log "GET /api/v1/participants/enrollments/?page=1&page_size=10 HTTP/1.1" 200 1991
+INFO 2026-03-18 00:40:52,197 log "GET /api/v1/participants/enrollments/stats/ HTTP/1.1" 200 300
+INFO 2026-03-18 00:40:52,207 log "GET /api/v1/participants/participants/?limit=100&is_active=true HTTP/1.1" 200 2253
+INFO 2026-03-18 00:40:52,252 log "GET /api/v1/participants/enrollments/stats/ HTTP/1.1" 200 300
+INFO 2026-03-18 00:40:54,472 log "OPTIONS /api/v1/participants/participants/?is_active=true HTTP/1.1" 200 0
+INFO 2026-03-18 00:40:54,473 log "OPTIONS /api/v1/participants/participants/?is_active=true HTTP/1.1" 200 0
+INFO 2026-03-18 00:40:54,489 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-18 00:40:54,510 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-18 00:40:54,515 log "GET /api/v1/participants/participants/?is_active=true HTTP/1.1" 200 2253
+INFO 2026-03-18 00:40:54,572 log "GET /api/v1/participants/participants/?is_active=true HTTP/1.1" 200 2253
+INFO 2026-03-18 00:41:02,526 log "GET /api/v1/participants/enrollments/?page=1&page_size=10 HTTP/1.1" 200 1991
+INFO 2026-03-18 00:41:02,526 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 639
+INFO 2026-03-18 00:41:02,581 log "GET /api/v1/participants/enrollments/stats/ HTTP/1.1" 200 300
+INFO 2026-03-18 00:41:02,585 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 639
+INFO 2026-03-18 00:41:02,586 log "GET /api/v1/participants/participants/?limit=100&is_active=true HTTP/1.1" 200 2253
+INFO 2026-03-18 00:41:02,586 log "GET /api/v1/participants/enrollments/?page=1&page_size=10 HTTP/1.1" 200 1991
+INFO 2026-03-18 00:41:02,617 log "GET /api/v1/participants/participants/?limit=100&is_active=true HTTP/1.1" 200 2253
+INFO 2026-03-18 00:41:02,666 log "GET /api/v1/participants/enrollments/stats/ HTTP/1.1" 200 300
+INFO 2026-03-23 22:56:03,005 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 22:56:18,883 log "OPTIONS /api/v1/participants/participants/stats/ HTTP/1.1" 200 0
+INFO 2026-03-23 22:56:18,883 log "OPTIONS /api/v1/attendance/records/stats/ HTTP/1.1" 200 0
+INFO 2026-03-23 22:56:18,883 log "OPTIONS /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 0
+INFO 2026-03-23 22:56:18,884 log "OPTIONS /api/v1/programs/programs/stats/ HTTP/1.1" 200 0
+INFO 2026-03-23 22:56:18,884 log "OPTIONS /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 0
+INFO 2026-03-23 22:56:18,884 log "OPTIONS /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 0
+INFO 2026-03-23 22:56:18,891 log "OPTIONS /api/v1/programs/programs/stats/ HTTP/1.1" 200 0
+INFO 2026-03-23 22:56:18,891 log "OPTIONS /api/v1/participants/participants/stats/ HTTP/1.1" 200 0
+INFO 2026-03-23 22:56:18,891 log "OPTIONS /api/v1/attendance/records/stats/ HTTP/1.1" 200 0
+INFO 2026-03-23 22:56:18,894 log "OPTIONS /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 0
+INFO 2026-03-23 22:56:18,894 log "OPTIONS /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 0
+INFO 2026-03-23 22:56:18,894 log "OPTIONS /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 0
+WARNING 2026-03-23 22:56:18,996 log Unauthorized: /api/v1/attendance/records/
+WARNING 2026-03-23 22:56:18,997 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 401 172
+WARNING 2026-03-23 22:56:19,001 log Unauthorized: /api/v1/programs/programs/
+WARNING 2026-03-23 22:56:19,003 log Unauthorized: /api/v1/participants/participants/stats/
+WARNING 2026-03-23 22:56:19,007 log Unauthorized: /api/v1/programs/programs/stats/
+WARNING 2026-03-23 22:56:19,009 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 401 172
+WARNING 2026-03-23 22:56:19,005 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 401 172
+WARNING 2026-03-23 22:56:19,005 log Unauthorized: /api/v1/attendance/records/stats/
+WARNING 2026-03-23 22:56:19,016 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 401 172
+WARNING 2026-03-23 22:56:19,008 log Unauthorized: /api/v1/participants/participants/
+WARNING 2026-03-23 22:56:19,016 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 401 172
+WARNING 2026-03-23 22:56:19,009 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 401 172
+WARNING 2026-03-23 22:56:19,043 log Unauthorized: /api/v1/attendance/records/
+WARNING 2026-03-23 22:56:19,051 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 401 172
+WARNING 2026-03-23 22:56:19,055 log Unauthorized: /api/v1/programs/programs/
+WARNING 2026-03-23 22:56:19,069 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 401 172
+WARNING 2026-03-23 22:56:19,063 log Unauthorized: /api/v1/attendance/records/stats/
+WARNING 2026-03-23 22:56:19,065 log Unauthorized: /api/v1/participants/participants/
+WARNING 2026-03-23 22:56:19,060 log Unauthorized: /api/v1/programs/programs/stats/
+WARNING 2026-03-23 22:56:19,062 log Unauthorized: /api/v1/participants/participants/stats/
+WARNING 2026-03-23 22:56:19,071 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 401 172
+WARNING 2026-03-23 22:56:19,072 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 401 172
+WARNING 2026-03-23 22:56:19,073 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 401 172
+WARNING 2026-03-23 22:56:19,073 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 401 172
+INFO 2026-03-23 22:56:31,830 log "OPTIONS /api/v1/auth/login/ HTTP/1.1" 200 0
+INFO 2026-03-23 22:56:32,334 log "POST /api/v1/auth/login/ HTTP/1.1" 200 912
+WARNING 2026-03-23 22:56:32,971 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-23 22:56:32,972 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-23 22:56:33,002 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+WARNING 2026-03-23 22:56:33,011 log Not Found: /api/v1/participants/participants/stats/
+INFO 2026-03-23 22:56:33,014 log "OPTIONS /api/v1/auth/stats/ HTTP/1.1" 200 0
+WARNING 2026-03-23 22:56:33,019 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-23 22:56:33,034 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-23 22:56:33,039 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-23 22:56:33,039 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-23 22:56:33,060 log "OPTIONS /api/v1/assessments/stats/ HTTP/1.1" 200 0
+INFO 2026-03-23 22:56:33,061 log "OPTIONS /api/v1/assessments/?ordering=-assessment_date&page_size=200 HTTP/1.1" 200 0
+INFO 2026-03-23 22:56:33,100 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-23 22:56:33,108 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-23 22:56:33,108 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-23 22:56:33,124 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+WARNING 2026-03-23 22:56:33,131 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-23 22:56:33,136 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-23 22:56:33,151 log "GET /api/v1/auth/stats/ HTTP/1.1" 200 158
+INFO 2026-03-23 22:56:33,175 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-23 22:56:33,218 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-23 22:56:33,220 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-23 22:56:33,220 log "GET /api/v1/assessments/?ordering=-assessment_date&page_size=200 HTTP/1.1" 200 199
+INFO 2026-03-23 22:56:33,230 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-23 22:56:33,235 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-23 22:56:33,247 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-23 22:56:33,257 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-23 22:56:33,303 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-23 22:56:45,822 log "OPTIONS /api/v1/auth/ HTTP/1.1" 200 0
+INFO 2026-03-23 22:56:45,822 log "OPTIONS /api/v1/auth/ HTTP/1.1" 200 0
+INFO 2026-03-23 22:56:45,831 log "GET /api/v1/auth/stats/ HTTP/1.1" 200 158
+INFO 2026-03-23 22:56:45,838 log "GET /api/v1/auth/ HTTP/1.1" 200 863
+INFO 2026-03-23 22:56:45,847 log "GET /api/v1/auth/stats/ HTTP/1.1" 200 158
+INFO 2026-03-23 22:56:45,899 log "GET /api/v1/auth/ HTTP/1.1" 200 863
+INFO 2026-03-23 22:56:46,127 log "GET /api/v1/auth/ HTTP/1.1" 200 863
+INFO 2026-03-23 22:56:56,584 log "OPTIONS /api/v1/programs/locations/ HTTP/1.1" 200 0
+INFO 2026-03-23 22:56:56,584 log "OPTIONS /api/v1/programs/locations/stats/ HTTP/1.1" 200 0
+INFO 2026-03-23 22:56:56,585 log "OPTIONS /api/v1/programs/locations/ HTTP/1.1" 200 0
+INFO 2026-03-23 22:56:56,585 log "OPTIONS /api/v1/programs/locations/stats/ HTTP/1.1" 200 0
+INFO 2026-03-23 22:56:56,616 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-03-23 22:56:56,617 log "GET /api/v1/programs/locations/stats/ HTTP/1.1" 200 265
+INFO 2026-03-23 22:56:56,681 log "GET /api/v1/programs/locations/ HTTP/1.1" 200 174
+INFO 2026-03-23 22:56:56,684 log "GET /api/v1/programs/locations/stats/ HTTP/1.1" 200 265
+INFO 2026-03-23 22:57:01,505 log "OPTIONS /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search=&room= HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:01,505 log "OPTIONS /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search=&room= HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:01,506 log "OPTIONS /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search=&room= HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:01,507 log "OPTIONS /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search=&room= HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:01,545 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search=&room= HTTP/1.1" 200 2253
+INFO 2026-03-23 22:57:01,608 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search=&room= HTTP/1.1" 200 2253
+INFO 2026-03-23 22:57:01,675 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search=&room= HTTP/1.1" 200 2253
+INFO 2026-03-23 22:57:01,741 log "GET /api/v1/participants/participants/?gender=&is_active=true&age_min=&age_max=&search=&room= HTTP/1.1" 200 2253
+INFO 2026-03-23 22:57:07,050 log "OPTIONS /api/v1/participants/rooms/?page=1&page_size=10 HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:07,050 log "OPTIONS /api/v1/participants/rooms/?page_size=1000 HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:07,051 log "OPTIONS /api/v1/participants/rooms/?page_size=1000 HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:07,051 log "OPTIONS /api/v1/programs/programs/ HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:07,051 log "OPTIONS /api/v1/programs/programs/ HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:07,052 log "OPTIONS /api/v1/participants/rooms/?page=1&page_size=10 HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:07,130 log "GET /api/v1/participants/rooms/?page=1&page_size=10 HTTP/1.1" 200 417
+INFO 2026-03-23 22:57:07,135 log "GET /api/v1/participants/rooms/?page_size=1000 HTTP/1.1" 200 417
+INFO 2026-03-23 22:57:07,140 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 639
+INFO 2026-03-23 22:57:07,224 log "GET /api/v1/participants/rooms/?page_size=1000 HTTP/1.1" 200 417
+INFO 2026-03-23 22:57:07,224 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 639
+INFO 2026-03-23 22:57:07,225 log "GET /api/v1/participants/rooms/?page=1&page_size=10 HTTP/1.1" 200 417
+INFO 2026-03-23 22:57:16,685 log "OPTIONS /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:16,686 log "OPTIONS /api/v1/participants/enrollments/?page=1&page_size=10 HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:16,686 log "OPTIONS /api/v1/participants/participants/?limit=100&is_active=true HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:16,686 log "OPTIONS /api/v1/participants/enrollments/?page=1&page_size=10 HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:16,687 log "OPTIONS /api/v1/participants/participants/?limit=100&is_active=true HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:16,687 log "OPTIONS /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:16,762 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 639
+INFO 2026-03-23 22:57:16,766 log "GET /api/v1/participants/enrollments/?page=1&page_size=10 HTTP/1.1" 200 1991
+INFO 2026-03-23 22:57:16,767 log "GET /api/v1/participants/participants/?limit=100&is_active=true HTTP/1.1" 200 2253
+INFO 2026-03-23 22:57:16,833 log "OPTIONS /api/v1/participants/enrollments/stats/ HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:16,842 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 639
+INFO 2026-03-23 22:57:16,862 log "GET /api/v1/participants/enrollments/?page=1&page_size=10 HTTP/1.1" 200 1991
+INFO 2026-03-23 22:57:16,874 log "GET /api/v1/participants/participants/?limit=100&is_active=true HTTP/1.1" 200 2253
+INFO 2026-03-23 22:57:16,878 log "GET /api/v1/participants/enrollments/stats/ HTTP/1.1" 200 300
+INFO 2026-03-23 22:57:16,945 log "GET /api/v1/participants/enrollments/stats/ HTTP/1.1" 200 300
+INFO 2026-03-23 22:57:24,672 log "OPTIONS /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:24,673 log "OPTIONS /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:24,719 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 639
+INFO 2026-03-23 22:57:24,722 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 2428
+INFO 2026-03-23 22:57:24,747 log "GET /api/v1/programs/programs/?limit=100&is_active=true HTTP/1.1" 200 639
+INFO 2026-03-23 22:57:24,775 log "OPTIONS /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:24,785 log "GET /api/v1/attendance/records/?page=1&page_size=10 HTTP/1.1" 200 2428
+INFO 2026-03-23 22:57:24,795 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 149
+INFO 2026-03-23 22:57:24,868 log "GET /api/v1/attendance/records/stats/?page=1&page_size=10 HTTP/1.1" 200 149
+INFO 2026-03-23 22:57:31,975 log "OPTIONS /api/v1/programs/programs/active/ HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:31,975 log "OPTIONS /api/v1/programs/programs/active/ HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:31,990 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 589
+INFO 2026-03-23 22:57:32,052 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 589
+INFO 2026-03-23 22:57:35,409 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 589
+INFO 2026-03-23 22:57:35,420 log "OPTIONS /api/v1/participants/rooms/?is_active=true&page_size=100 HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:35,434 log "GET /api/v1/programs/programs/active/ HTTP/1.1" 200 589
+INFO 2026-03-23 22:57:35,449 log "GET /api/v1/participants/rooms/?is_active=true&page_size=100 HTTP/1.1" 200 417
+INFO 2026-03-23 22:57:39,342 log "OPTIONS /api/v1/attendance/sessions/ HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:39,342 log "OPTIONS /api/v1/attendance/sessions/ HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:39,365 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 639
+INFO 2026-03-23 22:57:39,392 log "GET /api/v1/attendance/sessions/ HTTP/1.1" 200 52
+INFO 2026-03-23 22:57:39,395 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 639
+INFO 2026-03-23 22:57:39,449 log "GET /api/v1/attendance/sessions/ HTTP/1.1" 200 52
+WARNING 2026-03-23 22:57:43,323 log Not Found: /api/v1/participants/participants/stats/
+INFO 2026-03-23 22:57:43,323 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+WARNING 2026-03-23 22:57:43,329 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-23 22:57:43,344 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-23 22:57:43,364 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-23 22:57:43,404 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-23 22:57:43,405 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-23 22:57:43,407 log "GET /api/v1/assessments/?ordering=-assessment_date&page_size=200 HTTP/1.1" 200 199
+INFO 2026-03-23 22:57:43,418 log "GET /api/v1/auth/stats/ HTTP/1.1" 200 158
+INFO 2026-03-23 22:57:43,428 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+WARNING 2026-03-23 22:57:43,431 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-23 22:57:43,431 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-23 22:57:43,439 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+WARNING 2026-03-23 22:57:43,501 log Not Found: /api/v1/participants/participants/stats/
+INFO 2026-03-23 22:57:43,527 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+WARNING 2026-03-23 22:57:43,527 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-23 22:57:43,530 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-23 22:57:43,533 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-23 22:57:43,534 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-23 22:57:43,544 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-23 22:57:43,612 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-23 22:57:43,615 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-23 22:57:43,618 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-23 22:57:43,640 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-23 22:57:55,009 log "OPTIONS /api/v1/assessments/?ordering=-assessment_date HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:55,010 log "OPTIONS /api/v1/indicators/active/ HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:55,011 log "OPTIONS /api/v1/assessments/?ordering=-assessment_date HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:55,012 log "OPTIONS /api/v1/indicators/active/ HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:55,012 log "OPTIONS /api/v1/assessments/?ordering=-assessment_date HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:55,038 log "OPTIONS /api/v1/assessments/?ordering=-assessment_date HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:55,061 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-23 22:57:55,121 log "GET /api/v1/indicators/active/ HTTP/1.1" 200 1751
+INFO 2026-03-23 22:57:55,121 log "GET /api/v1/assessments/?ordering=-assessment_date HTTP/1.1" 200 199
+INFO 2026-03-23 22:57:55,126 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 639
+INFO 2026-03-23 22:57:55,153 log "GET /api/v1/indicators/active/ HTTP/1.1" 200 1751
+INFO 2026-03-23 22:57:55,153 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-23 22:57:55,177 log "GET /api/v1/programs/programs/ HTTP/1.1" 200 639
+INFO 2026-03-23 22:57:55,181 log "GET /api/v1/assessments/?ordering=-assessment_date HTTP/1.1" 200 199
+INFO 2026-03-23 22:57:55,208 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-23 22:57:55,241 log "GET /api/v1/assessments/?ordering=-assessment_date HTTP/1.1" 200 199
+INFO 2026-03-23 22:57:55,264 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-23 22:57:55,314 log "GET /api/v1/assessments/?ordering=-assessment_date HTTP/1.1" 200 199
+INFO 2026-03-23 22:57:59,974 log "OPTIONS /api/v1/indicators/ HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:59,975 log "OPTIONS /api/v1/indicators/ HTTP/1.1" 200 0
+INFO 2026-03-23 22:57:59,996 log "GET /api/v1/indicators/ HTTP/1.1" 200 1801
+INFO 2026-03-23 22:58:00,052 log "GET /api/v1/indicators/ HTTP/1.1" 200 1801
+INFO 2026-03-23 22:58:06,378 log "OPTIONS /api/v1/auth/?page_size=1000 HTTP/1.1" 200 0
+INFO 2026-03-23 22:58:06,381 log "OPTIONS /api/v1/programs/programs/?page_size=1000 HTTP/1.1" 200 0
+INFO 2026-03-23 22:58:06,382 log "OPTIONS /api/v1/attendance/records/?page_size=1000 HTTP/1.1" 200 0
+INFO 2026-03-23 22:58:06,383 log "OPTIONS /api/v1/participants/participants/?page_size=1000 HTTP/1.1" 200 0
+INFO 2026-03-23 22:58:06,383 log "OPTIONS /api/v1/assessments/?page_size=1000 HTTP/1.1" 200 0
+INFO 2026-03-23 22:58:06,383 log "OPTIONS /api/v1/indicators/?page_size=1000 HTTP/1.1" 200 0
+INFO 2026-03-23 22:58:06,462 log "GET /api/v1/indicators/?page_size=1000 HTTP/1.1" 200 1801
+INFO 2026-03-23 22:58:06,488 log "GET /api/v1/attendance/records/?page_size=1000 HTTP/1.1" 200 2428
+INFO 2026-03-23 22:58:06,492 log "GET /api/v1/assessments/?page_size=1000 HTTP/1.1" 200 199
+INFO 2026-03-23 22:58:06,500 log "GET /api/v1/auth/?page_size=1000 HTTP/1.1" 200 863
+INFO 2026-03-23 22:58:06,503 log "GET /api/v1/programs/programs/?page_size=1000 HTTP/1.1" 200 639
+INFO 2026-03-23 22:58:06,529 log "GET /api/v1/participants/participants/?page_size=1000 HTTP/1.1" 200 3835
+WARNING 2026-03-23 22:58:13,185 log Not Found: /api/v1/participants/participants/stats/
+INFO 2026-03-23 22:58:13,186 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+WARNING 2026-03-23 22:58:13,190 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-23 22:58:13,221 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+WARNING 2026-03-23 22:58:13,242 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-23 22:58:13,246 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-23 22:58:13,260 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-23 22:58:13,263 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-23 22:58:13,275 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-23 22:58:13,284 log "GET /api/v1/auth/stats/ HTTP/1.1" 200 158
+INFO 2026-03-23 22:58:13,327 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-23 22:58:13,345 log "GET /api/v1/assessments/?ordering=-assessment_date&page_size=200 HTTP/1.1" 200 199
+WARNING 2026-03-23 22:58:13,354 log Not Found: /api/v1/participants/participants/stats/
+INFO 2026-03-23 22:58:13,363 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+WARNING 2026-03-23 22:58:13,368 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-23 22:58:13,393 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-23 22:58:13,398 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-23 22:58:13,416 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-23 22:58:13,422 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-23 22:58:13,430 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-23 22:58:13,454 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-23 22:58:13,473 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-23 22:58:13,481 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-23 22:58:13,535 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-23 22:58:37,566 log "GET /api/v1/auth/stats/ HTTP/1.1" 200 158
+INFO 2026-03-23 22:58:37,570 log "GET /api/v1/auth/ HTTP/1.1" 200 863
+INFO 2026-03-23 22:58:37,586 log "GET /api/v1/auth/stats/ HTTP/1.1" 200 158
+INFO 2026-03-23 22:58:37,595 log "GET /api/v1/auth/ HTTP/1.1" 200 863
+INFO 2026-03-23 22:58:37,867 log "GET /api/v1/auth/ HTTP/1.1" 200 863
+INFO 2026-03-23 23:01:51,005 log "OPTIONS /api/v1/auth/logout/ HTTP/1.1" 200 0
+WARNING 2026-03-23 23:01:51,013 log Bad Request: /api/v1/auth/logout/
+WARNING 2026-03-23 23:01:51,014 log "POST /api/v1/auth/logout/ HTTP/1.1" 400 42
+INFO 2026-03-23 23:13:44,231 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/config/settings.py changed, reloading.
+INFO 2026-03-23 23:13:44,685 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:17:35,904 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/models.py changed, reloading.
+INFO 2026-03-23 23:17:36,384 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:17:52,284 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/models.py changed, reloading.
+INFO 2026-03-23 23:17:52,799 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:17:57,305 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/models.py changed, reloading.
+INFO 2026-03-23 23:17:57,837 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:19:44,135 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/serializers.py changed, reloading.
+INFO 2026-03-23 23:19:44,699 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:19:56,057 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/serializers.py changed, reloading.
+INFO 2026-03-23 23:19:56,588 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:20:40,879 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/serializers.py changed, reloading.
+INFO 2026-03-23 23:20:41,364 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:21:11,236 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/serializers.py changed, reloading.
+INFO 2026-03-23 23:21:11,788 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:21:31,450 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/serializers.py changed, reloading.
+INFO 2026-03-23 23:21:31,929 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:21:33,103 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/serializers.py changed, reloading.
+INFO 2026-03-23 23:21:33,632 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:23:24,431 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/serializers.py changed, reloading.
+INFO 2026-03-23 23:23:24,924 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:23:26,069 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/serializers.py changed, reloading.
+INFO 2026-03-23 23:23:26,575 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:23:28,747 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/serializers.py changed, reloading.
+INFO 2026-03-23 23:23:29,161 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:23:50,730 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/serializers.py changed, reloading.
+INFO 2026-03-23 23:23:51,232 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:24:00,806 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/serializers.py changed, reloading.
+INFO 2026-03-23 23:24:01,284 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:24:02,708 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/serializers.py changed, reloading.
+INFO 2026-03-23 23:24:03,180 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:24:04,620 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/serializers.py changed, reloading.
+INFO 2026-03-23 23:24:05,047 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:24:23,898 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/serializers.py changed, reloading.
+INFO 2026-03-23 23:24:24,346 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:24:55,553 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/serializers.py changed, reloading.
+INFO 2026-03-23 23:24:56,042 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:25:03,622 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/serializers.py changed, reloading.
+INFO 2026-03-23 23:25:04,157 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:25:48,846 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/serializers.py changed, reloading.
+INFO 2026-03-23 23:25:49,352 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:27:14,169 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/views.py changed, reloading.
+INFO 2026-03-23 23:27:14,673 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:27:33,583 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/views.py changed, reloading.
+INFO 2026-03-23 23:27:34,087 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:27:39,582 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/views.py changed, reloading.
+INFO 2026-03-23 23:27:40,062 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:28:09,192 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/views.py changed, reloading.
+INFO 2026-03-23 23:28:09,663 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:47:16,484 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/config/settings.py changed, reloading.
+INFO 2026-03-23 23:47:16,953 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:47:21,398 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/config/settings.py changed, reloading.
+INFO 2026-03-23 23:47:21,885 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:47:23,337 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/config/settings.py changed, reloading.
+INFO 2026-03-23 23:47:23,754 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:47:32,324 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/config/settings.py changed, reloading.
+INFO 2026-03-23 23:48:21,829 autoreload Watching for file changes with StatReloader
+INFO 2026-03-23 23:48:47,947 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/config/settings.py changed, reloading.
+INFO 2026-03-23 23:48:48,418 autoreload Watching for file changes with StatReloader
+ERROR 2026-03-23 23:56:57,913 views Failed to update login info: type object 'datetime.timezone' has no attribute 'now'
+INFO 2026-03-23 23:56:57,922 log "POST /api/v1/auth/login/ HTTP/1.1" 200 912
+WARNING 2026-03-24 00:01:48,043 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 00:01:48,055 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+WARNING 2026-03-24 00:01:48,057 log Not Found: /api/v1/auth/stats/
+INFO 2026-03-24 00:01:48,071 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+WARNING 2026-03-24 00:01:48,094 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:01:48,111 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 00:01:48,119 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 00:01:48,131 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-24 00:01:48,126 log "GET /api/v1/assessments/?ordering=-assessment_date&page_size=200 HTTP/1.1" 200 199
+INFO 2026-03-24 00:01:48,143 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+WARNING 2026-03-24 00:05:39,864 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 00:05:39,866 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+WARNING 2026-03-24 00:05:39,867 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:05:39,873 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:05:39,894 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 00:05:39,894 log "OPTIONS /api/v1/assessments/?ordering=-assessment_date&page_size=100 HTTP/1.1" 200 0
+INFO 2026-03-24 00:05:39,896 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 00:05:39,897 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 00:05:39,909 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-24 00:05:39,915 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 00:05:39,946 log "GET /api/v1/assessments/?ordering=-assessment_date&page_size=100 HTTP/1.1" 200 199
+WARNING 2026-03-24 00:06:00,253 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:06:00,259 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:06:00,259 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+WARNING 2026-03-24 00:06:00,268 log Not Found: /api/v1/participants/participants/stats/
+INFO 2026-03-24 00:06:00,276 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 00:06:00,285 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+WARNING 2026-03-24 00:06:00,289 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:06:00,291 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-24 00:06:00,294 log "GET /api/v1/assessments/?ordering=-assessment_date&page_size=200 HTTP/1.1" 200 199
+INFO 2026-03-24 00:06:00,305 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+WARNING 2026-03-24 00:10:29,856 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 00:10:29,865 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:10:29,909 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 00:10:29,916 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+WARNING 2026-03-24 00:10:29,919 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:10:29,924 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:10:29,923 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 00:10:29,921 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 00:10:29,954 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-24 00:10:29,975 log "GET /api/v1/assessments/?ordering=-assessment_date&page_size=200 HTTP/1.1" 200 199
+WARNING 2026-03-24 00:10:29,982 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 00:10:29,993 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:10:29,996 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 00:10:30,006 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-24 00:10:30,011 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 00:10:30,016 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 00:10:30,036 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+WARNING 2026-03-24 00:10:30,058 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 00:10:30,062 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:10:30,064 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 00:10:30,083 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 00:10:30,105 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-24 00:10:30,107 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 00:10:30,108 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 00:10:30,166 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+WARNING 2026-03-24 00:11:46,658 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:11:46,662 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:11:46,662 log "GET /api/v1/auth/ HTTP/1.1" 200 863
+WARNING 2026-03-24 00:11:46,673 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:11:46,674 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:11:46,679 log "GET /api/v1/auth/ HTTP/1.1" 200 863
+INFO 2026-03-24 00:11:46,964 log "GET /api/v1/auth/ HTTP/1.1" 200 863
+WARNING 2026-03-24 00:13:06,927 log Bad Request: /api/v1/auth/
+WARNING 2026-03-24 00:13:06,927 log "POST /api/v1/auth/ HTTP/1.1" 400 54
+WARNING 2026-03-24 00:13:22,808 log Bad Request: /api/v1/auth/
+WARNING 2026-03-24 00:13:22,809 log "POST /api/v1/auth/ HTTP/1.1" 400 54
+WARNING 2026-03-24 00:15:58,682 log Bad Request: /api/v1/auth/
+WARNING 2026-03-24 00:15:58,683 log "POST /api/v1/auth/ HTTP/1.1" 400 54
+WARNING 2026-03-24 00:19:00,076 log Bad Request: /api/v1/auth/
+WARNING 2026-03-24 00:19:00,077 log "POST /api/v1/auth/ HTTP/1.1" 400 54
+WARNING 2026-03-24 00:19:06,879 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:19:06,882 log Not Found: /api/v1/participants/participants/stats/
+INFO 2026-03-24 00:19:06,882 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+WARNING 2026-03-24 00:19:06,883 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+WARNING 2026-03-24 00:19:06,887 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:19:06,904 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 00:19:06,927 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-24 00:19:06,934 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 00:19:06,936 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 00:19:06,937 log "GET /api/v1/assessments/?ordering=-assessment_date&page_size=200 HTTP/1.1" 200 199
+WARNING 2026-03-24 00:19:15,106 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 00:19:15,111 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:19:15,119 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 00:19:15,121 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 00:19:15,154 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+WARNING 2026-03-24 00:19:15,163 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:19:15,167 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:19:15,170 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+WARNING 2026-03-24 00:19:15,185 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 00:19:15,193 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:19:15,194 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 00:19:15,216 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-24 00:19:15,219 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 00:19:15,223 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-24 00:19:15,257 log "GET /api/v1/assessments/?ordering=-assessment_date&page_size=200 HTTP/1.1" 200 199
+INFO 2026-03-24 00:19:15,263 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 00:19:15,281 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 00:19:15,297 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+WARNING 2026-03-24 00:19:26,052 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:19:26,053 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:19:26,056 log "GET /api/v1/auth/ HTTP/1.1" 200 863
+WARNING 2026-03-24 00:19:26,064 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:19:26,066 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:19:26,068 log "GET /api/v1/auth/ HTTP/1.1" 200 863
+INFO 2026-03-24 00:19:26,356 log "GET /api/v1/auth/ HTTP/1.1" 200 863
+WARNING 2026-03-24 00:19:48,203 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:19:48,203 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:19:48,205 log "GET /api/v1/auth/ HTTP/1.1" 200 863
+WARNING 2026-03-24 00:19:48,209 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:19:48,210 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:19:48,216 log "GET /api/v1/auth/ HTTP/1.1" 200 863
+INFO 2026-03-24 00:19:48,509 log "GET /api/v1/auth/ HTTP/1.1" 200 863
+WARNING 2026-03-24 00:20:38,822 log Bad Request: /api/v1/auth/
+WARNING 2026-03-24 00:20:38,823 log "POST /api/v1/auth/ HTTP/1.1" 400 54
+WARNING 2026-03-24 00:28:18,159 log Bad Request: /api/v1/auth/
+WARNING 2026-03-24 00:28:18,160 log "POST /api/v1/auth/ HTTP/1.1" 400 54
+WARNING 2026-03-24 00:28:32,076 log Bad Request: /api/v1/auth/
+WARNING 2026-03-24 00:28:32,076 log "POST /api/v1/auth/ HTTP/1.1" 400 54
+ERROR 2026-03-24 00:31:00,795 serializers Failed to send welcome email to shemaroger60@gmail.com: (530, b'5.7.0 Authentication Required. For more information, go to\n5.7.0  https://support.google.com/accounts/troubleshooter/2402620. ffacd0b85a97d-43b64703343sm33812742f8f.19 - gsmtp', 'shemaroger43@gmail.com')
+INFO 2026-03-24 00:31:00,799 log "POST /api/v1/auth/ HTTP/1.1" 201 197
+WARNING 2026-03-24 00:31:02,349 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:31:02,350 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:31:02,356 log "GET /api/v1/auth/ HTTP/1.1" 200 1068
+WARNING 2026-03-24 00:31:02,361 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:31:02,362 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:31:02,370 log "GET /api/v1/auth/ HTTP/1.1" 200 1068
+INFO 2026-03-24 00:31:02,653 log "GET /api/v1/auth/ HTTP/1.1" 200 1068
+INFO 2026-03-24 00:33:19,542 log "OPTIONS /api/v1/auth/5/ HTTP/1.1" 200 0
+INFO 2026-03-24 00:33:19,557 log "PATCH /api/v1/auth/5/ HTTP/1.1" 200 192
+INFO 2026-03-24 00:33:20,113 log "GET /api/v1/auth/ HTTP/1.1" 200 1069
+INFO 2026-03-24 00:33:29,373 log "GET /api/v1/auth/5/ HTTP/1.1" 200 415
+INFO 2026-03-24 00:33:29,381 log "GET /api/v1/auth/5/ HTTP/1.1" 200 415
+INFO 2026-03-24 00:33:34,674 log "PUT /api/v1/auth/5/ HTTP/1.1" 200 188
+WARNING 2026-03-24 00:33:35,756 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 00:33:35,761 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:33:35,767 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 00:33:35,784 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+WARNING 2026-03-24 00:33:35,805 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:33:35,807 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:33:35,834 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 00:33:35,835 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 00:33:35,862 log "GET /api/v1/assessments/?ordering=-assessment_date&page_size=200 HTTP/1.1" 200 199
+WARNING 2026-03-24 00:33:35,870 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 00:33:35,871 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:33:35,875 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 00:33:35,881 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-24 00:33:35,887 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 00:33:35,899 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+WARNING 2026-03-24 00:33:35,951 log Not Found: /api/v1/participants/participants/stats/
+INFO 2026-03-24 00:33:35,952 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+WARNING 2026-03-24 00:33:35,952 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:33:35,953 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 00:33:35,966 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 00:33:35,980 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 00:33:36,021 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-24 00:33:36,028 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 00:33:36,032 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 00:33:36,080 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+WARNING 2026-03-24 00:33:37,998 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:33:37,999 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:33:38,004 log "GET /api/v1/auth/ HTTP/1.1" 200 1065
+WARNING 2026-03-24 00:33:38,006 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:33:38,006 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:33:38,014 log "GET /api/v1/auth/ HTTP/1.1" 200 1065
+INFO 2026-03-24 00:33:38,306 log "GET /api/v1/auth/ HTTP/1.1" 200 1065
+INFO 2026-03-24 00:35:02,662 autoreload Watching for file changes with StatReloader
+INFO 2026-03-24 00:37:32,691 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/config/settings.py changed, reloading.
+INFO 2026-03-24 00:37:33,039 autoreload Watching for file changes with StatReloader
+INFO 2026-03-24 00:37:34,381 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/config/settings.py changed, reloading.
+INFO 2026-03-24 00:37:34,732 autoreload Watching for file changes with StatReloader
+INFO 2026-03-24 00:37:37,047 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/config/settings.py changed, reloading.
+INFO 2026-03-24 00:37:37,458 autoreload Watching for file changes with StatReloader
+INFO 2026-03-24 00:38:19,550 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/serializers.py changed, reloading.
+INFO 2026-03-24 00:38:19,865 autoreload Watching for file changes with StatReloader
+ERROR 2026-03-24 00:38:52,212 serializers Failed to send welcome email to shemaroger60@gmail.com: (530, b'5.7.0 Authentication Required. For more information, go to\n5.7.0  https://support.google.com/accounts/troubleshooter/2402620. ffacd0b85a97d-43b647120a1sm33320486f8f.30 - gsmtp', 'shemaroger43@gmail.com')
+INFO 2026-03-24 00:38:52,217 log "POST /api/v1/auth/ HTTP/1.1" 201 197
+WARNING 2026-03-24 00:38:53,762 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:38:53,763 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:38:53,768 log "GET /api/v1/auth/ HTTP/1.1" 200 1272
+WARNING 2026-03-24 00:38:53,771 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:38:53,771 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:38:53,778 log "GET /api/v1/auth/ HTTP/1.1" 200 1272
+INFO 2026-03-24 00:38:54,066 log "GET /api/v1/auth/ HTTP/1.1" 200 1272
+INFO 2026-03-24 00:40:50,304 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/config/settings.py changed, reloading.
+INFO 2026-03-24 00:40:50,716 autoreload Watching for file changes with StatReloader
+INFO 2026-03-24 00:40:52,080 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/config/settings.py changed, reloading.
+INFO 2026-03-24 00:40:52,501 autoreload Watching for file changes with StatReloader
+INFO 2026-03-24 00:41:47,687 log "OPTIONS /api/v1/auth/6/ HTTP/1.1" 200 0
+INFO 2026-03-24 00:41:47,687 log "OPTIONS /api/v1/auth/6/ HTTP/1.1" 200 0
+INFO 2026-03-24 00:41:47,704 log "GET /api/v1/auth/6/ HTTP/1.1" 200 414
+INFO 2026-03-24 00:41:47,754 log "GET /api/v1/auth/6/ HTTP/1.1" 200 414
+INFO 2026-03-24 00:42:00,348 log "PUT /api/v1/auth/6/ HTTP/1.1" 200 185
+WARNING 2026-03-24 00:42:01,429 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 00:42:01,434 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:42:01,439 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 00:42:01,439 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 00:42:01,484 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 00:42:01,487 log "GET /api/v1/assessments/?ordering=-assessment_date&page_size=200 HTTP/1.1" 200 199
+INFO 2026-03-24 00:42:01,494 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+WARNING 2026-03-24 00:42:01,496 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:42:01,500 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+WARNING 2026-03-24 00:42:01,516 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 00:42:01,520 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:42:01,524 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 00:42:01,526 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-24 00:42:01,544 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-24 00:42:01,557 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+WARNING 2026-03-24 00:42:01,574 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 00:42:01,580 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:42:01,582 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 00:42:01,591 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 00:42:01,598 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 00:42:01,614 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 00:42:01,635 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-24 00:42:01,643 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 00:42:01,657 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 00:42:01,708 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+WARNING 2026-03-24 00:42:03,250 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:42:03,251 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:42:03,256 log "GET /api/v1/auth/ HTTP/1.1" 200 1267
+WARNING 2026-03-24 00:42:03,261 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:42:03,262 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:42:03,269 log "GET /api/v1/auth/ HTTP/1.1" 200 1267
+INFO 2026-03-24 00:42:03,556 log "GET /api/v1/auth/ HTTP/1.1" 200 1267
+ERROR 2026-03-24 00:42:44,067 serializers Failed to send welcome email to shemaroger60@gmail.com: (530, b'5.7.0 Authentication Required. For more information, go to\n5.7.0  https://support.google.com/accounts/troubleshooter/2402620. 5b1f17b1804b1-4871107b43esm2602615e9.21 - gsmtp', 'noreply@youthimpact.com')
+INFO 2026-03-24 00:42:44,070 log "POST /api/v1/auth/ HTTP/1.1" 201 198
+WARNING 2026-03-24 00:42:45,615 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:42:45,616 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:42:45,623 log "GET /api/v1/auth/ HTTP/1.1" 200 1471
+WARNING 2026-03-24 00:42:45,624 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:42:45,624 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:42:45,638 log "GET /api/v1/auth/ HTTP/1.1" 200 1471
+INFO 2026-03-24 00:42:45,924 log "GET /api/v1/auth/ HTTP/1.1" 200 1471
+INFO 2026-03-24 00:46:29,057 autoreload Watching for file changes with StatReloader
+INFO 2026-03-24 00:46:40,617 log "OPTIONS /api/v1/auth/7/ HTTP/1.1" 200 0
+INFO 2026-03-24 00:46:40,617 log "OPTIONS /api/v1/auth/7/ HTTP/1.1" 200 0
+INFO 2026-03-24 00:46:40,636 log "GET /api/v1/auth/7/ HTTP/1.1" 200 415
+INFO 2026-03-24 00:46:40,685 log "GET /api/v1/auth/7/ HTTP/1.1" 200 415
+WARNING 2026-03-24 00:46:44,336 log Not Found: /api/v1/participants/participants/stats/
+INFO 2026-03-24 00:46:44,338 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+WARNING 2026-03-24 00:46:44,345 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:46:44,352 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 00:46:44,383 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 00:46:44,384 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+WARNING 2026-03-24 00:46:44,386 log Not Found: /api/v1/auth/stats/
+INFO 2026-03-24 00:46:44,391 log "GET /api/v1/assessments/?ordering=-assessment_date&page_size=200 HTTP/1.1" 200 199
+WARNING 2026-03-24 00:46:44,393 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:46:44,416 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 00:46:44,420 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 00:46:44,416 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-24 00:46:44,449 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+WARNING 2026-03-24 00:46:44,455 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 00:46:44,464 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:46:44,492 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 00:46:44,496 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 00:46:44,502 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 00:46:44,505 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+WARNING 2026-03-24 00:46:44,515 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 00:46:44,516 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:46:44,535 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-24 00:46:44,563 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 00:46:44,565 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 00:46:44,604 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+WARNING 2026-03-24 00:46:46,713 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:46:46,717 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:46:46,717 log "GET /api/v1/auth/ HTTP/1.1" 200 1471
+WARNING 2026-03-24 00:46:46,726 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:46:46,727 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:46:46,733 log "GET /api/v1/auth/ HTTP/1.1" 200 1471
+INFO 2026-03-24 00:46:47,023 log "GET /api/v1/auth/ HTTP/1.1" 200 1471
+INFO 2026-03-24 00:46:51,453 log "GET /api/v1/auth/7/ HTTP/1.1" 200 415
+INFO 2026-03-24 00:46:51,460 log "GET /api/v1/auth/7/ HTTP/1.1" 200 415
+INFO 2026-03-24 00:46:59,485 log "PUT /api/v1/auth/7/ HTTP/1.1" 200 193
+WARNING 2026-03-24 00:47:00,546 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 00:47:00,569 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:47:00,573 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 00:47:00,588 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 00:47:00,616 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+WARNING 2026-03-24 00:47:00,627 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:47:00,633 log Not Found: /api/v1/participants/participants/stats/
+INFO 2026-03-24 00:47:00,637 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+WARNING 2026-03-24 00:47:00,646 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+WARNING 2026-03-24 00:47:00,652 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:47:00,652 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 00:47:00,678 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-24 00:47:00,680 log "GET /api/v1/assessments/?ordering=-assessment_date&page_size=200 HTTP/1.1" 200 199
+INFO 2026-03-24 00:47:00,687 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+WARNING 2026-03-24 00:47:00,712 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 00:47:00,730 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:47:00,736 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 00:47:00,742 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 00:47:00,757 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 00:47:00,757 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 00:47:00,775 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-24 00:47:00,792 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 00:47:00,798 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 00:47:00,812 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 00:47:00,844 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+WARNING 2026-03-24 00:47:03,473 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:47:03,474 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:47:03,478 log "GET /api/v1/auth/ HTTP/1.1" 200 1471
+WARNING 2026-03-24 00:47:03,482 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:47:03,482 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:47:03,490 log "GET /api/v1/auth/ HTTP/1.1" 200 1471
+INFO 2026-03-24 00:47:03,779 log "GET /api/v1/auth/ HTTP/1.1" 200 1471
+INFO 2026-03-24 00:47:37,321 serializers Welcome email sent successfully to shemaroger60@gmail.com
+INFO 2026-03-24 00:47:37,322 log "POST /api/v1/auth/ HTTP/1.1" 201 202
+WARNING 2026-03-24 00:47:38,860 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:47:38,861 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:47:38,870 log "GET /api/v1/auth/ HTTP/1.1" 200 1679
+WARNING 2026-03-24 00:47:38,875 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:47:38,878 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:47:38,882 log "GET /api/v1/auth/ HTTP/1.1" 200 1679
+INFO 2026-03-24 00:47:39,166 log "GET /api/v1/auth/ HTTP/1.1" 200 1679
+INFO 2026-03-24 00:51:37,177 log "OPTIONS /api/v1/auth/8/ HTTP/1.1" 200 0
+INFO 2026-03-24 00:51:37,177 log "OPTIONS /api/v1/auth/8/ HTTP/1.1" 200 0
+INFO 2026-03-24 00:51:37,213 log "GET /api/v1/auth/8/ HTTP/1.1" 200 419
+INFO 2026-03-24 00:51:37,262 log "GET /api/v1/auth/8/ HTTP/1.1" 200 419
+INFO 2026-03-24 00:51:46,516 log "PUT /api/v1/auth/8/ HTTP/1.1" 200 193
+WARNING 2026-03-24 00:51:47,617 log Not Found: /api/v1/participants/participants/stats/
+INFO 2026-03-24 00:51:47,618 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+WARNING 2026-03-24 00:51:47,631 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:51:47,639 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+WARNING 2026-03-24 00:51:47,651 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:51:47,652 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:51:47,662 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 00:51:47,672 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+WARNING 2026-03-24 00:51:47,689 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 00:51:47,691 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:51:47,702 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-24 00:51:47,722 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 00:51:47,727 log "GET /api/v1/assessments/?ordering=-assessment_date&page_size=200 HTTP/1.1" 200 199
+INFO 2026-03-24 00:51:47,727 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 00:51:47,728 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-24 00:51:47,755 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 00:51:47,761 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+WARNING 2026-03-24 00:51:47,775 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 00:51:47,777 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:51:47,785 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 00:51:47,799 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 00:51:47,826 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-24 00:51:47,833 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 00:51:47,834 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 00:51:47,885 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+WARNING 2026-03-24 00:51:50,278 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:51:50,281 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:51:50,287 log "GET /api/v1/auth/ HTTP/1.1" 200 1679
+WARNING 2026-03-24 00:51:50,290 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:51:50,294 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:51:50,302 log "GET /api/v1/auth/ HTTP/1.1" 200 1679
+INFO 2026-03-24 00:51:50,590 log "GET /api/v1/auth/ HTTP/1.1" 200 1679
+WARNING 2026-03-24 00:52:17,621 log Bad Request: /api/v1/auth/
+WARNING 2026-03-24 00:52:17,622 log "POST /api/v1/auth/ HTTP/1.1" 400 58
+INFO 2026-03-24 00:52:32,059 serializers Welcome email sent successfully to shemaroger60@gmail.com
+INFO 2026-03-24 00:52:32,060 log "POST /api/v1/auth/ HTTP/1.1" 201 195
+INFO 2026-03-24 00:52:33,602 log "GET /api/v1/auth/ HTTP/1.1" 200 1883
+WARNING 2026-03-24 00:52:33,603 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:52:33,606 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:52:33,618 log "GET /api/v1/auth/ HTTP/1.1" 200 1883
+WARNING 2026-03-24 00:52:33,619 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:52:33,620 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:52:33,907 log "GET /api/v1/auth/ HTTP/1.1" 200 1883
+INFO 2026-03-24 00:58:52,295 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/serializers.py changed, reloading.
+INFO 2026-03-24 00:58:52,708 autoreload Watching for file changes with StatReloader
+INFO 2026-03-24 00:59:04,296 autoreload Watching for file changes with StatReloader
+INFO 2026-03-24 00:59:26,019 log "OPTIONS /api/v1/auth/9/ HTTP/1.1" 200 0
+INFO 2026-03-24 00:59:26,019 log "OPTIONS /api/v1/auth/9/ HTTP/1.1" 200 0
+WARNING 2026-03-24 00:59:26,027 log Unauthorized: /api/v1/auth/9/
+WARNING 2026-03-24 00:59:26,028 log "GET /api/v1/auth/9/ HTTP/1.1" 401 172
+WARNING 2026-03-24 00:59:26,074 log Unauthorized: /api/v1/auth/9/
+WARNING 2026-03-24 00:59:26,075 log "GET /api/v1/auth/9/ HTTP/1.1" 401 172
+INFO 2026-03-24 00:59:26,079 log "OPTIONS /api/v1/auth/refresh/ HTTP/1.1" 200 0
+INFO 2026-03-24 00:59:26,080 log "OPTIONS /api/v1/auth/refresh/ HTTP/1.1" 200 0
+INFO 2026-03-24 00:59:26,134 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-03-24 00:59:26,136 log "POST /api/v1/auth/refresh/ HTTP/1.1" 200 489
+INFO 2026-03-24 00:59:26,199 log "GET /api/v1/auth/9/ HTTP/1.1" 200 412
+INFO 2026-03-24 00:59:26,249 log "GET /api/v1/auth/9/ HTTP/1.1" 200 412
+INFO 2026-03-24 00:59:30,072 log "OPTIONS /api/v1/programs/programs/stats/ HTTP/1.1" 200 0
+INFO 2026-03-24 00:59:30,074 log "OPTIONS /api/v1/participants/participants/stats/ HTTP/1.1" 200 0
+INFO 2026-03-24 00:59:30,076 log "OPTIONS /api/v1/attendance/records/stats/ HTTP/1.1" 200 0
+INFO 2026-03-24 00:59:30,083 log "OPTIONS /api/v1/participants/participants/stats/ HTTP/1.1" 200 0
+INFO 2026-03-24 00:59:30,084 log "OPTIONS /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 0
+INFO 2026-03-24 00:59:30,084 log "OPTIONS /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 0
+INFO 2026-03-24 00:59:30,084 log "OPTIONS /api/v1/programs/programs/stats/ HTTP/1.1" 200 0
+INFO 2026-03-24 00:59:30,084 log "OPTIONS /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 0
+INFO 2026-03-24 00:59:30,084 log "OPTIONS /api/v1/attendance/records/stats/ HTTP/1.1" 200 0
+INFO 2026-03-24 00:59:30,093 log "OPTIONS /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 0
+INFO 2026-03-24 00:59:30,094 log "OPTIONS /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 0
+INFO 2026-03-24 00:59:30,095 log "OPTIONS /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 0
+INFO 2026-03-24 00:59:30,155 log "OPTIONS /api/v1/auth/stats/ HTTP/1.1" 200 0
+WARNING 2026-03-24 00:59:30,190 log Not Found: /api/v1/participants/participants/stats/
+INFO 2026-03-24 00:59:30,191 log "OPTIONS /api/v1/assessments/stats/ HTTP/1.1" 200 0
+WARNING 2026-03-24 00:59:30,191 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:59:30,194 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 00:59:30,198 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 00:59:30,212 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 00:59:30,223 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 00:59:30,240 log "OPTIONS /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 0
+INFO 2026-03-24 00:59:30,240 log "OPTIONS /api/v1/assessments/?ordering=-assessment_date&page_size=200 HTTP/1.1" 200 0
+WARNING 2026-03-24 00:59:30,273 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:59:30,279 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 00:59:30,284 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+WARNING 2026-03-24 00:59:30,285 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:59:30,314 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-24 00:59:30,318 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 00:59:30,318 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 00:59:30,333 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-24 00:59:30,352 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 00:59:30,357 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+WARNING 2026-03-24 00:59:30,367 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 00:59:30,375 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:59:30,381 log "GET /api/v1/assessments/?ordering=-assessment_date&page_size=200 HTTP/1.1" 200 199
+INFO 2026-03-24 00:59:30,412 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 00:59:30,424 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 00:59:30,445 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 00:59:30,471 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 00:59:30,482 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-24 00:59:30,557 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-24 00:59:32,529 log "OPTIONS /api/v1/auth/ HTTP/1.1" 200 0
+INFO 2026-03-24 00:59:32,530 log "OPTIONS /api/v1/auth/ HTTP/1.1" 200 0
+WARNING 2026-03-24 00:59:32,532 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:59:32,534 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:59:32,541 log "GET /api/v1/auth/ HTTP/1.1" 200 1883
+WARNING 2026-03-24 00:59:32,543 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:59:32,543 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:59:32,597 log "GET /api/v1/auth/ HTTP/1.1" 200 1883
+INFO 2026-03-24 00:59:32,839 log "GET /api/v1/auth/ HTTP/1.1" 200 1883
+INFO 2026-03-24 00:59:46,201 log "GET /api/v1/auth/9/ HTTP/1.1" 200 412
+INFO 2026-03-24 00:59:46,209 log "GET /api/v1/auth/9/ HTTP/1.1" 200 412
+WARNING 2026-03-24 00:59:48,873 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 00:59:48,882 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:59:48,895 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 00:59:48,908 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+WARNING 2026-03-24 00:59:48,921 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:59:48,925 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 00:59:48,926 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:59:48,930 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+WARNING 2026-03-24 00:59:48,930 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:59:48,939 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 00:59:48,982 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 00:59:48,991 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-24 00:59:49,005 log "GET /api/v1/assessments/?ordering=-assessment_date&page_size=200 HTTP/1.1" 200 199
+INFO 2026-03-24 00:59:49,009 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 00:59:49,017 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 00:59:49,020 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+WARNING 2026-03-24 00:59:49,036 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 00:59:49,043 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:59:49,047 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 00:59:49,062 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 00:59:49,100 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 00:59:49,122 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 00:59:49,131 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-24 00:59:49,138 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 00:59:49,202 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+WARNING 2026-03-24 00:59:50,793 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:59:50,795 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:59:50,800 log "GET /api/v1/auth/ HTTP/1.1" 200 1883
+WARNING 2026-03-24 00:59:50,803 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 00:59:50,806 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 00:59:50,813 log "GET /api/v1/auth/ HTTP/1.1" 200 1883
+INFO 2026-03-24 00:59:51,100 log "GET /api/v1/auth/ HTTP/1.1" 200 1883
+INFO 2026-03-24 00:59:53,160 log "GET /api/v1/auth/9/ HTTP/1.1" 200 412
+INFO 2026-03-24 00:59:53,171 log "GET /api/v1/auth/9/ HTTP/1.1" 200 412
+INFO 2026-03-24 01:00:01,340 log "PUT /api/v1/auth/9/ HTTP/1.1" 200 191
+WARNING 2026-03-24 01:00:02,427 log Not Found: /api/v1/participants/participants/stats/
+INFO 2026-03-24 01:00:02,429 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+WARNING 2026-03-24 01:00:02,432 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:00:02,455 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+WARNING 2026-03-24 01:00:02,457 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 01:00:02,459 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:00:02,470 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 01:00:02,473 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 01:00:02,493 log "GET /api/v1/assessments/?ordering=-assessment_date&page_size=200 HTTP/1.1" 200 199
+WARNING 2026-03-24 01:00:02,498 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 01:00:02,510 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:00:02,523 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 01:00:02,539 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-24 01:00:02,544 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 01:00:02,561 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-24 01:00:02,575 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+WARNING 2026-03-24 01:00:02,579 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 01:00:02,586 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:00:02,605 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 01:00:02,616 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 01:00:02,617 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 01:00:02,652 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 01:00:02,654 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-24 01:00:02,673 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 01:00:02,727 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+WARNING 2026-03-24 01:00:04,327 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 01:00:04,328 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:00:04,332 log "GET /api/v1/auth/ HTTP/1.1" 200 1884
+WARNING 2026-03-24 01:00:04,339 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 01:00:04,341 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:00:04,349 log "GET /api/v1/auth/ HTTP/1.1" 200 1884
+INFO 2026-03-24 01:00:04,634 log "GET /api/v1/auth/ HTTP/1.1" 200 1884
+INFO 2026-03-24 01:00:42,644 serializers Using provided password for user tests
+INFO 2026-03-24 01:00:43,121 serializers Welcome email sent successfully to shemaroger60@gmail.com
+INFO 2026-03-24 01:00:43,121 log "POST /api/v1/auth/ HTTP/1.1" 201 213
+WARNING 2026-03-24 01:00:44,654 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 01:00:44,656 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:00:44,663 log "GET /api/v1/auth/ HTTP/1.1" 200 2090
+WARNING 2026-03-24 01:00:44,668 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 01:00:44,669 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:00:44,675 log "GET /api/v1/auth/ HTTP/1.1" 200 2090
+INFO 2026-03-24 01:00:44,961 log "GET /api/v1/auth/ HTTP/1.1" 200 2090
+INFO 2026-03-24 01:04:15,705 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/serializers.py changed, reloading.
+INFO 2026-03-24 01:04:16,304 autoreload Watching for file changes with StatReloader
+INFO 2026-03-24 01:04:29,664 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/serializers.py changed, reloading.
+INFO 2026-03-24 01:04:30,047 autoreload Watching for file changes with StatReloader
+INFO 2026-03-24 01:04:34,224 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/serializers.py changed, reloading.
+INFO 2026-03-24 01:04:34,704 autoreload Watching for file changes with StatReloader
+INFO 2026-03-24 01:04:36,041 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/serializers.py changed, reloading.
+INFO 2026-03-24 01:04:36,411 autoreload Watching for file changes with StatReloader
+INFO 2026-03-24 01:04:38,537 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/serializers.py changed, reloading.
+INFO 2026-03-24 01:04:38,892 autoreload Watching for file changes with StatReloader
+INFO 2026-03-24 01:04:47,152 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/serializers.py changed, reloading.
+INFO 2026-03-24 01:04:47,557 autoreload Watching for file changes with StatReloader
+INFO 2026-03-24 01:05:31,102 autoreload Watching for file changes with StatReloader
+INFO 2026-03-24 01:08:21,456 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/serializers.py changed, reloading.
+INFO 2026-03-24 01:08:21,858 autoreload Watching for file changes with StatReloader
+WARNING 2026-03-24 01:08:53,425 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 01:08:53,426 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:08:53,433 log "GET /api/v1/auth/ HTTP/1.1" 200 2090
+WARNING 2026-03-24 01:08:53,436 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 01:08:53,439 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:08:53,447 log "GET /api/v1/auth/ HTTP/1.1" 200 2090
+INFO 2026-03-24 01:08:53,723 log "GET /api/v1/auth/ HTTP/1.1" 200 2090
+INFO 2026-03-24 01:08:56,296 log "OPTIONS /api/v1/auth/10/ HTTP/1.1" 200 0
+INFO 2026-03-24 01:08:56,297 log "OPTIONS /api/v1/auth/10/ HTTP/1.1" 200 0
+INFO 2026-03-24 01:08:56,304 log "GET /api/v1/auth/10/ HTTP/1.1" 200 413
+INFO 2026-03-24 01:08:56,356 log "GET /api/v1/auth/10/ HTTP/1.1" 200 413
+INFO 2026-03-24 01:09:02,990 log "PUT /api/v1/auth/10/ HTTP/1.1" 200 189
+WARNING 2026-03-24 01:09:04,060 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 01:09:04,071 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:09:04,087 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 01:09:04,115 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 01:09:04,160 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+WARNING 2026-03-24 01:09:04,167 log Not Found: /api/v1/participants/participants/stats/
+INFO 2026-03-24 01:09:04,182 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-24 01:09:04,170 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+WARNING 2026-03-24 01:09:04,193 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 01:09:04,197 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+WARNING 2026-03-24 01:09:04,223 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:09:04,254 log "GET /api/v1/assessments/?ordering=-assessment_date&page_size=200 HTTP/1.1" 200 199
+INFO 2026-03-24 01:09:04,262 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 01:09:04,285 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 01:09:04,286 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-24 01:09:04,315 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 01:09:04,320 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 01:09:04,333 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+WARNING 2026-03-24 01:09:04,348 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 01:09:04,350 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:09:04,372 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 01:09:04,398 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 01:09:04,405 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 01:09:04,411 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-24 01:09:04,479 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+WARNING 2026-03-24 01:09:05,714 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 01:09:05,719 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:09:05,720 log "GET /api/v1/auth/ HTTP/1.1" 200 2089
+WARNING 2026-03-24 01:09:05,724 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 01:09:05,726 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:09:05,731 log "GET /api/v1/auth/ HTTP/1.1" 200 2089
+INFO 2026-03-24 01:09:06,020 log "GET /api/v1/auth/ HTTP/1.1" 200 2089
+INFO 2026-03-24 01:09:48,250 serializers Using provided password for user testw
+ERROR 2026-03-24 01:09:48,685 serializers Failed to send welcome email to shemaroger60@gmail.com: type object 'datetime.timezone' has no attribute 'now'
+INFO 2026-03-24 01:09:48,685 serializers Generated password for testw: Test@123
+INFO 2026-03-24 01:09:48,686 log "POST /api/v1/auth/ HTTP/1.1" 201 244
+WARNING 2026-03-24 01:09:50,231 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 01:09:50,233 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:09:50,236 log "GET /api/v1/auth/ HTTP/1.1" 200 2295
+WARNING 2026-03-24 01:09:50,243 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 01:09:50,246 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:09:50,252 log "GET /api/v1/auth/ HTTP/1.1" 200 2295
+INFO 2026-03-24 01:09:50,540 log "GET /api/v1/auth/ HTTP/1.1" 200 2295
+INFO 2026-03-24 01:12:29,128 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/config/settings.py changed, reloading.
+INFO 2026-03-24 01:12:29,528 autoreload Watching for file changes with StatReloader
+INFO 2026-03-24 01:15:44,489 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/views.py changed, reloading.
+INFO 2026-03-24 01:15:44,838 autoreload Watching for file changes with StatReloader
+INFO 2026-03-24 01:15:47,159 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/views.py changed, reloading.
+INFO 2026-03-24 01:15:47,557 autoreload Watching for file changes with StatReloader
+INFO 2026-03-24 01:16:03,970 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/views.py changed, reloading.
+INFO 2026-03-24 01:16:04,372 autoreload Watching for file changes with StatReloader
+INFO 2026-03-24 01:16:33,296 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/config/urls.py changed, reloading.
+INFO 2026-03-24 01:16:33,764 autoreload Watching for file changes with StatReloader
+INFO 2026-03-24 01:16:43,296 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/config/urls.py changed, reloading.
+INFO 2026-03-24 01:16:43,745 autoreload Watching for file changes with StatReloader
+INFO 2026-03-24 01:16:47,116 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/config/urls.py changed, reloading.
+INFO 2026-03-24 01:16:47,472 autoreload Watching for file changes with StatReloader
+INFO 2026-03-24 01:17:04,658 autoreload Watching for file changes with StatReloader
+WARNING 2026-03-24 01:22:34,115 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 01:22:34,116 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:22:34,124 log "GET /api/v1/auth/ HTTP/1.1" 200 2295
+WARNING 2026-03-24 01:22:34,128 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 01:22:34,131 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:22:34,139 log "GET /api/v1/auth/ HTTP/1.1" 200 2295
+INFO 2026-03-24 01:22:34,410 log "GET /api/v1/auth/ HTTP/1.1" 200 2295
+INFO 2026-03-24 01:23:28,084 serializers Generated secure password for user student1
+ERROR 2026-03-24 01:23:28,498 serializers Failed to send welcome email to shemaroger43@gmail.com: type object 'datetime.timezone' has no attribute 'now'
+INFO 2026-03-24 01:23:28,498 serializers Generated password for student1: &IlnqMZmqw1b
+INFO 2026-03-24 01:23:28,499 log "POST /api/v1/auth/ HTTP/1.1" 201 250
+WARNING 2026-03-24 01:23:49,795 log Bad Request: /api/v1/auth/
+WARNING 2026-03-24 01:23:49,796 log "POST /api/v1/auth/ HTTP/1.1" 400 58
+INFO 2026-03-24 01:26:18,546 autoreload /home/roger/Project/YouthProgramImpactVirsualizer/apps/users/serializers.py changed, reloading.
+INFO 2026-03-24 01:26:18,922 autoreload Watching for file changes with StatReloader
+INFO 2026-03-24 01:26:49,092 serializers Generated secure password for user testd
+INFO 2026-03-24 01:26:52,890 serializers Welcome email sent successfully to shemaroger43@gmail.com
+INFO 2026-03-24 01:26:52,894 log "POST /api/v1/auth/ HTTP/1.1" 201 218
+WARNING 2026-03-24 01:26:55,935 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 01:26:55,937 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:26:55,942 log "GET /api/v1/auth/ HTTP/1.1" 200 2708
+WARNING 2026-03-24 01:26:55,953 log Not Found: /api/v1/auth/stats/
+INFO 2026-03-24 01:26:55,958 log "GET /api/v1/auth/ HTTP/1.1" 200 2708
+WARNING 2026-03-24 01:26:55,958 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:26:56,242 log "GET /api/v1/auth/ HTTP/1.1" 200 2708
+INFO 2026-03-24 01:28:57,091 log "OPTIONS /api/v1/auth/logout/ HTTP/1.1" 200 0
+WARNING 2026-03-24 01:28:57,096 log Bad Request: /api/v1/auth/logout/
+WARNING 2026-03-24 01:28:57,096 log "POST /api/v1/auth/logout/ HTTP/1.1" 400 42
+INFO 2026-03-24 01:30:43,613 log "OPTIONS /api/v1/auth/login/ HTTP/1.1" 200 0
+ERROR 2026-03-24 01:30:44,010 views Failed to update login info: type object 'datetime.timezone' has no attribute 'now'
+INFO 2026-03-24 01:30:44,012 log "POST /api/v1/auth/login/ HTTP/1.1" 200 1004
+INFO 2026-03-24 01:31:12,725 log "OPTIONS /api/v1/auth/change_password/ HTTP/1.1" 200 0
+INFO 2026-03-24 01:31:14,002 serializers Password changed for user testd
+INFO 2026-03-24 01:31:14,003 log "POST /api/v1/auth/change_password/ HTTP/1.1" 200 72
+WARNING 2026-03-24 01:31:43,425 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 01:31:43,435 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:31:43,447 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 01:31:43,453 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 01:31:43,461 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+WARNING 2026-03-24 01:31:43,474 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 01:31:43,475 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:31:43,495 log "GET /api/v1/assessments/?ordering=-assessment_date&page_size=200 HTTP/1.1" 200 199
+INFO 2026-03-24 01:31:43,498 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 01:31:43,511 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-24 01:31:43,528 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 01:31:43,532 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 01:31:43,536 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-24 01:31:43,540 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+WARNING 2026-03-24 01:31:43,549 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 01:31:43,554 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:31:43,562 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 01:31:43,594 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 01:31:43,601 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 01:31:43,622 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 01:31:43,625 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-24 01:31:43,628 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 01:31:43,688 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+WARNING 2026-03-24 01:31:44,486 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 01:31:44,490 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:31:44,502 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 01:31:44,507 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+WARNING 2026-03-24 01:31:44,513 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 01:31:44,521 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:31:44,523 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 01:31:44,533 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 01:31:44,538 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 01:31:44,547 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 01:31:44,556 log "GET /api/v1/assessments/?ordering=-assessment_date&page_size=200 HTTP/1.1" 200 199
+INFO 2026-03-24 01:31:44,573 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-24 01:31:44,594 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-24 01:31:44,597 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+WARNING 2026-03-24 01:31:44,600 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 01:31:44,602 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:31:44,622 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 01:31:44,630 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 01:31:44,631 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 01:31:44,654 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-24 01:31:44,658 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 01:31:44,682 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 01:31:44,721 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+WARNING 2026-03-24 01:35:30,724 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 01:35:30,734 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:35:30,752 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 01:35:30,766 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+WARNING 2026-03-24 01:35:30,788 log Not Found: /api/v1/participants/participants/stats/
+INFO 2026-03-24 01:35:30,788 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+WARNING 2026-03-24 01:35:30,790 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:35:30,808 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 01:35:30,814 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 01:35:30,861 log "GET /api/v1/assessments/?ordering=-assessment_date&page_size=200 HTTP/1.1" 200 199
+INFO 2026-03-24 01:35:30,872 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 01:35:30,879 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 01:35:30,883 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-24 01:35:30,894 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 01:35:30,895 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+WARNING 2026-03-24 01:35:30,904 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 01:35:30,914 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:35:30,916 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 01:35:30,970 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 01:35:30,971 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 01:35:30,973 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 01:35:30,987 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-24 01:35:31,055 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+WARNING 2026-03-24 01:35:39,542 log Bad Request: /api/v1/auth/logout/
+WARNING 2026-03-24 01:35:39,542 log "POST /api/v1/auth/logout/ HTTP/1.1" 400 42
+ERROR 2026-03-24 01:35:56,862 views Failed to update login info: type object 'datetime.timezone' has no attribute 'now'
+INFO 2026-03-24 01:35:56,865 log "POST /api/v1/auth/login/ HTTP/1.1" 200 924
+INFO 2026-03-24 01:35:57,460 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+WARNING 2026-03-24 01:35:57,466 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 01:35:57,478 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:35:57,504 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 01:35:57,528 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 01:35:57,538 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 01:35:57,538 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 01:35:57,553 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-24 01:35:57,567 log "GET /api/v1/assessments/?ordering=-assessment_date&page_size=200 HTTP/1.1" 200 199
+INFO 2026-03-24 01:35:57,577 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+WARNING 2026-03-24 01:35:57,587 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 01:35:57,591 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:35:57,618 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-24 01:35:57,630 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 01:35:57,638 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+WARNING 2026-03-24 01:35:57,649 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 01:35:57,658 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:35:57,659 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 01:35:57,667 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 01:35:57,723 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-24 01:35:57,726 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 01:35:57,727 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 01:35:57,800 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+WARNING 2026-03-24 01:36:14,283 log Not Found: /api/v1/participants/participants/stats/
+INFO 2026-03-24 01:36:14,284 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+WARNING 2026-03-24 01:36:14,285 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:36:14,303 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 01:36:14,369 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-24 01:36:14,376 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 01:36:14,378 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 01:36:14,388 log "GET /api/v1/assessments/?ordering=-assessment_date&page_size=200 HTTP/1.1" 200 199
+INFO 2026-03-24 01:36:14,401 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+WARNING 2026-03-24 01:36:35,163 log Bad Request: /api/v1/auth/logout/
+WARNING 2026-03-24 01:36:35,164 log "POST /api/v1/auth/logout/ HTTP/1.1" 400 42
+ERROR 2026-03-24 01:36:43,258 views Failed to update login info: type object 'datetime.timezone' has no attribute 'now'
+INFO 2026-03-24 01:36:43,261 log "POST /api/v1/auth/login/ HTTP/1.1" 200 912
+WARNING 2026-03-24 01:36:43,823 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 01:36:43,825 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:36:43,843 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 01:36:43,858 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+WARNING 2026-03-24 01:36:43,872 log Not Found: /api/v1/participants/participants/stats/
+WARNING 2026-03-24 01:36:43,880 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:36:43,881 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 01:36:43,886 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+WARNING 2026-03-24 01:36:43,891 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 01:36:43,892 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:36:43,917 log "GET /api/v1/assessments/?ordering=-assessment_date&page_size=200 HTTP/1.1" 200 199
+INFO 2026-03-24 01:36:43,941 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 01:36:43,953 log "GET /api/v1/assessments/stats/ HTTP/1.1" 200 214
+INFO 2026-03-24 01:36:43,968 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 01:36:43,972 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+WARNING 2026-03-24 01:36:43,985 log Not Found: /api/v1/participants/participants/stats/
+INFO 2026-03-24 01:36:43,985 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+WARNING 2026-03-24 01:36:43,989 log "GET /api/v1/participants/participants/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:36:44,008 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 01:36:44,032 log "GET /api/v1/attendance/records/?date_from=2026-03-16&date_to=2026-03-23 HTTP/1.1" 200 52
+INFO 2026-03-24 01:36:44,039 log "GET /api/v1/attendance/records/stats/ HTTP/1.1" 200 149
+INFO 2026-03-24 01:36:44,054 log "GET /api/v1/programs/programs/stats/ HTTP/1.1" 200 257
+INFO 2026-03-24 01:36:44,065 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+INFO 2026-03-24 01:36:44,075 log "GET /api/v1/programs/programs/?is_active=true HTTP/1.1" 200 639
+INFO 2026-03-24 01:36:44,136 log "GET /api/v1/participants/participants/?ordering=created_at HTTP/1.1" 200 3835
+WARNING 2026-03-24 01:36:47,971 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 01:36:47,971 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:36:47,975 log "GET /api/v1/auth/ HTTP/1.1" 200 2708
+WARNING 2026-03-24 01:36:47,978 log Not Found: /api/v1/auth/stats/
+WARNING 2026-03-24 01:36:47,979 log "GET /api/v1/auth/stats/ HTTP/1.1" 404 23
+INFO 2026-03-24 01:36:47,985 log "GET /api/v1/auth/ HTTP/1.1" 200 2708
+INFO 2026-03-24 01:36:48,277 log "GET /api/v1/auth/ HTTP/1.1" 200 2708

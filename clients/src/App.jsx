@@ -6,6 +6,9 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/auth/LoginPage';
 import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
 
+// Password Change Page (Moved outside dashboard for clean access)
+import ChangePasswordPage from './pages/auth/ChangePasswordPage';
+
 // Dashboard
 import DashboardPage from './pages/dashboard/DashboardPage';
 
@@ -33,13 +36,13 @@ import ParticipantDetailPage from './pages/dashboard/participants/ParticipantDet
 import CreateParticipantPage from './pages/dashboard/participants/CreateParticipantPage';
 import EditParticipantPage from './pages/dashboard/participants/EditParticipantPage';
 
-// Enrollments (NEW)
+// Enrollments
 import EnrollmentsListPage from './pages/dashboard/enrollments/EnrollmentsListPage';
 import EnrollmentDetailPage from './pages/dashboard/enrollments/EnrollmentDetailPage';
 import CreateEnrollmentPage from './pages/dashboard/enrollments/CreateEnrollmentPage';
 import EditEnrollmentPage from './pages/dashboard/enrollments/EditEnrollmentPage';
 
-// Rooms (NEW)
+// Rooms
 import RoomsListPage from './pages/dashboard/Rooms/RoomsListPage';
 import CreateRoomPage from './pages/dashboard/Rooms/CreateRoomPage';
 import EditRoomPage from './pages/dashboard/Rooms/EditRoomPage';
@@ -69,9 +72,8 @@ import IndicatorsListPage from './pages/dashboard/assessments/IndicatorsListPage
 // Reports
 import GeneralReport from './pages/dashboard/report/GeneralReport';
 
-// Profile
+// Profile (Regular profile page, not password change)
 import ProfilePage from './pages/dashboard/profile/ProfilePage';
-import ChangePasswordPage from './pages/dashboard/profile/ChangePasswordPage';
 
 // Components
 import ProtectedRoute from "./hooks/ProtectedRoute";
@@ -108,7 +110,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public Routes */}
+        {/* ================================
+            PUBLIC ROUTES
+            ================================ */}
         <Route 
           path="/login" 
           element={
@@ -125,22 +129,38 @@ function App() {
             </PublicRoute>
           } 
         />
+        
+        {/* Password Change Route - Special handling */}
+        {/* This route requires authentication but allows access even if password needs change */}
+        <Route 
+          path="/change-password" 
+          element={
+            <ProtectedRoute requireAuth={true} requireFullAuth={false}>
+              <ChangePasswordPage />
+            </ProtectedRoute>
+          } 
+        />
 
-        {/* Protected Routes - Dashboard (All authenticated users) */}
+        {/* ================================
+            PROTECTED ROUTES - DASHBOARD
+            Require full authentication (password changed)
+            ================================ */}
         <Route 
           path="/dashboard" 
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requireFullAuth={true}>
               <DashboardPage />
             </ProtectedRoute>
           } 
         />
 
-        {/* Protected Routes - Users (Admin only) */}
+        {/* ================================
+            USERS ROUTES (Admin only)
+            ================================ */}
         <Route 
           path="/dashboard/users" 
           element={
-            <ProtectedRoute allowedRoles={['admin']}>
+            <ProtectedRoute allowedRoles={['admin']} requireFullAuth={true}>
               <UsersListPage />
             </ProtectedRoute>
           } 
@@ -148,7 +168,7 @@ function App() {
         <Route 
           path="/dashboard/users/create" 
           element={
-            <ProtectedRoute allowedRoles={['admin']}>
+            <ProtectedRoute allowedRoles={['admin']} requireFullAuth={true}>
               <CreateUserPage />
             </ProtectedRoute>
           } 
@@ -156,7 +176,7 @@ function App() {
         <Route 
           path="/dashboard/users/:id" 
           element={
-            <ProtectedRoute allowedRoles={['admin']}>
+            <ProtectedRoute allowedRoles={['admin']} requireFullAuth={true}>
               <UserDetailPage />
             </ProtectedRoute>
           } 
@@ -164,17 +184,19 @@ function App() {
         <Route 
           path="/dashboard/users/:id/edit" 
           element={
-            <ProtectedRoute allowedRoles={['admin']}>
+            <ProtectedRoute allowedRoles={['admin']} requireFullAuth={true}>
               <EditUserPage />
             </ProtectedRoute>
           } 
         />
 
-        {/* Protected Routes - Locations (Admin, Program Manager) */}
+        {/* ================================
+            LOCATIONS ROUTES (Admin, Program Manager)
+            ================================ */}
         <Route 
           path="/dashboard/locations" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'program_manager']}>
+            <ProtectedRoute allowedRoles={['admin', 'program_manager']} requireFullAuth={true}>
               <LocationsListPage />
             </ProtectedRoute>
           } 
@@ -182,7 +204,7 @@ function App() {
         <Route 
           path="/dashboard/locations/create" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'program_manager']}>
+            <ProtectedRoute allowedRoles={['admin', 'program_manager']} requireFullAuth={true}>
               <CreateLocationPage />
             </ProtectedRoute>
           } 
@@ -190,7 +212,7 @@ function App() {
         <Route 
           path="/dashboard/locations/:id" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'program_manager']}>
+            <ProtectedRoute allowedRoles={['admin', 'program_manager']} requireFullAuth={true}>
               <LocationDetailPage />
             </ProtectedRoute>
           } 
@@ -198,17 +220,20 @@ function App() {
         <Route 
           path="/dashboard/locations/:id/edit" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'program_manager']}>
+            <ProtectedRoute allowedRoles={['admin', 'program_manager']} requireFullAuth={true}>
               <EditLocationPage />
             </ProtectedRoute>
           } 
         />
 
-        {/* Protected Routes - Programs (All authenticated users can view, Admin/PM can edit) */}
+        {/* ================================
+            PROGRAMS ROUTES
+            All authenticated users can view, Admin/PM can edit
+            ================================ */}
         <Route 
           path="/dashboard/programs" 
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requireFullAuth={true}>
               <ProgramsListPage />
             </ProtectedRoute>
           } 
@@ -216,7 +241,7 @@ function App() {
         <Route 
           path="/dashboard/programs/create" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'program_manager']}>
+            <ProtectedRoute allowedRoles={['admin', 'program_manager']} requireFullAuth={true}>
               <CreateProgramPage />
             </ProtectedRoute>
           } 
@@ -224,7 +249,7 @@ function App() {
         <Route 
           path="/dashboard/programs/:id" 
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requireFullAuth={true}>
               <ProgramDetailPage />
             </ProtectedRoute>
           } 
@@ -232,17 +257,19 @@ function App() {
         <Route 
           path="/dashboard/programs/:id/edit" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'program_manager']}>
+            <ProtectedRoute allowedRoles={['admin', 'program_manager']} requireFullAuth={true}>
               <EditProgramPage />
             </ProtectedRoute>
           } 
         />
         
-        {/* Milestone Routes (Admin, Teacher, Program Manager) */}
+        {/* ================================
+            MILESTONE ROUTES (Admin, Teacher, Program Manager)
+            ================================ */}
         <Route
           path="/dashboard/milestones"
           element={
-            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']}>
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']} requireFullAuth={true}>
               <MilestonesListPage />
             </ProtectedRoute>
           }
@@ -250,7 +277,7 @@ function App() {
         <Route
           path="/dashboard/milestones/create"
           element={
-            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']}>
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']} requireFullAuth={true}>
               <CreateMilestonePage />
             </ProtectedRoute>
           }
@@ -258,7 +285,7 @@ function App() {
         <Route
           path="/dashboard/milestones/:id"
           element={
-            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']}>
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']} requireFullAuth={true}>
               <MilestoneDetailPage />
             </ProtectedRoute>
           }
@@ -266,20 +293,19 @@ function App() {
         <Route
           path="/dashboard/milestones/:id/edit"
           element={
-            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']}>
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']} requireFullAuth={true}>
               <EditMilestonePage />
             </ProtectedRoute>
           }
         />
 
         {/* ================================
-            ROOMS ROUTES (NEW)
-            Admin and Program Manager can manage rooms
+            ROOMS ROUTES
             ================================ */}
         <Route 
           path="/dashboard/participants/rooms" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher']}>
+            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher']} requireFullAuth={true}>
               <RoomsListPage />
             </ProtectedRoute>
           } 
@@ -287,7 +313,7 @@ function App() {
         <Route 
           path="/dashboard/participants/rooms/create" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'program_manager']}>
+            <ProtectedRoute allowedRoles={['admin', 'program_manager']} requireFullAuth={true}>
               <CreateRoomPage />
             </ProtectedRoute>
           } 
@@ -295,7 +321,7 @@ function App() {
         <Route 
           path="/dashboard/participants/rooms/:id/edit" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher']}>
+            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher']} requireFullAuth={true}>
               <EditRoomPage />
             </ProtectedRoute>
           } 
@@ -303,19 +329,19 @@ function App() {
         <Route 
           path="/dashboard/participants/rooms/:id/participants" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher', 'staff']}>
+            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher', 'staff']} requireFullAuth={true}>
               <RoomParticipantsPage />
             </ProtectedRoute>
           } 
         />
 
         {/* ================================
-            ENROLLMENTS ROUTES (NEW)
+            ENROLLMENTS ROUTES
             ================================ */}
         <Route 
           path="/dashboard/enrollments" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher', 'staff']}>
+            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher', 'staff']} requireFullAuth={true}>
               <EnrollmentsListPage />
             </ProtectedRoute>
           } 
@@ -323,7 +349,7 @@ function App() {
         <Route 
           path="/dashboard/enrollments/create" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher', 'staff']}>
+            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher', 'staff']} requireFullAuth={true}>
               <CreateEnrollmentPage />
             </ProtectedRoute>
           } 
@@ -331,7 +357,7 @@ function App() {
         <Route 
           path="/dashboard/enrollments/:id" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher', 'staff', 'donor']}>
+            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher', 'staff', 'donor']} requireFullAuth={true}>
               <EnrollmentDetailPage />
             </ProtectedRoute>
           } 
@@ -339,16 +365,17 @@ function App() {
         <Route 
           path="/dashboard/enrollments/:id/edit" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher', 'staff']}>
+            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher', 'staff']} requireFullAuth={true}>
               <EditEnrollmentPage />
             </ProtectedRoute>
           } 
         />
+        
         {/* Special enrollment actions */}
         <Route 
           path="/dashboard/enrollments/:id/dropout" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher']}>
+            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher']} requireFullAuth={true}>
               <ComingSoonPage pageName="Record Dropout" />
             </ProtectedRoute>
           } 
@@ -356,7 +383,7 @@ function App() {
         <Route 
           path="/dashboard/enrollments/:id/award-scholarship" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'program_manager']}>
+            <ProtectedRoute allowedRoles={['admin', 'program_manager']} requireFullAuth={true}>
               <ComingSoonPage pageName="Award Scholarship" />
             </ProtectedRoute>
           } 
@@ -364,17 +391,19 @@ function App() {
         <Route 
           path="/dashboard/enrollments/:id/temporary-leave" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher']}>
+            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher']} requireFullAuth={true}>
               <ComingSoonPage pageName="Temporary Leave" />
             </ProtectedRoute>
           } 
         />
 
-        {/* Protected Routes - Participants (All authenticated users can view, Admin/Teacher/PM can edit) */}
+        {/* ================================
+            PARTICIPANTS ROUTES
+            ================================ */}
         <Route 
           path="/dashboard/participants" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff', 'donor']}>
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff', 'donor']} requireFullAuth={true}>
               <ParticipantsListPage />
             </ProtectedRoute>
           } 
@@ -382,7 +411,7 @@ function App() {
         <Route 
           path="/dashboard/participants/create" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff']}>
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff']} requireFullAuth={true}>
               <CreateParticipantPage />
             </ProtectedRoute>
           } 
@@ -390,7 +419,7 @@ function App() {
         <Route 
           path="/dashboard/participants/:id" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff', 'donor']}>
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff', 'donor']} requireFullAuth={true}>
               <ParticipantDetailPage />
             </ProtectedRoute>
           } 
@@ -398,37 +427,35 @@ function App() {
         <Route 
           path="/dashboard/participants/:id/edit" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff']}>
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff']} requireFullAuth={true}>
               <EditParticipantPage />
             </ProtectedRoute>
           } 
         />
 
-        {/* Protected Routes - Attendance (Admin, Teacher, Program Manager, Staff) */}
+        {/* ================================
+            ATTENDANCE ROUTES
+            ================================ */}
         <Route 
           path="/dashboard/attendance" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff']}>
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff']} requireFullAuth={true}>
               <AttendanceListPage />
             </ProtectedRoute>
           } 
         />
-
-        {/* Detail page - All authenticated users can view */}
         <Route 
           path="/dashboard/attendance/:id" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff', 'donor']}>
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff', 'donor']} requireFullAuth={true}>
               <AttendanceDetailPage />
             </ProtectedRoute>
           } 
         />
-        
-        {/* Edit page - Only staff/teachers/managers can edit (donors excluded) */}
         <Route 
           path="/dashboard/attendance/:id/edit" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff']}>
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff']} requireFullAuth={true}>
               <AttendanceEditPage />
             </ProtectedRoute>
           } 
@@ -436,7 +463,7 @@ function App() {
         <Route 
           path="/dashboard/attendance/check-in" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff']}>
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff']} requireFullAuth={true}>
               <FaceCheckInPage />
             </ProtectedRoute>
           } 
@@ -444,7 +471,7 @@ function App() {
         <Route 
           path="/dashboard/attendance/bulk" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff']}>
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff']} requireFullAuth={true}>
               <BulkAttendancePage />
             </ProtectedRoute>
           } 
@@ -452,17 +479,19 @@ function App() {
         <Route 
           path="/dashboard/attendance/sessions" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff']}>
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff']} requireFullAuth={true}>
               <SessionsListPage />
             </ProtectedRoute>
           } 
         />
 
-        {/* Protected Routes - Assessments */}
+        {/* ================================
+            ASSESSMENTS ROUTES
+            ================================ */}
         <Route 
           path="/dashboard/assessments" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'donor']}>
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'donor']} requireFullAuth={true}>
               <AssessmentsListPage />
             </ProtectedRoute>
           } 
@@ -470,7 +499,7 @@ function App() {
         <Route 
           path="/dashboard/assessments/create" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']}>
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']} requireFullAuth={true}>
               <CreateAssessmentPage />
             </ProtectedRoute>
           } 
@@ -478,7 +507,7 @@ function App() {
         <Route 
           path="/dashboard/assessments/indicators" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'donor']}>
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'donor']} requireFullAuth={true}>
               <IndicatorsListPage />
             </ProtectedRoute>
           } 
@@ -486,7 +515,7 @@ function App() {
         <Route 
           path="/dashboard/assessments/:id" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'donor']}>
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'donor']} requireFullAuth={true}>
               <AssessmentDetailPage />
             </ProtectedRoute>
           } 
@@ -494,42 +523,39 @@ function App() {
         <Route 
           path="/dashboard/assessments/:id/edit"
           element={
-            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']}>
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager']} requireFullAuth={true}>
               <AssessmentEditPage />
             </ProtectedRoute>
           } 
         />
 
-        {/* ── Reports ──
-            General Report accessible to Admin, Program Manager, Director */}
+        {/* ================================
+            REPORTS ROUTES
+            ================================ */}
         <Route 
           path="/dashboard/reports/general" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'director']}>
+            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'director']} requireFullAuth={true}>
               <GeneralReport />
             </ProtectedRoute>
           } 
         />
 
-        {/* Protected Routes - Profile (All authenticated users) */}
+        {/* ================================
+            PROFILE ROUTES (Regular profile, not password change)
+            ================================ */}
         <Route 
           path="/dashboard/profile" 
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requireFullAuth={true}>
               <ProfilePage />
             </ProtectedRoute>
           } 
         />
-        <Route 
-          path="/dashboard/profile/change-password" 
-          element={
-            <ProtectedRoute>
-              <ChangePasswordPage />
-            </ProtectedRoute>
-          } 
-        />
 
-        {/* Redirects */}
+        {/* ================================
+            REDIRECTS
+            ================================ */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>

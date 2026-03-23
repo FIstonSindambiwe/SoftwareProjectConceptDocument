@@ -2,6 +2,9 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+import secrets
+import string
+
 
 
 class User(AbstractUser):
@@ -40,6 +43,10 @@ class User(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    # Password management
+    must_change_password = models.BooleanField(default=False)
+    password_changed_at = models.DateTimeField(null=True, blank=True)
+    
     class Meta:
         db_table = 'users'
         ordering = ['-date_joined']
@@ -64,6 +71,13 @@ class User(AbstractUser):
     @property
     def can_edit_data(self):
         return self.role in ['admin', 'teacher', 'program_manager']
+    
+    @staticmethod
+    def generate_default_password(length=12):
+        """Generate a secure random password"""
+        alphabet = string.ascii_letters + string.digits + "!@#$%^&*"
+        password = ''.join(secrets.choice(alphabet) for i in range(length))
+        return password
 
 
 class AuditLog(models.Model):

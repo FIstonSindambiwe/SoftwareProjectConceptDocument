@@ -518,7 +518,7 @@ const DashboardPage = () => {
               color="indigo" 
               delay={0}   
               loading={statsLoading}
-              onClick={isAdmin?.() ? () => navigate('/dashboard/users') : undefined} 
+              onClick={isAdmin ? () => navigate('/dashboard/users') : undefined} 
             />
           )}
           <StatCard   
@@ -656,7 +656,8 @@ const DashboardPage = () => {
               delay={0} 
             />
           )}
-          {canEditData?.() && (
+          {/* FIX: Changed canEditData?.() to canEditData (boolean) */}
+          {canEditData && (
             <ActionCard 
               icon={PlusIcon}         
               label="Add Participant"

@@ -146,13 +146,27 @@ const LoginPage = () => {
     setIsLoading(true);
 
     try {
-      await authService.login(formData.username, formData.password);
+      const result = await authService.login(formData.username, formData.password);
+      
       toast.success('Login successful! Welcome back.');
       
-      // Small delay to show toast before redirect
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 500);
+      // Check if user needs to change password
+      if (result.mustChangePassword) {
+        // Small delay to show toast before redirect
+        setTimeout(() => {
+          navigate('/change-password', { 
+            state: { 
+              username: formData.username,
+              fromLogin: true 
+            } 
+          });
+        }, 500);
+      } else {
+        // Small delay to show toast before redirect
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 500);
+      }
       
     } catch (error) {
       console.error('Login error:', error);
@@ -224,15 +238,12 @@ const LoginPage = () => {
                 alt="Youth Impact Visualizer" 
                 className="w-full h-full object-cover"
               />
-              {/* Optional: Very light overlay for text readability - Remove this div to see 100% pure image */}
-              {/* <div className="absolute inset-0 bg-black/10"></div> */}
             </div>
 
             {/* Content with text shadow for readability */}
             <div className="relative z-10 flex flex-col justify-center px-16 text-white">
-              {/* Brand Name (No Logo) */}
+              {/* Brand Name */}
               <div className="mb-12 animate-slide-in-left">
-    
               </div>
 
               {/* Tagline */}

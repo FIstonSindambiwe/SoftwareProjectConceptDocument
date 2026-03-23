@@ -12,6 +12,8 @@ admin.site.site_header = "Youth Program Impact Visualizer Administration"
 admin.site.site_title = "Youth Impact Admin"
 admin.site.index_title = "Welcome to Youth Impact Visualizer"
 
+from users.views import test_email_view
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,6 +26,8 @@ urlpatterns = [
         path('', include('assessments.urls')),
         path('analytics/', include('analytics.urls')),
         path('reports/', include('reports.urls')),
+        
+        path('api/v1/test-email/', test_email_view, name='test_email'),
     ])),
 ]
 

@@ -2,6 +2,8 @@
 """
 User ViewSet with Role-Based Access Control
 """
+from datetime import timezone
+
 from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
@@ -28,6 +30,13 @@ from .permissions import (
     CanEditData,
 )
 
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 def get_client_ip(request):
     """Get client IP address from request"""
@@ -44,6 +53,7 @@ def get_client_ip(request):
 def login_view(request):
     """
     Login endpoint - Returns JWT tokens and user data
+    Also checks if user must change password
     
     POST /api/v1/auth/login/
     Body: {"username": "...", "password": "..."}
@@ -59,13 +69,17 @@ def login_view(request):
     # Get authenticated user from serializer
     user = serializer.validated_data['user']
     
-    # Update last login IP
+    # Check if user must change password
+    must_change_password = user.must_change_password
+    
+    # Update last login IP and time
     try:
         ip_address = get_client_ip(request)
         user.last_login_ip = ip_address
+        user.last_login = timezone.now()
         user.save(update_fields=['last_login_ip', 'last_login'])
-    except Exception:
-        pass
+    except Exception as e:
+        logger.error(f"Failed to update login info: {str(e)}")
     
     # Generate JWT tokens
     refresh = RefreshToken.for_user(user)
@@ -73,11 +87,19 @@ def login_view(request):
     # Serialize user data
     user_serializer = UserSerializer(user, context={'request': request})
     
-    return Response({
+    response_data = {
         'access': str(refresh.access_token),
         'refresh': str(refresh),
         'user': user_serializer.data
-    }, status=status.HTTP_200_OK)
+    }
+    
+    # Add flag for password change requirement
+    if must_change_password:
+        response_data['must_change_password'] = True
+        response_data['message'] = 'Please change your password to continue'
+    
+    return Response(response_data, status=status.HTTP_200_OK)
+
 
 
 @api_view(['POST'])
@@ -117,16 +139,9 @@ def logout_view(request):
         )
 
 
-# apps/users/views.py
 class UserViewSet(viewsets.ModelViewSet):
     """
     ViewSet for User model with role-based access control
-    
-    Permissions:
-    - List/Retrieve: Admin only (or own profile)
-    - Create: Admin only
-    - Update/Delete: Admin only (or own profile with limited fields)
-    - Profile actions: Own profile or admin
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -136,16 +151,12 @@ class UserViewSet(viewsets.ModelViewSet):
         Assign permissions based on action
         """
         if self.action in ['list', 'create', 'destroy']:
-            # Only admins can list all users, create users, or delete users
             permission_classes = [permissions.IsAuthenticated, CanManageUsers]
         elif self.action in ['retrieve', 'update', 'partial_update']:
-            # Admins can access any user, others only their own profile
             permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
         elif self.action in ['me', 'update_profile', 'change_password', 'my_activity']:
-            # Any authenticated user can access their own profile
             permission_classes = [permissions.IsAuthenticated]
         elif self.action in ['stats', 'audit_logs']:
-            # Only admins can view user statistics and audit logs
             permission_classes = [permissions.IsAuthenticated, IsAdmin]
         else:
             permission_classes = [permissions.IsAuthenticated]
@@ -159,7 +170,6 @@ class UserViewSet(viewsets.ModelViewSet):
         if self.action == 'create':
             return UserCreateSerializer
         elif self.action in ['update', 'partial_update']:
-            # Check if user is updating themselves
             try:
                 obj = self.get_object()
                 if obj == self.request.user:
@@ -177,92 +187,11 @@ class UserViewSet(viewsets.ModelViewSet):
             return UserStatsSerializer
         return UserSerializer
     
-    def get_queryset(self):
-        """
-        Filter queryset based on user role and query parameters
-        """
-        user = self.request.user
-        queryset = User.objects.all()
-        
-        # Admins see all users
-        if user.role == 'admin':
-            # Apply filters
-            search = self.request.query_params.get('search', None)
-            role = self.request.query_params.get('role', None)
-            is_active = self.request.query_params.get('is_active', None)
-            
-            if search:
-                queryset = queryset.filter(
-                    Q(username__icontains=search) |
-                    Q(email__icontains=search) |
-                    Q(first_name__icontains=search) |
-                    Q(last_name__icontains=search)
-                )
-            
-            if role:
-                queryset = queryset.filter(role=role)
-            
-            if is_active is not None:
-                is_active_bool = is_active.lower() in ['true', '1', 'yes']
-                queryset = queryset.filter(is_active=is_active_bool)
-            
-            return queryset.order_by('-date_joined')
-        
-        # Others only see themselves
-        return User.objects.filter(id=user.id)
-    
-    def partial_update(self, request, *args, **kwargs):
-        """
-        Handle PATCH requests - allows admins to update any user field
-        """
-        instance = self.get_object()
-        
-        # Log the update attempt
-        print(f"PATCH request for user {instance.id} by {request.user.username}")
-        print(f"Data received: {request.data}")
-        
-        # Allow admin to update any field via PATCH
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        
-        # Log the update
-        print(f"User {instance.id} updated successfully")
-        print(f"Updated data: {serializer.data}")
-        
-        return Response(serializer.data)
-    
-    @action(detail=False, methods=['get'])
-    def me(self, request):
-        """
-        Get current user profile
-        
-        GET /api/v1/auth/me/
-        """
-        serializer = self.get_serializer(request.user)
-        return Response(serializer.data)
-    
-    @action(detail=False, methods=['put', 'patch'])
-    def update_profile(self, request):
-        """
-        Update current user profile
-        
-        PUT/PATCH /api/v1/auth/update_profile/
-        """
-        serializer = self.get_serializer(
-            request.user, 
-            data=request.data, 
-            partial=request.method == 'PATCH',
-            context={'request': request}
-        )
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-    
     @action(detail=False, methods=['post'])
     def change_password(self, request):
         """
         Change user password
+        Also clears must_change_password flag
         
         POST /api/v1/auth/change_password/
         Body: {
@@ -279,93 +208,71 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer.save()
         
         return Response({
-            'message': 'Password changed successfully'
+            'message': 'Password changed successfully',
+            'must_change_password': False
         }, status=status.HTTP_200_OK)
     
-    @action(detail=False, methods=['get'])
-    def stats(self, request):
-        """
-        Get user statistics (Admin only)
-        
-        GET /api/v1/auth/stats/
-        """
-        stats = {
-            'total_users': User.objects.count(),
-            'active_users': User.objects.filter(is_active=True).count(),
-            'inactive_users': User.objects.filter(is_active=False).count(),
-            'by_role': list(User.objects.values('role').annotate(count=Count('id'))),
-        }
-        
-        return Response(stats)
-    
-    @action(detail=True, methods=['get'])
-    def audit_logs(self, request, pk=None):
-        """
-        Get audit logs for a specific user (Admin only)
-        
-        GET /api/v1/auth/{id}/audit_logs/
-        """
-        user = self.get_object()
-        logs = AuditLog.objects.filter(user=user).order_by('-timestamp')[:50]
-        serializer = AuditLogSerializer(logs, many=True)
-        
-        return Response({
-            'user': user.username,
-            'logs': serializer.data
-        })
-    
-    @action(detail=False, methods=['get'])
-    def my_activity(self, request):
-        """
-        Get current user's activity logs
-        
-        GET /api/v1/auth/my_activity/
-        """
-        logs = AuditLog.objects.filter(user=request.user).order_by('-timestamp')[:50]
-        serializer = AuditLogSerializer(logs, many=True)
-        
-        return Response({
-            'user': request.user.username,
-            'activity': serializer.data
-        })
-    
-    def perform_destroy(self, instance):
-        """
-        Deactivate user instead of deleting (soft delete)
-        """
-        instance.is_active = False
-        instance.save()
-        
-        # Log the deactivation
-        print(f"User {instance.username} (ID: {instance.id}) deactivated by {self.request.user.username}")
-    
     @action(detail=True, methods=['post'])
-    def toggle_active(self, request, pk=None):
+    def reset_password(self, request, pk=None):
         """
-        Toggle user active status
-        POST /api/v1/auth/{id}/toggle_active/
+        Reset user password (Admin only)
+        Generates new password and sends email
+        
+        POST /api/v1/auth/{id}/reset_password/
         """
         if request.user.role != 'admin':
             return Response(
-                {'error': 'Only admins can toggle user status'},
+                {'error': 'Only admins can reset passwords'},
                 status=status.HTTP_403_FORBIDDEN
             )
         
         user = self.get_object()
+        new_password = User.generate_default_password()
         
-        print(f"Toggling user {user.id} ({user.username})")
-        print(f"Current is_active: {user.is_active}")
-        
-        user.is_active = not user.is_active
+        user.set_password(new_password)
+        user.must_change_password = True
         user.save()
         
-        print(f"New is_active: {user.is_active}")
-        
-        serializer = self.get_serializer(user)
-        return Response({
-            'message': f'User {user.username} {"activated" if user.is_active else "deactivated"}',
-            'user': serializer.data
-        })    
+        # Send email with new password
+        try:
+            from django.core.mail import send_mail
+            subject = "Your Password Has Been Reset"
+            message = f"""
+            Dear {user.get_full_name() or user.username},
+            
+            Your password has been reset by an administrator.
+            
+            New login credentials:
+            Username: {user.username}
+            Password: {new_password}
+            
+            Please login and change your password immediately.
+            
+            If you did not request this, please contact the system administrator.
+            
+            Best regards,
+            System Administrator
+            """
+            
+            send_mail(
+                subject,
+                message,
+                settings.DEFAULT_FROM_EMAIL,
+                [user.email],
+                fail_silently=False,
+            )
+            
+            return Response({
+                'message': f'Password reset for user {user.username}. New password sent to {user.email}',
+                'temp_password': new_password  # Remove in production, only for testing
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            logger.error(f"Failed to send reset email: {str(e)}")
+            return Response({
+                'error': 'Password reset failed - email sending error',
+                'details': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
 
 class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -407,3 +314,32 @@ class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
             'total_logs': logs.count(),
             'logs': serializer.data
         })
+        
+@csrf_exempt
+def test_email_view(request):
+    """View to test email sending from browser"""
+    if request.method == 'POST':
+        try:
+            recipient = request.POST.get('email', 'shemaroger60@gmail.com')
+            
+            send_mail(
+                subject="Test Email from Youth Impact Visualizer",
+                message="This is a test email. Your email configuration is working!",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[recipient],
+                fail_silently=False,
+            )
+            
+            return JsonResponse({
+                'success': True,
+                'message': f'Test email sent successfully to {recipient}'
+            })
+            
+        except Exception as e:
+            logger.error(f"Test email failed: {str(e)}")
+            return JsonResponse({
+                'success': False,
+                'error': str(e)
+            }, status=500)
+    
+    return JsonResponse({'error': 'POST method required'}, status=405)        
