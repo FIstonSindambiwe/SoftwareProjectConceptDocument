@@ -9,6 +9,10 @@ import {
   CheckCircleIcon,
   ArrowPathIcon,
   UserGroupIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronDoubleLeftIcon,
+  ChevronDoubleRightIcon,
 } from '@heroicons/react/24/outline';
 import { toast } from 'react-hot-toast';
 import Layout from '../../../components/layout/Layout';
@@ -19,6 +23,109 @@ import UserFilter from '../../../components/users/UserFilter';
 import UserStats from '../../../components/users/UserStats';
 import useUsers from '../../../hooks/useUsers';
 
+// Pagination Component
+const Pagination = ({ 
+  currentPage, 
+  totalPages, 
+  totalItems, 
+  itemsPerPage,
+  onPageChange,
+  isLoading 
+}) => {
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisible = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+    
+    if (endPage - startPage + 1 < maxVisible) {
+      startPage = Math.max(1, endPage - maxVisible + 1);
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    
+    return pages;
+  };
+
+  if (totalPages <= 1) return null;
+
+  return (
+    <div className="flex items-center justify-between px-6 py-4 bg-gray-50 border-t border-gray-200">
+      <div className="flex items-center gap-2 text-sm text-gray-600">
+        <span>Showing</span>
+        <span className="font-medium text-gray-900">
+          {(currentPage - 1) * itemsPerPage + 1} - {Math.min(currentPage * itemsPerPage, totalItems)}
+        </span>
+        <span>of</span>
+        <span className="font-medium text-gray-900">{totalItems}</span>
+        <span>users</span>
+      </div>
+      
+      <div className="flex items-center gap-1">
+        {/* First Page Button */}
+        <button
+          onClick={() => onPageChange(1)}
+          disabled={currentPage === 1 || isLoading}
+          className="p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          title="First Page"
+        >
+          <ChevronDoubleLeftIcon className="h-4 w-4" />
+        </button>
+        
+        {/* Previous Page Button */}
+        <button
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1 || isLoading}
+          className="p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          title="Previous Page"
+        >
+          <ChevronLeftIcon className="h-4 w-4" />
+        </button>
+        
+        {/* Page Numbers */}
+        <div className="flex items-center gap-1">
+          {getPageNumbers().map(page => (
+            <button
+              key={page}
+              onClick={() => onPageChange(page)}
+              disabled={isLoading}
+              className={`px-3 py-1 rounded-lg text-sm font-medium transition-all ${
+                currentPage === page
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              {page}
+            </button>
+          ))}
+        </div>
+        
+        {/* Next Page Button */}
+        <button
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages || isLoading}
+          className="p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          title="Next Page"
+        >
+          <ChevronRightIcon className="h-4 w-4" />
+        </button>
+        
+        {/* Last Page Button */}
+        <button
+          onClick={() => onPageChange(totalPages)}
+          disabled={currentPage === totalPages || isLoading}
+          className="p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          title="Last Page"
+        >
+          <ChevronDoubleRightIcon className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const UsersListPage = () => {
   const navigate = useNavigate();
   const { users, isLoading, fetchUsers, patchUser } = useUsers();
@@ -28,37 +135,75 @@ const UsersListPage = () => {
   const [statusFilter, setStatusFilter] = useState('');
   const [updatingUser, setUpdatingUser] = useState(null);
   const [localUsers, setLocalUsers] = useState([]);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [paginationInfo, setPaginationInfo] = useState(null);
 
   // Update local users when the fetched users change
   useEffect(() => {
     if (Array.isArray(users)) {
       setLocalUsers(users);
     }
-  }, [users]);
+    // Handle pagination metadata from API response
+    if (paginationInfo) {
+      setTotalPages(paginationInfo.total_pages || Math.ceil(paginationInfo.count / itemsPerPage) || 1);
+      setTotalItems(paginationInfo.count || 0);
+    }
+  }, [users, paginationInfo, itemsPerPage]);
 
-  // Fetch users on mount
+  // Fetch users on mount and when filters/pagination change
   useEffect(() => {
     loadUsers();
-  }, []);
+  }, [searchTerm, roleFilter, statusFilter, currentPage, itemsPerPage]);
 
   const loadUsers = async () => {
     try {
-      const params = {};
+      const params = {
+        page: currentPage,
+        page_size: itemsPerPage,
+      };
       if (searchTerm) params.search = searchTerm;
       if (roleFilter) params.role = roleFilter;
       if (statusFilter) params.is_active = statusFilter === 'active';
       
-      await fetchUsers(params);
+      const response = await fetchUsers(params);
+      
+      // Handle pagination metadata if returned
+      if (response && typeof response === 'object') {
+        if (response.results) {
+          setLocalUsers(response.results);
+          setTotalItems(response.count || 0);
+          setTotalPages(Math.ceil((response.count || 0) / itemsPerPage));
+          setPaginationInfo({
+            count: response.count,
+            next: response.next,
+            previous: response.previous,
+            total_pages: Math.ceil((response.count || 0) / itemsPerPage)
+          });
+        } else if (Array.isArray(response)) {
+          setLocalUsers(response);
+          setTotalItems(response.length);
+          setTotalPages(Math.ceil(response.length / itemsPerPage));
+        }
+      }
     } catch (error) {
       console.error('Failed to load users:', error);
       toast.error('Failed to load users');
     }
   };
 
-  // Reload when filters change
+  // Debounced search
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
-      loadUsers();
+      if (currentPage !== 1) {
+        setCurrentPage(1); // Reset to first page when filters change
+      } else {
+        loadUsers();
+      }
     }, 300);
 
     return () => clearTimeout(debounceTimer);
@@ -68,6 +213,20 @@ const UsersListPage = () => {
     setSearchTerm('');
     setRoleFilter('');
     setStatusFilter('');
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages && page !== currentPage) {
+      setCurrentPage(page);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleItemsPerPageChange = (e) => {
+    const newSize = parseInt(e.target.value, 10);
+    setItemsPerPage(newSize);
+    setCurrentPage(1); // Reset to first page when changing items per page
   };
 
   const handleToggleStatus = async (user) => {
@@ -229,7 +388,7 @@ const UsersListPage = () => {
           onClearFilters={handleClearFilters}
         />
 
-        {/* Results Count */}
+        {/* Results Count and Items Per Page */}
         <Card className="flex items-center justify-between px-6 py-3">
           <div className="text-sm text-gray-600">
             {isLoading ? (
@@ -240,20 +399,37 @@ const UsersListPage = () => {
             ) : (
               <span>
                 Showing <span className="font-semibold text-gray-900">{localUsers.length}</span> user{localUsers.length !== 1 ? 's' : ''}
+                {totalItems > 0 && ` out of ${totalItems} total`}
                 {(searchTerm || roleFilter || statusFilter) && (
                   <span className="text-gray-400"> (filtered)</span>
                 )}
               </span>
             )}
           </div>
-          <button 
-            onClick={handleRefresh} 
-            className="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1 lg:hidden"
-            disabled={isLoading}
-          >
-            <ArrowPathIcon className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-            Refresh
-          </button>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <label className="text-sm text-gray-600">Show:</label>
+              <select
+                value={itemsPerPage}
+                onChange={handleItemsPerPageChange}
+                disabled={isLoading}
+                className="px-2 py-1 border border-gray-300 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
+            </div>
+            <button 
+              onClick={handleRefresh} 
+              className="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1 lg:hidden"
+              disabled={isLoading}
+            >
+              <ArrowPathIcon className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+              Refresh
+            </button>
+          </div>
         </Card>
 
         {/* Users Table */}
@@ -292,157 +468,168 @@ const UsersListPage = () => {
             </div>
           </Card>
         ) : (
-          <Card className="overflow-hidden" padding={false}>
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      User
-                    </th>
-                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Contact
-                    </th>
-                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Role
-                    </th>
-                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Organization
-                    </th>
-                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Joined
-                    </th>
-                    <th scope="col" className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {localUsers.map((user) => (
-                    <tr 
-                      key={user.id} 
-                      className="hover:bg-blue-50/50 transition-colors group"
-                    >
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="h-10 w-10 flex-shrink-0">
-                            {user.avatar ? (
-                              <img
-                                className="h-10 w-10 rounded-full ring-2 ring-blue-100 object-cover"
-                                src={user.avatar}
-                                alt={getDisplayName(user)}
-                              />
-                            ) : (
-                              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center ring-2 ring-blue-100">
-                                <span className="text-white font-semibold text-sm">
-                                  {getAvatarInitial(user)}
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                          <div className="ml-3">
-                            <div className="text-sm font-medium text-gray-900">
-                              {getDisplayName(user)}
-                            </div>
-                            <div className="text-xs text-gray-500">
-                              {getUsername(user)}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{user.email || '-'}</div>
-                        {user.phone_number && (
-                          <div className="text-xs text-gray-500">{user.phone_number}</div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-3 py-1 inline-flex text-xs font-semibold rounded-full border ${getRoleBadgeColor(user.role)}`}>
-                          {user.role_display || user.role || 'None'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {user.organization || '-'}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`px-3 py-1 inline-flex text-xs font-semibold rounded-full border ${
-                            user.is_active
-                              ? 'bg-green-100 text-green-800 border-green-200'
-                              : 'bg-gray-100 text-gray-600 border-gray-200'
-                          }`}
-                        >
-                          <span className={`mr-1.5 h-2 w-2 rounded-full ${user.is_active ? 'bg-green-500' : 'bg-gray-400'}`} />
-                          {user.is_active ? 'Active' : 'Inactive'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                        {formatDate(user.date_joined)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right">
-                        <div className="flex items-center justify-end gap-1">
-                          {/* View button - icon only */}
-                          <button
-                            onClick={() => navigate(`/dashboard/users/${user.id}`)}
-                            className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
-                            title="View Details"
-                          >
-                            <EyeIcon className="h-5 w-5" />
-                          </button>
-                          
-                          {/* Edit button - icon only */}
-                          <button
-                            onClick={() => navigate(`/dashboard/users/${user.id}/edit`)}
-                            className="p-2 text-gray-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all"
-                            title="Edit User"
-                          >
-                            <PencilIcon className="h-5 w-5" />
-                          </button>
-                          
-                          {/* Toggle Status button - icon only */}
-                          <button
-                            onClick={() => handleToggleStatus(user)}
-                            disabled={updatingUser === user.id}
-                            className={`p-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-                              user.is_active
-                                ? 'text-gray-500 hover:text-red-600 hover:bg-red-50'
-                                : 'text-gray-500 hover:text-green-600 hover:bg-green-50'
-                            }`}
-                            title={user.is_active ? 'Deactivate User' : 'Activate User'}
-                          >
-                            {updatingUser === user.id ? (
-                              <Spinner size="sm" />
-                            ) : user.is_active ? (
-                              <NoSymbolIcon className="h-5 w-5" />
-                            ) : (
-                              <CheckCircleIcon className="h-5 w-5" />
-                            )}
-                          </button>
-                        </div>
-                      </td>
+          <>
+            <Card className="overflow-hidden" padding={false}>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        User
+                      </th>
+                      <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Contact
+                      </th>
+                      <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Role
+                      </th>
+                      <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Organization
+                      </th>
+                      <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Status
+                      </th>
+                      <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Joined
+                      </th>
+                      <th scope="col" className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Actions
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            
-            {/* Table footer with record count */}
-            <div className="px-6 py-3 bg-gray-50 border-t border-gray-200 text-xs text-gray-500">
-              <div className="flex items-center justify-between">
-                <span>
-                  Showing {localUsers.length} of {localUsers.length} users
-                </span>
-                <span className="text-gray-400">
-                  Last updated: {new Date().toLocaleTimeString()}
-                </span>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {localUsers.map((user) => (
+                      <tr 
+                        key={user.id} 
+                        className="hover:bg-blue-50/50 transition-colors group"
+                      >
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center">
+                            <div className="h-10 w-10 flex-shrink-0">
+                              {user.avatar ? (
+                                <img
+                                  className="h-10 w-10 rounded-full ring-2 ring-blue-100 object-cover"
+                                  src={user.avatar}
+                                  alt={getDisplayName(user)}
+                                />
+                              ) : (
+                                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center ring-2 ring-blue-100">
+                                  <span className="text-white font-semibold text-sm">
+                                    {getAvatarInitial(user)}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                            <div className="ml-3">
+                              <div className="text-sm font-medium text-gray-900">
+                                {getDisplayName(user)}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                {getUsername(user)}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">{user.email || '-'}</div>
+                          {user.phone_number && (
+                            <div className="text-xs text-gray-500">{user.phone_number}</div>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`px-3 py-1 inline-flex text-xs font-semibold rounded-full border ${getRoleBadgeColor(user.role)}`}>
+                            {user.role_display || user.role || 'None'}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">
+                            {user.organization || '-'}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span
+                            className={`px-3 py-1 inline-flex text-xs font-semibold rounded-full border ${
+                              user.is_active
+                                ? 'bg-green-100 text-green-800 border-green-200'
+                                : 'bg-gray-100 text-gray-600 border-gray-200'
+                            }`}
+                          >
+                            <span className={`mr-1.5 h-2 w-2 rounded-full ${user.is_active ? 'bg-green-500' : 'bg-gray-400'}`} />
+                            {user.is_active ? 'Active' : 'Inactive'}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                          {formatDate(user.date_joined)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right">
+                          <div className="flex items-center justify-end gap-1">
+                            <button
+                              onClick={() => navigate(`/dashboard/users/${user.id}`)}
+                              className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                              title="View Details"
+                            >
+                              <EyeIcon className="h-5 w-5" />
+                            </button>
+                            
+                            <button
+                              onClick={() => navigate(`/dashboard/users/${user.id}/edit`)}
+                              className="p-2 text-gray-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all"
+                              title="Edit User"
+                            >
+                              <PencilIcon className="h-5 w-5" />
+                            </button>
+                            
+                            <button
+                              onClick={() => handleToggleStatus(user)}
+                              disabled={updatingUser === user.id}
+                              className={`p-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                                user.is_active
+                                  ? 'text-gray-500 hover:text-red-600 hover:bg-red-50'
+                                  : 'text-gray-500 hover:text-green-600 hover:bg-green-50'
+                              }`}
+                              title={user.is_active ? 'Deactivate User' : 'Activate User'}
+                            >
+                              {updatingUser === user.id ? (
+                                <Spinner size="sm" />
+                              ) : user.is_active ? (
+                                <NoSymbolIcon className="h-5 w-5" />
+                              ) : (
+                                <CheckCircleIcon className="h-5 w-5" />
+                              )}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            </div>
-          </Card>
+              
+              {/* Table footer with timestamp */}
+              <div className="px-6 py-3 bg-gray-50 border-t border-gray-200 text-xs text-gray-500">
+                <div className="flex items-center justify-between">
+                  <span>
+                    Last updated: {new Date().toLocaleTimeString()}
+                  </span>
+                  {totalItems > 0 && (
+                    <span className="text-gray-400">
+                      Page {currentPage} of {totalPages}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </Card>
+            
+            {/* Pagination Component */}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalItems={totalItems}
+              itemsPerPage={itemsPerPage}
+              onPageChange={handlePageChange}
+              isLoading={isLoading}
+            />
+          </>
         )}
       </div>
     </Layout>

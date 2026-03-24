@@ -5,9 +5,8 @@ import {
   FunnelIcon, 
   XMarkIcon,
   ChevronDownIcon,
-  CheckIcon 
+  ChevronUpIcon
 } from '@heroicons/react/24/outline';
-import Input from '../common/Input';
 import Button from '../common/Button';
 
 const UserFilter = ({ 
@@ -19,117 +18,97 @@ const UserFilter = ({
   onStatusChange,
   onClearFilters 
 }) => {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isOpen, setIsOpen] = useState(false); // Default closed
   const hasActiveFilters = searchTerm || roleFilter || statusFilter;
-
-  const handleClearFilters = () => {
-    if (onClearFilters) {
-      onClearFilters();
-    }
-  };
 
   const roleOptions = [
     { value: '', label: 'All Roles' },
-    { value: 'admin', label: 'Admin', color: 'bg-red-50 text-red-700' },
-    { value: 'teacher', label: 'Teacher', color: 'bg-blue-50 text-blue-700' },
-    { value: 'program_manager', label: 'Program Manager', color: 'bg-purple-50 text-purple-700' },
-    { value: 'donor', label: 'Donor', color: 'bg-green-50 text-green-700' },
+    { value: 'admin', label: 'Admin' },
+    { value: 'teacher', label: 'Teacher' },
+    { value: 'program_manager', label: 'Program Manager' },
+    { value: 'donor', label: 'Donor' },
   ];
 
   const statusOptions = [
     { value: '', label: 'All Status' },
-    { value: 'true', label: 'Active', color: 'bg-emerald-50 text-emerald-700' },
-    { value: 'false', label: 'Inactive', color: 'bg-amber-50 text-amber-700' },
+    { value: 'true', label: 'Active' },
+    { value: 'false', label: 'Inactive' },
   ];
 
-  const getRoleLabel = (value) => {
-    const role = roleOptions.find(r => r.value === value);
-    return role ? role.label : value;
-  };
-
-  const getStatusLabel = (value) => {
-    const status = statusOptions.find(s => s.value === value);
-    return status ? status.label : (value === 'true' ? 'Active' : 'Inactive');
-  };
-
   return (
-    <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-xl">
-      {/* Header */}
-      <div className="px-6 py-4 border-b border-gray-100">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-md">
-              <FunnelIcon className="h-5 w-5 text-white" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-gray-900">Filter Users</h3>
-              <p className="text-sm text-gray-500 mt-0.5">Narrow down your user list</p>
-            </div>
-          </div>
-          
-          <div className="flex items-center space-x-3">
-            {hasActiveFilters && (
-              <Button
-                variant="outline"
-                size="sm"
-                icon={XMarkIcon}
-                onClick={handleClearFilters}
-                className="hover:bg-red-50 hover:text-red-700 hover:border-red-300 transition-colors"
-              >
-                Clear All
-              </Button>
-            )}
-            <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <ChevronDownIcon 
-                className={`h-5 w-5 text-gray-500 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
-              />
-            </button>
-          </div>
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+      {/* Header - Always visible */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
+      >
+        <div className="flex items-center gap-2">
+          <FunnelIcon className="h-5 w-5 text-gray-500" />
+          <span className="font-medium text-gray-700">Filters</span>
+          {hasActiveFilters && (
+            <span className="px-2 py-0.5 text-xs bg-blue-100 text-blue-700 rounded-full">
+              {[searchTerm, roleFilter, statusFilter].filter(Boolean).length}
+            </span>
+          )}
         </div>
-      </div>
+        <div className="flex items-center gap-2">
+          {hasActiveFilters && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onClearFilters();
+              }}
+              className="text-xs text-gray-500 hover:text-red-600 px-2 py-1 rounded"
+            >
+              Clear
+            </button>
+          )}
+          {isOpen ? (
+            <ChevronUpIcon className="h-5 w-5 text-gray-400" />
+          ) : (
+            <ChevronDownIcon className="h-5 w-5 text-gray-400" />
+          )}
+        </div>
+      </button>
 
-      {/* Filter Content */}
-      <div className={`px-6 py-5 transition-all duration-300 ${isExpanded ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'}`}>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-          {/* Search Field */}
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-800">
-              <div className="flex items-center space-x-2">
-                <MagnifyingGlassIcon className="h-4 w-4" />
-                <span>Search Users</span>
-              </div>
+      {/* Filter Content - Collapsible */}
+      {isOpen && (
+        <div className="px-4 pb-4 pt-2 border-t border-gray-100 space-y-4">
+          {/* Search */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Search
             </label>
             <div className="relative">
-              <Input
+              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <input
                 type="text"
-                placeholder="Search by name, email, or username..."
+                placeholder="Name, email, or username..."
                 value={searchTerm}
                 onChange={(e) => onSearchChange(e.target.value)}
-                className="pl-10 pr-4 py-3 rounded-xl border-gray-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all"
+                className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
               />
-              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               {searchTerm && (
                 <button
                   onClick={() => onSearchChange('')}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 hover:bg-gray-100 rounded-full transition-colors"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2"
                 >
-                  <XMarkIcon className="h-4 w-4 text-gray-500" />
+                  <XMarkIcon className="h-4 w-4 text-gray-400 hover:text-gray-600" />
                 </button>
               )}
             </div>
           </div>
 
           {/* Role Filter */}
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-800">Role</label>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Role
+            </label>
             <div className="relative">
               <select
                 value={roleFilter}
                 onChange={(e) => onRoleChange(e.target.value)}
-                className="w-full pl-4 pr-10 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 appearance-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all cursor-pointer"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm appearance-none bg-white"
               >
                 {roleOptions.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -137,25 +116,20 @@ const UserFilter = ({
                   </option>
                 ))}
               </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3">
-                <ChevronDownIcon className="h-5 w-5 text-gray-400" />
-              </div>
-              {roleFilter && (
-                <div className="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                  <div className={`w-2 h-2 rounded-full ${roleOptions.find(r => r.value === roleFilter)?.color?.replace('bg-', 'bg-').split(' ')[0] || 'bg-blue-500'}`} />
-                </div>
-              )}
+              <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
             </div>
           </div>
 
           {/* Status Filter */}
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold text-gray-800">Status</label>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Status
+            </label>
             <div className="relative">
               <select
                 value={statusFilter}
                 onChange={(e) => onStatusChange(e.target.value)}
-                className="w-full pl-4 pr-10 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 appearance-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all cursor-pointer"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm appearance-none bg-white"
               >
                 {statusOptions.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -163,114 +137,44 @@ const UserFilter = ({
                   </option>
                 ))}
               </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3">
-                <ChevronDownIcon className="h-5 w-5 text-gray-400" />
-              </div>
-              {statusFilter && (
-                <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-                  {statusFilter === 'true' ? (
-                    <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                  ) : (
-                    <div className="w-2 h-2 rounded-full bg-amber-500" />
-                  )}
-                </div>
-              )}
+              <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
             </div>
           </div>
-        </div>
 
-        {/* Active Filter Tags */}
-        {hasActiveFilters && (
-          <div className="mt-6 pt-5 border-t border-gray-100">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-sm font-semibold text-gray-700">Active Filters:</span>
-              <span className="text-xs text-gray-500 px-2 py-1 bg-gray-100 rounded-full">
-                {[searchTerm, roleFilter, statusFilter].filter(Boolean).length} active
-              </span>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {searchTerm && (
-                <div className="group relative">
-                  <div className="flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 text-blue-800 font-medium text-sm shadow-sm transition-all hover:shadow-md hover:scale-[1.02]">
-                    <MagnifyingGlassIcon className="h-4 w-4 mr-2" />
-                    {searchTerm}
-                    <button
-                      onClick={() => onSearchChange('')}
-                      className="ml-3 p-0.5 hover:bg-blue-200 rounded-full transition-colors"
-                    >
-                      <XMarkIcon className="h-4 w-4" />
-                    </button>
-                  </div>
-                  <div className="absolute -top-2 -right-2 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center transform scale-0 group-hover:scale-100 transition-transform">
-                    <CheckIcon className="h-3 w-3 text-white" />
-                  </div>
-                </div>
-              )}
-              
-              {roleFilter && (
-                <div className="group relative">
-                  <div className="flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200 text-purple-800 font-medium text-sm shadow-sm transition-all hover:shadow-md hover:scale-[1.02]">
-                    <div className="w-2 h-2 rounded-full bg-purple-500 mr-2"></div>
-                    Role: {getRoleLabel(roleFilter)}
-                    <button
-                      onClick={() => onRoleChange('')}
-                      className="ml-3 p-0.5 hover:bg-purple-200 rounded-full transition-colors"
-                    >
-                      <XMarkIcon className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-              )}
-              
-              {statusFilter && (
-                <div className="group relative">
-                  <div className={`flex items-center px-4 py-2 rounded-full border font-medium text-sm shadow-sm transition-all hover:shadow-md hover:scale-[1.02] ${
-                    statusFilter === 'true' 
-                      ? 'bg-gradient-to-r from-emerald-50 to-emerald-100 border-emerald-200 text-emerald-800' 
-                      : 'bg-gradient-to-r from-amber-50 to-amber-100 border-amber-200 text-amber-800'
-                  }`}>
-                    <div className={`w-2 h-2 rounded-full mr-2 ${
-                      statusFilter === 'true' ? 'bg-emerald-500' : 'bg-amber-500'
-                    }`}></div>
-                    Status: {getStatusLabel(statusFilter)}
-                    <button
-                      onClick={() => onStatusChange('')}
-                      className={`ml-3 p-0.5 rounded-full transition-colors ${
-                        statusFilter === 'true' ? 'hover:bg-emerald-200' : 'hover:bg-amber-200'
-                      }`}
-                    >
-                      <XMarkIcon className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Results Preview */}
-        <div className="mt-6 flex items-center justify-between text-sm">
-          <div className="flex items-center space-x-2">
-            <div className="p-1.5 bg-gray-100 rounded-lg">
-              <FunnelIcon className="h-4 w-4 text-gray-600" />
-            </div>
-            <span className="text-gray-600">
-              {hasActiveFilters ? 'Filters applied' : 'No filters active'}
-            </span>
-          </div>
+          {/* Active Filters Tags */}
           {hasActiveFilters && (
-            <button
-              onClick={handleClearFilters}
-              className="text-blue-600 hover:text-blue-800 font-medium hover:underline transition-colors"
-            >
-              Reset all filters
-            </button>
+            <div className="pt-2 border-t border-gray-100">
+              <div className="flex flex-wrap gap-2">
+                {searchTerm && (
+                  <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-full">
+                    <MagnifyingGlassIcon className="h-3 w-3" />
+                    {searchTerm.length > 20 ? searchTerm.slice(0, 20) + '...' : searchTerm}
+                    <button onClick={() => onSearchChange('')} className="hover:text-gray-900">
+                      <XMarkIcon className="h-3 w-3" />
+                    </button>
+                  </span>
+                )}
+                {roleFilter && (
+                  <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-full">
+                    {roleOptions.find(r => r.value === roleFilter)?.label}
+                    <button onClick={() => onRoleChange('')} className="hover:text-gray-900">
+                      <XMarkIcon className="h-3 w-3" />
+                    </button>
+                  </span>
+                )}
+                {statusFilter && (
+                  <span className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-full">
+                    {statusOptions.find(s => s.value === statusFilter)?.label}
+                    <button onClick={() => onStatusChange('')} className="hover:text-gray-900">
+                      <XMarkIcon className="h-3 w-3" />
+                    </button>
+                  </span>
+                )}
+              </div>
+            </div>
           )}
         </div>
-      </div>
-
-      {/* Footer Glow Effect */}
-      <div className="h-1 bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
+      )}
     </div>
   );
 };

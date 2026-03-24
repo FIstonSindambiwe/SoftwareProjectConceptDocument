@@ -1,4 +1,4 @@
-// src/pages/dashboard/participants/RoomsListPage.jsx (updated with RoomStats)
+// src/pages/dashboard/participants/RoomsListPage.jsx
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -17,7 +17,8 @@ import {
   InformationCircleIcon,
   CalendarIcon,
   AcademicCapIcon,
-  ChartBarIcon,
+  MagnifyingGlassIcon,
+  ChevronDownIcon,
   EllipsisVerticalIcon,
   DocumentDuplicateIcon,
   UsersIcon
@@ -29,7 +30,6 @@ import Spinner from '../../../components/common/Spinner';
 import Badge from '../../../components/common/Badge';
 import ErrorBoundary from '../../../components/common/ErrorBoundary';
 import ActionModal from '../../../components/common/ActionModal';
-import RoomStats from '../../../components/rooms/RoomStats'; // Import the RoomStats component
 import useAuth from '../../../hooks/useAuth';
 import participantService from '../../../services/api/participantService';
 import programService from '../../../services/api/programService';
@@ -128,6 +128,7 @@ const RoomsListPage = () => {
   const handleDelete = async (room) => {
     if (room.current_enrollment_count > 0) {
       setError(`Cannot delete "${room.name}" - it has ${room.current_enrollment_count} participant(s) assigned.`);
+      setShowActionModal(false);
       return;
     }
     
@@ -209,6 +210,14 @@ const RoomsListPage = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const hasActiveFilters = () => {
+    return searchTerm || filterProgram || filterStatus;
+  };
+
+  const getActiveFilterCount = () => {
+    return [searchTerm, filterProgram, filterStatus].filter(Boolean).length;
+  };
+
   // Filter rooms by search term (client-side filtering for search only)
   const filteredRooms = useMemo(() => {
     if (!searchTerm) return rooms;
@@ -222,6 +231,14 @@ const RoomsListPage = () => {
   }, [rooms, searchTerm]);
 
   const canLoadMore = pagination.page < pagination.total_pages;
+
+  // Calculate room statistics
+  const totalRooms = allRooms.length;
+  const activeRooms = allRooms.filter(r => r.is_active).length;
+  const totalCapacity = allRooms.reduce((sum, r) => sum + (r.capacity || 0), 0);
+  const totalEnrolled = allRooms.reduce((sum, r) => sum + (r.current_enrollment_count || 0), 0);
+  const averageOccupancy = totalCapacity > 0 ? ((totalEnrolled / totalCapacity) * 100).toFixed(1) : 0;
+  const fullRooms = allRooms.filter(r => r.is_full).length;
 
   // Format date
   const formatDate = (dateString) => {
@@ -267,12 +284,45 @@ const RoomsListPage = () => {
             <div className="flex items-center gap-3">
               <Button
                 variant="outline"
+                onClick={handleRefresh}
+                disabled={refreshing}
+                className="flex items-center gap-2"
+              >
+                <ArrowPathIcon className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+                <span className="hidden sm:inline">Refresh</span>
+              </Button>
+              <Button
+                variant="primary"
                 onClick={() => navigate('/dashboard/participants/rooms/create')}
               >
                 <PlusIcon className="h-4 w-4 mr-2" />
                 <span className="hidden sm:inline">Create Room</span>
                 <span className="sm:hidden">Create</span>
               </Button>
+            </div>
+          </div>
+
+          {/* Room Statistics Card */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
+              <p className="text-2xl font-bold text-blue-600">{totalRooms}</p>
+              <p className="text-sm text-gray-600">Total Rooms</p>
+            </div>
+            <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
+              <p className="text-2xl font-bold text-green-600">{activeRooms}</p>
+              <p className="text-sm text-gray-600">Active Rooms</p>
+            </div>
+            <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
+              <p className="text-2xl font-bold text-purple-600">{totalCapacity}</p>
+              <p className="text-sm text-gray-600">Total Capacity</p>
+            </div>
+            <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
+              <p className="text-2xl font-bold text-indigo-600">{totalEnrolled}</p>
+              <p className="text-sm text-gray-600">Enrolled Participants</p>
+            </div>
+            <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
+              <p className="text-2xl font-bold text-orange-600">{averageOccupancy}%</p>
+              <p className="text-sm text-gray-600">Avg. Occupancy</p>
             </div>
           </div>
 
@@ -308,95 +358,114 @@ const RoomsListPage = () => {
             </div>
           )}
 
-          {/* Room Statistics - Using the RoomStats component */}
-          <RoomStats rooms={allRooms} />
-
-          {/* Filters */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <Button
-                variant={showFilters ? 'primary' : 'outline'}
-                size="sm"
-                onClick={() => setShowFilters(!showFilters)}
-              >
-                <FunnelIcon className="h-4 w-4 mr-2" />
-                Filters
-                {(filterProgram || filterStatus || searchTerm) && (
-                  <span className="ml-2 bg-blue-100 text-blue-600 text-xs px-2 py-0.5 rounded-full">
-                    Active
+          {/* Filters Section */}
+          <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <FunnelIcon className="h-5 w-5 text-gray-400" />
+                <span className="text-sm font-medium text-gray-700">Filters</span>
+                {hasActiveFilters() && (
+                  <span className="px-2 py-0.5 text-xs font-medium bg-blue-50 text-blue-700 rounded-full">
+                    {getActiveFilterCount()}
                   </span>
                 )}
-              </Button>
-              
-              {(filterProgram || filterStatus || searchTerm) && (
-                <Button variant="ghost" size="sm" onClick={handleClearFilters}>
-                  <XMarkIcon className="h-4 w-4 mr-2" />
-                  Clear All
-                </Button>
-              )}
-            </div>
+              </div>
+              <div className="flex items-center gap-2">
+                {hasActiveFilters() && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleClearFilters();
+                    }}
+                    className="text-xs text-gray-500 hover:text-red-600 px-2 py-1 rounded hover:bg-red-50"
+                  >
+                    Clear all
+                  </button>
+                )}
+                <ChevronDownIcon className={`h-5 w-5 text-gray-400 transition-transform duration-200 ${showFilters ? 'rotate-180' : ''}`} />
+              </div>
+            </button>
 
             {showFilters && (
-              <Card>
-                <div className="p-4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Search
-                      </label>
-                      <input
-                        type="text"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        placeholder="Search by name, program, teacher..."
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                      />
-                    </div>
-                    
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Filter by Program
-                      </label>
-                      <select
-                        value={filterProgram}
-                        onChange={(e) => {
-                          setFilterProgram(e.target.value);
-                          setPagination(prev => ({ ...prev, page: 1 }));
-                        }}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              <div className="px-4 pb-4 pt-2 border-t border-gray-100 space-y-4">
+                {/* Search */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Search
+                  </label>
+                  <div className="relative">
+                    <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <input
+                      type="text"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      placeholder="Search by name, program, teacher..."
+                      className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    />
+                    {searchTerm && (
+                      <button
+                        onClick={() => setSearchTerm('')}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2"
                       >
-                        <option value="">All Programs</option>
-                        {programs.map(p => (
-                          <option key={p.id} value={p.id}>{p.name}</option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Status
-                      </label>
-                      <select
-                        value={filterStatus}
-                        onChange={(e) => {
-                          setFilterStatus(e.target.value);
-                          setPagination(prev => ({ ...prev, page: 1 }));
-                        }}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                      >
-                        <option value="">All Status</option>
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
-                      </select>
-                    </div>
+                        <XMarkIcon className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                      </button>
+                    )}
                   </div>
                 </div>
-              </Card>
+
+                {/* Program Filter */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Filter by Program
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={filterProgram}
+                      onChange={(e) => {
+                        setFilterProgram(e.target.value);
+                        setPagination(prev => ({ ...prev, page: 1 }));
+                      }}
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm appearance-none bg-white"
+                    >
+                      <option value="">All Programs</option>
+                      {programs.map(p => (
+                        <option key={p.id} value={p.id}>{p.name}</option>
+                      ))}
+                    </select>
+                    <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                  </div>
+                </div>
+
+                {/* Status Filter */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Status
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={filterStatus}
+                      onChange={(e) => {
+                        setFilterStatus(e.target.value);
+                        setPagination(prev => ({ ...prev, page: 1 }));
+                      }}
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm appearance-none bg-white"
+                    >
+                      <option value="">All Status</option>
+                      <option value="active">Active</option>
+                      <option value="inactive">Inactive</option>
+                    </select>
+                    <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                  </div>
+                </div>
+              </div>
             )}
           </div>
 
           {/* Results Count */}
-          <Card className="flex items-center justify-between px-6 py-3">
+          <div className="flex items-center justify-between bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200">
             <div className="text-sm text-gray-600">
               {loading ? (
                 <span className="flex items-center gap-2">
@@ -408,8 +477,8 @@ const RoomsListPage = () => {
                   Showing <span className="font-semibold text-gray-900">{filteredRooms.length}</span> of{' '}
                   <span className="font-semibold text-gray-900">{pagination.total_count}</span> room
                   {pagination.total_count !== 1 ? 's' : ''}
-                  {(searchTerm || filterProgram || filterStatus) && (
-                    <span className="text-gray-400"> (filtered)</span>
+                  {hasActiveFilters() && (
+                    <span className="text-gray-400 ml-1">(filtered)</span>
                   )}
                 </span>
               )}
@@ -417,7 +486,7 @@ const RoomsListPage = () => {
             <div className="text-xs text-gray-500">
               Page {pagination.page} of {pagination.total_pages || 1}
             </div>
-          </Card>
+          </div>
 
           {/* Rooms Table */}
           {filteredRooms.length === 0 ? (
@@ -428,11 +497,11 @@ const RoomsListPage = () => {
                 </div>
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No rooms found</h3>
                 <p className="text-sm text-gray-500 mb-6">
-                  {searchTerm || filterProgram || filterStatus
+                  {hasActiveFilters()
                     ? 'Try adjusting your filters to find what you\'re looking for.'
                     : 'Create your first room to get started.'}
                 </p>
-                {!searchTerm && !filterProgram && !filterStatus ? (
+                {!hasActiveFilters() ? (
                   canEdit && (
                     <Button onClick={() => navigate('/dashboard/participants/rooms/create')}>
                       <PlusIcon className="h-4 w-4 mr-2" />

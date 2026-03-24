@@ -10,7 +10,10 @@ import {
   XCircleIcon,
   FlagIcon,
   CalendarIcon,
-  ExclamationTriangleIcon,
+  MagnifyingGlassIcon,
+  FunnelIcon,
+  ChevronDownIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline';
 import { toast } from 'react-hot-toast';
 import Layout from '../../../components/layout/Layout';
@@ -18,8 +21,6 @@ import Button from '../../../components/common/Button';
 import Spinner from '../../../components/common/Spinner';
 import Modal from '../../../components/common/Modal';
 import Badge from '../../../components/common/Badge';
-import MilestoneStatistics from '../../../components/milestones/MilestoneStatistics';
-import MilestoneFilters from '../../../components/milestones/MilestoneFilters';
 import programService from '../../../services/api/programService';
 
 const MilestonesListPage = () => {
@@ -30,6 +31,7 @@ const MilestonesListPage = () => {
   const [programFilter, setProgramFilter] = useState('');
   const [completionFilter, setCompletionFilter] = useState('');
   const [overdueFilter, setOverdueFilter] = useState('');
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   
   // Modal states
   const [showCompleteModal, setShowCompleteModal] = useState(false);
@@ -156,6 +158,30 @@ const MilestonesListPage = () => {
     return <Badge variant="warning">Pending</Badge>;
   };
 
+  const handleClearFilters = () => {
+    setSearchTerm('');
+    setProgramFilter('');
+    setCompletionFilter('');
+    setOverdueFilter('');
+  };
+
+  const hasActiveFilters = () => {
+    return searchTerm || programFilter || completionFilter || overdueFilter;
+  };
+
+  const getActiveFilterCount = () => {
+    return [searchTerm, programFilter, completionFilter, overdueFilter].filter(Boolean).length;
+  };
+
+  // Get unique programs for filter
+  const uniquePrograms = [...new Set(milestones.map(m => m.program?.name || m.program_name).filter(Boolean))].sort();
+
+  // Calculate statistics
+  const totalMilestones = milestones.length;
+  const completedMilestones = milestones.filter(m => m.is_completed).length;
+  const pendingMilestones = milestones.filter(m => !m.is_completed && !m.is_overdue).length;
+  const overdueMilestones = milestones.filter(m => m.is_overdue).length;
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -177,20 +203,146 @@ const MilestonesListPage = () => {
           </Button>
         </div>
 
-        {/* Statistics */}
-        <MilestoneStatistics milestones={milestones} />
+        {/* Simple Statistics Card */}
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+          <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
+            <p className="text-2xl font-bold text-blue-600">{totalMilestones}</p>
+            <p className="text-sm text-gray-600">Total Milestones</p>
+          </div>
+          <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
+            <p className="text-2xl font-bold text-green-600">{completedMilestones}</p>
+            <p className="text-sm text-gray-600">Completed</p>
+          </div>
+          <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
+            <p className="text-2xl font-bold text-yellow-600">{pendingMilestones}</p>
+            <p className="text-sm text-gray-600">Pending</p>
+          </div>
+          <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
+            <p className="text-2xl font-bold text-red-600">{overdueMilestones}</p>
+            <p className="text-sm text-gray-600">Overdue</p>
+          </div>
+        </div>
 
-        {/* Filters */}
-        <MilestoneFilters
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          programFilter={programFilter}
-          setProgramFilter={setProgramFilter}
-          completionFilter={completionFilter}
-          setCompletionFilter={setCompletionFilter}
-          overdueFilter={overdueFilter}
-          setOverdueFilter={setOverdueFilter}
-        />
+        {/* Filters Section */}
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          <button
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+            className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <FunnelIcon className="h-5 w-5 text-gray-400" />
+              <span className="text-sm font-medium text-gray-700">Filters</span>
+              {hasActiveFilters() && (
+                <span className="px-2 py-0.5 text-xs font-medium bg-blue-50 text-blue-700 rounded-full">
+                  {getActiveFilterCount()}
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              {hasActiveFilters() && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleClearFilters();
+                  }}
+                  className="text-xs text-gray-500 hover:text-red-600 px-2 py-1 rounded hover:bg-red-50"
+                >
+                  Clear all
+                </button>
+              )}
+              <ChevronDownIcon className={`h-5 w-5 text-gray-400 transition-transform duration-200 ${isFilterOpen ? 'rotate-180' : ''}`} />
+            </div>
+          </button>
+
+          {isFilterOpen && (
+            <div className="px-4 pb-4 pt-2 border-t border-gray-100 space-y-4">
+              {/* Search */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Search
+                </label>
+                <div className="relative">
+                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search by title or description..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  />
+                  {searchTerm && (
+                    <button
+                      onClick={() => setSearchTerm('')}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                    >
+                      <XMarkIcon className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Program Filter */}
+              {uniquePrograms.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Program
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={programFilter}
+                      onChange={(e) => setProgramFilter(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm appearance-none bg-white"
+                    >
+                      <option value="">All Programs</option>
+                      {uniquePrograms.map(program => (
+                        <option key={program} value={program}>{program}</option>
+                      ))}
+                    </select>
+                    <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                  </div>
+                </div>
+              )}
+
+              {/* Completion Filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Completion Status
+                </label>
+                <div className="relative">
+                  <select
+                    value={completionFilter}
+                    onChange={(e) => setCompletionFilter(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm appearance-none bg-white"
+                  >
+                    <option value="">All</option>
+                    <option value="true">Completed</option>
+                    <option value="false">Not Completed</option>
+                  </select>
+                  <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                </div>
+              </div>
+
+              {/* Overdue Filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Overdue Status
+                </label>
+                <div className="relative">
+                  <select
+                    value={overdueFilter}
+                    onChange={(e) => setOverdueFilter(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm appearance-none bg-white"
+                  >
+                    <option value="">All</option>
+                    <option value="true">Overdue</option>
+                    <option value="false">Not Overdue</option>
+                  </select>
+                  <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Results Count */}
         <div className="flex items-center justify-between bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200">
@@ -203,6 +355,7 @@ const MilestonesListPage = () => {
             ) : (
               <span>
                 Showing <span className="font-semibold text-gray-900">{milestones.length}</span> milestone{milestones.length !== 1 ? 's' : ''}
+                {hasActiveFilters() && <span className="text-gray-400 ml-1">(filtered)</span>}
               </span>
             )}
           </div>
@@ -220,11 +373,11 @@ const MilestonesListPage = () => {
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">No milestones found</h3>
             <p className="text-gray-600 mb-6 max-w-md mx-auto">
-              {searchTerm || programFilter || completionFilter || overdueFilter
+              {hasActiveFilters()
                 ? 'Try adjusting your filters to find what you\'re looking for.'
                 : 'Get started by creating your first milestone.'}
             </p>
-            {!searchTerm && !programFilter && !completionFilter && !overdueFilter && (
+            {!hasActiveFilters() && (
               <Button
                 variant="primary"
                 icon={PlusIcon}
@@ -258,7 +411,7 @@ const MilestonesListPage = () => {
                     <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Actions
                     </th>
-                  </tr>
+                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {milestones.map((milestone, index) => (

@@ -11,19 +11,18 @@ import {
   CheckCircleIcon,
   ClockIcon,
   XCircleIcon,
-  TrashIcon,
   EllipsisVerticalIcon,
-  ArchiveBoxIcon,
-  ArrowPathIcon
+  ArrowPathIcon,
+  MagnifyingGlassIcon,
+  FunnelIcon,
+  ChevronDownIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline';
 import { toast } from 'react-hot-toast';
 import Layout from '../../../components/layout/Layout';
 import Button from '../../../components/common/Button';
 import Spinner from '../../../components/common/Spinner';
 import Dropdown from '../../../components/common/Dropdown';
-import Modal from '../../../components/common/Modal';
-import ProgramFilters from '../../../components/programs/ProgramFilters';
-import ProgramStatistics from '../../../components/programs/ProgramStatistics';
 import programService from '../../../services/api/programService';
 
 const ProgramsListPage = () => {
@@ -35,6 +34,7 @@ const ProgramsListPage = () => {
   const [locationFilter, setLocationFilter] = useState('');
   const [activeFilter, setActiveFilter] = useState('');
   const [ongoingFilter, setOngoingFilter] = useState('');
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   
   // Modal states
   const [showToggleModal, setShowToggleModal] = useState(false);
@@ -66,7 +66,6 @@ const ProgramsListPage = () => {
 
       const data = await programService.getPrograms(params);
       
-      // Handle both paginated and non-paginated responses
       let programsList = [];
       if (data && data.results && Array.isArray(data.results)) {
         programsList = data.results;
@@ -122,7 +121,6 @@ const ProgramsListPage = () => {
       
       toast.success(response.message);
       
-      // Update the program in the list
       setPrograms(programs.map(p => 
         p.id === program.id ? response.program : p
       ));
@@ -148,7 +146,6 @@ const ProgramsListPage = () => {
       
       toast.success(response.message);
       
-      // Update the program in the list
       setPrograms(programs.map(p => 
         p.id === selectedProgram.id ? response.program : p
       ));
@@ -176,7 +173,6 @@ const ProgramsListPage = () => {
       
       toast.success('Program deleted successfully');
       
-      // Remove the program from the list
       setPrograms(programs.filter(p => p.id !== selectedProgram.id));
       
       setShowDeleteModal(false);
@@ -193,13 +189,10 @@ const ProgramsListPage = () => {
 
     setIsUpdating(true);
     try {
-      // Since there's no archive endpoint, we can toggle active status or change status
-      // Let's use toggle active status as an "archive" action
       const response = await programService.toggleProgramActive(program.id);
       
       toast.success(response.message || 'Program archived successfully');
       
-      // Update the program in the list
       setPrograms(programs.map(p => 
         p.id === program.id ? response.program : p
       ));
@@ -227,6 +220,25 @@ const ProgramsListPage = () => {
     loadPrograms();
   };
 
+  const handleClearFilters = () => {
+    setSearchTerm('');
+    setStatusFilter('');
+    setLocationFilter('');
+    setActiveFilter('');
+    setOngoingFilter('');
+  };
+
+  const hasActiveFilters = () => {
+    return searchTerm || statusFilter || locationFilter || activeFilter || ongoingFilter;
+  };
+
+  const getActiveFilterCount = () => {
+    return [searchTerm, statusFilter, locationFilter, activeFilter, ongoingFilter].filter(Boolean).length;
+  };
+
+  // Get unique locations for filter
+  const uniqueLocations = [...new Set(programs.map(p => p.location_name).filter(Boolean))].sort();
+
   const ActionMenu = ({ program }) => {
     const menuItems = [
       {
@@ -243,21 +255,7 @@ const ProgramsListPage = () => {
       },
       {
         divider: true
-      },
-      // {
-      //   label: program.is_active ? 'Deactivate Program' : 'Activate Program',
-      //   icon: program.is_active ? 
-      //     <XCircleIcon className="h-4 w-4 mr-2" /> : 
-      //     <CheckCircleIcon className="h-4 w-4 mr-2" />,
-      //   onClick: () => handleOpenToggleModal(program),
-      //   className: program.is_active ? 'text-orange-600 hover:bg-orange-50' : 'text-green-600 hover:bg-green-50'
-      // },
-      // {
-      //   label: 'Delete Program',
-      //   icon: <TrashIcon className="h-4 w-4 mr-2" />,
-      //   onClick: () => handleOpenDeleteModal(program),
-      //   className: 'text-red-600 hover:bg-red-50'
-      // }
+      }
     ];
 
     return (
@@ -275,6 +273,12 @@ const ProgramsListPage = () => {
       />
     );
   };
+
+  // Calculate statistics
+  const totalPrograms = programs.length;
+  const activePrograms = programs.filter(p => p.status === 'active').length;
+  const completedPrograms = programs.filter(p => p.status === 'completed').length;
+  const totalParticipants = programs.reduce((sum, p) => sum + (p.enrollment_count || 0), 0);
 
   return (
     <Layout>
@@ -307,22 +311,167 @@ const ProgramsListPage = () => {
           </div>
         </div>
 
-        {/* Statistics */}
-        <ProgramStatistics programs={programs} />
+        {/* Simple Statistics Card */}
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+          <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
+            <p className="text-2xl font-bold text-blue-600">{totalPrograms}</p>
+            <p className="text-sm text-gray-600">Total Programs</p>
+          </div>
+          <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
+            <p className="text-2xl font-bold text-green-600">{activePrograms}</p>
+            <p className="text-sm text-gray-600">Active Programs</p>
+          </div>
+          <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
+            <p className="text-2xl font-bold text-gray-600">{completedPrograms}</p>
+            <p className="text-sm text-gray-600">Completed</p>
+          </div>
+          <div className="bg-white rounded-lg border border-gray-200 p-4 text-center">
+            <p className="text-2xl font-bold text-purple-600">{totalParticipants}</p>
+            <p className="text-sm text-gray-600">Total Participants</p>
+          </div>
+        </div>
 
-        {/* Filters */}
-        <ProgramFilters
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          statusFilter={statusFilter}
-          setStatusFilter={setStatusFilter}
-          locationFilter={locationFilter}
-          setLocationFilter={setLocationFilter}
-          activeFilter={activeFilter}
-          setActiveFilter={setActiveFilter}
-          ongoingFilter={ongoingFilter}
-          setOngoingFilter={setOngoingFilter}
-        />
+        {/* Filters Section */}
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          <button
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+            className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <FunnelIcon className="h-5 w-5 text-gray-400" />
+              <span className="text-sm font-medium text-gray-700">Filters</span>
+              {hasActiveFilters() && (
+                <span className="px-2 py-0.5 text-xs font-medium bg-blue-50 text-blue-700 rounded-full">
+                  {getActiveFilterCount()}
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              {hasActiveFilters() && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleClearFilters();
+                  }}
+                  className="text-xs text-gray-500 hover:text-red-600 px-2 py-1 rounded hover:bg-red-50"
+                >
+                  Clear all
+                </button>
+              )}
+              <ChevronDownIcon className={`h-5 w-5 text-gray-400 transition-transform duration-200 ${isFilterOpen ? 'rotate-180' : ''}`} />
+            </div>
+          </button>
+
+          {isFilterOpen && (
+            <div className="px-4 pb-4 pt-2 border-t border-gray-100 space-y-4">
+              {/* Search */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Search
+                </label>
+                <div className="relative">
+                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search by name..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  />
+                  {searchTerm && (
+                    <button
+                      onClick={() => setSearchTerm('')}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                    >
+                      <XMarkIcon className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Status Filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Status
+                </label>
+                <div className="relative">
+                  <select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm appearance-none bg-white"
+                  >
+                    <option value="">All Status</option>
+                    {statusOptions.map(option => (
+                      <option key={option.value} value={option.value}>{option.label}</option>
+                    ))}
+                  </select>
+                  <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                </div>
+              </div>
+
+              {/* Location Filter */}
+              {uniqueLocations.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Location
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={locationFilter}
+                      onChange={(e) => setLocationFilter(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm appearance-none bg-white"
+                    >
+                      <option value="">All Locations</option>
+                      {uniqueLocations.map(location => (
+                        <option key={location} value={location}>{location}</option>
+                      ))}
+                    </select>
+                    <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                  </div>
+                </div>
+              )}
+
+              {/* Active Filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Active Status
+                </label>
+                <div className="relative">
+                  <select
+                    value={activeFilter}
+                    onChange={(e) => setActiveFilter(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm appearance-none bg-white"
+                  >
+                    <option value="">All</option>
+                    <option value="true">Active</option>
+                    <option value="false">Inactive</option>
+                  </select>
+                  <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                </div>
+              </div>
+
+              {/* Ongoing Filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Timeline
+                </label>
+                <div className="relative">
+                  <select
+                    value={ongoingFilter}
+                    onChange={(e) => setOngoingFilter(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm appearance-none bg-white"
+                  >
+                    <option value="">All Programs</option>
+                    <option value="ongoing">Ongoing</option>
+                    <option value="upcoming">Upcoming</option>
+                    <option value="past">Past</option>
+                  </select>
+                  <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Results Count */}
         <div className="flex items-center justify-between bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200">
@@ -335,6 +484,7 @@ const ProgramsListPage = () => {
             ) : (
               <span>
                 Showing <span className="font-semibold text-gray-900">{programs.length}</span> program{programs.length !== 1 ? 's' : ''}
+                {hasActiveFilters() && <span className="text-gray-400 ml-1">(filtered)</span>}
               </span>
             )}
           </div>
@@ -364,11 +514,11 @@ const ProgramsListPage = () => {
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">No programs found</h3>
             <p className="text-gray-600 mb-6 max-w-md mx-auto">
-              {searchTerm || statusFilter || locationFilter || activeFilter || ongoingFilter
+              {hasActiveFilters()
                 ? 'Try adjusting your filters to find what you\'re looking for.'
                 : 'Get started by creating your first program.'}
             </p>
-            {!searchTerm && !statusFilter && !locationFilter && !activeFilter && !ongoingFilter && (
+            {!hasActiveFilters() && (
               <Button
                 variant="primary"
                 onClick={() => navigate('/dashboard/programs/create')}
@@ -402,7 +552,7 @@ const ProgramsListPage = () => {
                     <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Actions
                     </th>
-                  </tr>
+                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {programs.map((program, index) => (
@@ -435,7 +585,7 @@ const ProgramsListPage = () => {
                             )}
                           </div>
                         </div>
-                      </td>
+                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center text-sm text-gray-900">
                           <MapPinIcon className="h-4 w-4 mr-2 text-gray-400 flex-shrink-0" />
@@ -446,7 +596,7 @@ const ProgramsListPage = () => {
                             )}
                           </div>
                         </div>
-                      </td>
+                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center text-sm text-gray-900">
                           <CalendarIcon className="h-4 w-4 mr-2 text-gray-400 flex-shrink-0" />
@@ -459,7 +609,7 @@ const ProgramsListPage = () => {
                             )}
                           </div>
                         </div>
-                      </td>
+                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center text-sm">
                           <UsersIcon className="h-4 w-4 mr-2 text-gray-400 flex-shrink-0" />
@@ -471,7 +621,7 @@ const ProgramsListPage = () => {
                             <span className="text-gray-600">{program.target_participants || 'N/A'}</span>
                           </div>
                         </div>
-                      </td>
+                       </td>
                       <td className="px-6 py-4">
                         <select
                           value={program.status}
@@ -485,12 +635,12 @@ const ProgramsListPage = () => {
                             </option>
                           ))}
                         </select>
-                      </td>
+                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center justify-center">
                           <ActionMenu program={program} />
                         </div>
-                      </td>
+                       </td>
                     </tr>
                   ))}
                 </tbody>
@@ -498,105 +648,6 @@ const ProgramsListPage = () => {
             </div>
           </div>
         )}
-
-        {/* Toggle Active/Inactive Modal
-        <Modal
-          isOpen={showToggleModal}
-          onClose={() => setShowToggleModal(false)}
-          title={`${selectedProgram?.is_active ? 'Deactivate' : 'Activate'} Program`}
-        >
-          <div className="space-y-4">
-            <p className="text-sm text-gray-600">
-              {selectedProgram?.is_active ? (
-                <>
-                  Are you sure you want to deactivate <strong className="font-semibold">{selectedProgram?.name}</strong>?
-                  <br /><br />
-                  <span className="text-amber-600 font-medium">
-                    This will prevent new enrollments and hide the program from active listings.
-                  </span>
-                </>
-              ) : (
-                <>
-                  Are you sure you want to activate <strong className="font-semibold">{selectedProgram?.name}</strong>?
-                  <br /><br />
-                  <span className="text-green-600 font-medium">
-                    This will make the program visible and allow new enrollments.
-                  </span>
-                </>
-              )}
-            </p>
-
-            <div className="flex justify-end gap-3 pt-4">
-              <Button
-                variant="outline"
-                onClick={() => setShowToggleModal(false)}
-                disabled={isUpdating}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant={selectedProgram?.is_active ? 'warning' : 'primary'}
-                onClick={handleToggleActive}
-                isLoading={isUpdating}
-              >
-                {selectedProgram?.is_active ? 'Deactivate' : 'Activate'}
-              </Button>
-            </div>
-          </div>
-        </Modal> */}
-
-        {/* Delete Program Modal */}
-        {/* <Modal
-          isOpen={showDeleteModal}
-          onClose={() => setShowDeleteModal(false)}
-          title="Delete Program"
-          danger
-        >
-          <div className="space-y-4">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-red-800">Warning: Destructive Action</h3>
-                  <div className="mt-2 text-sm text-red-700">
-                    <p>This action cannot be undone. All program data including:</p>
-                    <ul className="list-disc pl-5 mt-1">
-                      <li>Program details</li>
-                      <li>Participant enrollments</li>
-                      <li>Milestones and progress</li>
-                    </ul>
-                    <p className="mt-2 font-bold">will be permanently deleted.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <p className="text-sm text-gray-600">
-              Are you sure you want to delete <strong className="font-semibold">{selectedProgram?.name}</strong>?
-            </p>
-
-            <div className="flex justify-end gap-3 pt-4">
-              <Button
-                variant="outline"
-                onClick={() => setShowDeleteModal(false)}
-                disabled={isUpdating}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="danger"
-                onClick={handleDeleteProgram}
-                isLoading={isUpdating}
-              >
-                Delete Program
-              </Button>
-            </div>
-          </div>
-        </Modal> */}
       </div>
     </Layout>
   );

@@ -10,6 +10,10 @@ import {
   XCircleIcon,
   ArrowPathIcon,
   BuildingOfficeIcon,
+  MagnifyingGlassIcon,
+  FunnelIcon,
+  XMarkIcon,
+  ChevronDownIcon
 } from '@heroicons/react/24/outline';
 import { toast } from 'react-hot-toast';
 import Layout from '../../../components/layout/Layout';
@@ -17,8 +21,6 @@ import Button from '../../../components/common/Button';
 import Card from '../../../components/common/Card';
 import Spinner from '../../../components/common/Spinner';
 import Badge from '../../../components/common/Badge';
-import LocationStatistics from '../../../components/locations/LocationStatistics';
-import LocationFilters from '../../../components/locations/LocationFilters';
 import programService from '../../../services/api/programService';
 
 const LocationsListPage = () => {
@@ -29,6 +31,7 @@ const LocationsListPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [countryFilter, setCountryFilter] = useState('');
   const [activeFilter, setActiveFilter] = useState('');
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   useEffect(() => {
     loadLocations();
@@ -76,7 +79,6 @@ const LocationsListPage = () => {
         `${location.name} ${updatedLocation.is_active ? 'activated' : 'deactivated'} successfully`
       );
       
-      // Update the location in state
       setLocations(locations.map(loc => 
         loc.id === location.id ? updatedLocation : loc
       ));
@@ -94,6 +96,10 @@ const LocationsListPage = () => {
 
   const hasActiveFilters = () => {
     return searchTerm || countryFilter || activeFilter;
+  };
+
+  const getActiveFilterCount = () => {
+    return [searchTerm, countryFilter, activeFilter].filter(Boolean).length;
   };
 
   // Get unique countries for filter
@@ -146,20 +152,129 @@ const LocationsListPage = () => {
           </div>
         </div>
 
-        {/* Statistics */}
-        <LocationStatistics locations={locations} />
+        {/* Simple Statistics Card */}
+        {/* <Card>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="text-center p-3">
+              <p className="text-2xl font-bold text-indigo-600">{locations.length}</p>
+              <p className="text-sm text-gray-600">Total Locations</p>
+            </div>
+            <div className="text-center p-3">
+              <p className="text-2xl font-bold text-green-600">
+                {locations.filter(l => l.is_active).length}
+              </p>
+              <p className="text-sm text-gray-600">Active Locations</p>
+            </div>
+            <div className="text-center p-3">
+              <p className="text-2xl font-bold text-gray-600">
+                {[...new Set(locations.map(l => l.country).filter(Boolean))].length}
+              </p>
+              <p className="text-sm text-gray-600">Countries</p>
+            </div>
+          </div>
+        </Card> */}
 
-        {/* Filters */}
-        <LocationFilters
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          countryFilter={countryFilter}
-          setCountryFilter={setCountryFilter}
-          activeFilter={activeFilter}
-          setActiveFilter={setActiveFilter}
-          countries={uniqueCountries}
-          onClearFilters={handleClearFilters}
-        />
+        {/* Filters Section */}
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          {/* Filter Header */}
+          <button
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+            className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <FunnelIcon className="h-5 w-5 text-gray-400" />
+              <span className="text-sm font-medium text-gray-700">Filters</span>
+              {hasActiveFilters() && (
+                <span className="px-2 py-0.5 text-xs font-medium bg-blue-50 text-blue-700 rounded-full">
+                  {getActiveFilterCount()}
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              {hasActiveFilters() && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleClearFilters();
+                  }}
+                  className="text-xs text-gray-500 hover:text-red-600 px-2 py-1 rounded hover:bg-red-50"
+                >
+                  Clear all
+                </button>
+              )}
+              <ChevronDownIcon className={`h-5 w-5 text-gray-400 transition-transform duration-200 ${isFilterOpen ? 'rotate-180' : ''}`} />
+            </div>
+          </button>
+
+          {/* Filter Content */}
+          {isFilterOpen && (
+            <div className="px-4 pb-4 pt-2 border-t border-gray-100 space-y-4">
+              {/* Search */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Search
+                </label>
+                <div className="relative">
+                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search by name, city, or country..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                  />
+                  {searchTerm && (
+                    <button
+                      onClick={() => setSearchTerm('')}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                    >
+                      <XMarkIcon className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Country Filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Country
+                </label>
+                <div className="relative">
+                  <select
+                    value={countryFilter}
+                    onChange={(e) => setCountryFilter(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm appearance-none bg-white"
+                  >
+                    <option value="">All Countries</option>
+                    {uniqueCountries.map(country => (
+                      <option key={country} value={country}>{country}</option>
+                    ))}
+                  </select>
+                  <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                </div>
+              </div>
+
+              {/* Status Filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Status
+                </label>
+                <div className="relative">
+                  <select
+                    value={activeFilter}
+                    onChange={(e) => setActiveFilter(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm appearance-none bg-white"
+                  >
+                    <option value="">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                  </select>
+                  <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Results Count */}
         <Card className="flex items-center justify-between px-6 py-3">
@@ -317,7 +432,6 @@ const LocationsListPage = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right">
                           <div className="flex items-center justify-end gap-1">
-                            {/* View button - icon only */}
                             <button
                               onClick={() => navigate(`/dashboard/locations/${location.id}`)}
                               className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
@@ -326,7 +440,6 @@ const LocationsListPage = () => {
                               <EyeIcon className="h-5 w-5" />
                             </button>
                             
-                            {/* Edit button - icon only */}
                             <button
                               onClick={() => navigate(`/dashboard/locations/${location.id}/edit`)}
                               className="p-2 text-gray-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all"
@@ -335,7 +448,6 @@ const LocationsListPage = () => {
                               <PencilIcon className="h-5 w-5" />
                             </button>
                             
-                            {/* Toggle Status button - icon only */}
                             <button
                               onClick={() => handleToggleActive(location)}
                               className={`p-2 rounded-lg transition-all ${
@@ -360,7 +472,6 @@ const LocationsListPage = () => {
               </table>
             </div>
             
-            {/* Table footer with record count */}
             <div className="px-6 py-3 bg-gray-50 border-t border-gray-200 text-xs text-gray-500">
               <div className="flex items-center justify-between">
                 <span>
