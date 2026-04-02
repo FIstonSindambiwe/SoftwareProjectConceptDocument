@@ -181,7 +181,7 @@ const AssessmentsListPage = () => {
                 onClick={() => navigate('/dashboard/assessments/create')}
               >
                 <PlusIcon className="h-4 w-4 mr-2" />
-                New Assessment
+                Recording Assessment
               </Button>
             </div>
           )}

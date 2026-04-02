@@ -58,7 +58,7 @@ const GeneralReport = () => {
 
   // Check access permissions (Admin, Program Manager)
   // Be defensive - check if user exists first
-  const canAccessReports = user && ['admin', 'program_manager'].includes(user.role);
+  const canAccessReports = user && ['admin', 'program_manager', 'teacher','donor'].includes(user.role);
 
   useEffect(() => {
     // Wait for user to load

@@ -10,6 +10,7 @@ import {
   ClipboardDocumentCheckIcon,
   ChartBarIcon,
   DocumentTextIcon,
+  BuildingLibraryIcon,
   
   // Module Icons
   MapPinIcon,
@@ -20,7 +21,7 @@ import {
   ListBulletIcon,
   BeakerIcon,
   PresentationChartLineIcon,
-  BuildingOfficeIcon, // NEW - For Rooms
+  BuildingOfficeIcon,
   
   // UI Icons
   XMarkIcon,
@@ -40,6 +41,7 @@ const Sidebar = ({ isOpen, onClose }) => {
     youthManagement: false,
     attendance: false,
     assessments: false,
+    schools: false,
     reports: false
   });
 
@@ -178,6 +180,23 @@ const Sidebar = ({ isOpen, onClose }) => {
         },
       ]
     },
+
+    // ✅ SCHOOLS - Above Reports
+    { 
+      name: 'Schools', 
+      icon: BuildingLibraryIcon, 
+      roles: ['admin', 'program_manager', 'teacher', 'staff'],
+      isDropdown: true,
+      dropdownKey: 'schools',
+      children: [
+        { 
+          name: 'Schools List', 
+          href: '/dashboard/schools',
+          icon: BuildingLibraryIcon, 
+          roles: ['admin', 'program_manager', 'teacher', 'staff'] 
+        },
+      ]
+    },
     
     { 
       name: 'Reports', 
@@ -190,7 +209,7 @@ const Sidebar = ({ isOpen, onClose }) => {
           name: 'General Report', 
           href: '/dashboard/reports/general',
           icon: PresentationChartLineIcon, 
-          roles: ['admin', 'program_manager']
+          roles: ['admin', 'program_manager', 'teacher', 'donor']
         },
       ]
     },
@@ -221,7 +240,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         {/* Dropdown Header */}
         <button
           onClick={() => toggleDropdown(item.dropdownKey)}
-          className="w-full flex items-center justify-between gap-4 px-4 py-3 text-sm font-medium rounded-lg transition-all text-slate-300 hover:bg-slate-700 hover:text-white hover:shadow-md"
+          className="w-full flex items-center justify-between gap-4 px-4 py-3 text-sm font-medium rounded-lg transition-all text-gray-300 hover:bg-gray-700 hover:text-white hover:shadow-md"
         >
           <div className="flex items-center gap-4">
             <item.icon className="h-5 w-5 flex-shrink-0" />
@@ -242,12 +261,16 @@ const Sidebar = ({ isOpen, onClose }) => {
                 key={child.name}
                 to={child.href}
                 onClick={() => onClose()}
-                end={child.href === '/dashboard/attendance' || child.href === '/dashboard/reports/general'}
+                end={
+                  child.href === '/dashboard/attendance' || 
+                  child.href === '/dashboard/reports/general' ||
+                  child.href === '/dashboard/schools'
+                }
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all
                   ${isActive
-                    ? 'bg-slate-600 text-white shadow-inner'
-                    : 'text-slate-300 hover:bg-slate-700 hover:text-white'
+                    ? 'bg-gray-600 text-white shadow-inner'
+                    : 'text-gray-300 hover:bg-gray-700 hover:text-white'
                   }`
                 }
               >
@@ -272,7 +295,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         `flex items-center gap-4 px-4 py-3 text-sm font-medium rounded-lg transition-all
         ${isActive
           ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-white shadow-inner border-l-4 border-blue-500'
-          : 'text-slate-300 hover:bg-slate-700/50 hover:text-white hover:shadow-md'
+          : 'text-gray-300 hover:bg-gray-700/50 hover:text-white hover:shadow-md'
         }`
       }
     >
@@ -286,7 +309,7 @@ const Sidebar = ({ isOpen, onClose }) => {
       {/* Mobile Backdrop */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-40 lg:hidden"
+          className="fixed inset-0 bg-gray-800/50 backdrop-blur-sm z-40 lg:hidden"
           onClick={onClose}
         />
       )}
@@ -295,7 +318,7 @@ const Sidebar = ({ isOpen, onClose }) => {
       <aside 
         className={`
           fixed top-0 left-0 h-full w-64 
-          bg-slate-900
+          bg-gray-800
           transform transition-transform duration-300 ease-in-out z-50
           lg:translate-x-0 shadow-2xl
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
@@ -305,14 +328,14 @@ const Sidebar = ({ isOpen, onClose }) => {
           {/* Mobile Close Button */}
           <button
             onClick={onClose}
-            className="lg:hidden absolute top-4 right-4 text-gray-400 hover:text-white z-10 p-2 rounded-full hover:bg-slate-700 transition-colors"
+            className="lg:hidden absolute top-4 right-4 text-gray-400 hover:text-white z-10 p-2 rounded-full hover:bg-gray-700 transition-colors"
             aria-label="Close sidebar"
           >
             <XMarkIcon className="h-5 w-5" />
           </button>
 
           {/* Logo Section */}
-          <div className="px-6 py-8 border-b border-slate-700/50">
+          <div className="px-6 py-8 border-b border-gray-700/50">
             <div className="flex flex-col items-center">
               <div className="w-36 h-36 mb-4 flex items-center justify-center">
                 <img 
@@ -324,25 +347,25 @@ const Sidebar = ({ isOpen, onClose }) => {
               <h3 className="text-white font-bold text-2xl tracking-wide text-center">
                 Youth Impact
               </h3>
-              <p className="text-slate-400 text-xs mt-1 text-center">
+              <p className="text-gray-400 text-xs mt-1 text-center">
                 Track • Measure • Visualize
               </p>
             </div>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
+          <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
             {filteredNavigation.map((item) => 
               item.isDropdown ? renderDropdown(item) : renderLink(item)
             )}
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-slate-700/50">
-            <p className="text-xs text-slate-400 text-center">
+          <div className="p-4 border-t border-gray-700/50">
+            <p className="text-xs text-gray-400 text-center">
               © {new Date().getFullYear()} Youth Empowerment System
             </p>
-            <p className="text-xs text-slate-500 text-center mt-1">
+            <p className="text-xs text-gray-500 text-center mt-1">
               v1.0.0
             </p>
           </div>

@@ -209,9 +209,9 @@ const ChangePasswordPage = () => {
         // Redirect after delay
         setTimeout(() => {
           if (fromLogin) {
-            navigate('/dashboard');
+            navigate('/login');
           } else {
-            navigate('/dashboard/profile');
+            navigate('/login');
           }
         }, 2000);
       } else {

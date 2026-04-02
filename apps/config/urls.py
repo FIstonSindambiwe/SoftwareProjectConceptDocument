@@ -26,7 +26,7 @@ urlpatterns = [
         path('', include('assessments.urls')),
         path('analytics/', include('analytics.urls')),
         path('reports/', include('reports.urls')),
-        
+        path('reports/', include('reports.urls')),
         path('api/v1/test-email/', test_email_view, name='test_email'),
     ])),
 ]

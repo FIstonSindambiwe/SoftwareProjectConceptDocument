@@ -3,7 +3,6 @@ from rest_framework import serializers
 from .models import ReportTemplate, GeneratedReport
 
 
-
 class ReportTemplateSerializer(serializers.ModelSerializer):
     """Serializer for report templates"""
     template_type_display = serializers.CharField(source='get_template_type_display', read_only=True)

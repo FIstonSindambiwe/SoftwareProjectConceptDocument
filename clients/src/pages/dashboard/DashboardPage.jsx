@@ -483,6 +483,7 @@ const DashboardPage = () => {
       <style>{STYLES}</style>
 
       <div className="space-y-8 pb-12">
+        
         {/* ── Welcome Card ────────────────────────────────────── */}
         <WelcomeCard 
           user={user}
@@ -670,7 +671,7 @@ const DashboardPage = () => {
           {isTeacherUp && (
             <ActionCard 
               icon={ChartBarIcon}     
-              label="New Assessment"
+              label="Recording Assessment"
               sub="Record participant progress"
               onClick={() => navigate('/dashboard/assessments/create')}
               color="#6366f1" 

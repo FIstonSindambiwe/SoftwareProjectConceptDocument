@@ -53,6 +53,8 @@ import AttendanceListPage from './pages/dashboard/attendance/AttendanceListPage'
 import FaceCheckInPage from './pages/dashboard/attendance/FaceCheckInPage';
 import BulkAttendancePage from './pages/dashboard/attendance/BulkAttendancePage';
 import SessionsListPage from './pages/dashboard/attendance/SessionsListPage';
+import CreateSessionPage from './pages/dashboard/attendance/CreateSessionPage';
+import SessionAttendancePage from './pages/dashboard/attendance/SessionAttendancePage';
 import AttendanceDetailPage from './pages/dashboard/attendance/AttendanceDetailPage';
 import AttendanceEditPage from './pages/dashboard/attendance/AttendanceEditPage';
 
@@ -71,6 +73,12 @@ import IndicatorsListPage from './pages/dashboard/assessments/IndicatorsListPage
 
 // Reports
 import GeneralReport from './pages/dashboard/report/GeneralReport';
+// Schools  👈 ADD HERE
+import SchoolsListPage from './pages/dashboard/schools/SchoolsListPage';
+import CreateSchoolPage from './pages/dashboard/schools/CreateSchoolPage';
+import SchoolDetailPage from './pages/dashboard/schools/SchoolDetailPage';
+import CreateStudentPage from './pages/dashboard/schools/CreateStudentPage';
+import StudentDetailPage from './pages/dashboard/schools/StudentDetailPage';
 
 // Profile (Regular profile page, not password change)
 import ProfilePage from './pages/dashboard/profile/ProfilePage';
@@ -80,6 +88,10 @@ import ProtectedRoute from "./hooks/ProtectedRoute";
 import useAuth from './hooks/useAuth';
 
 // Public Route Component
+
+
+
+
 const PublicRoute = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
 
@@ -408,6 +420,9 @@ function App() {
             </ProtectedRoute>
           } 
         />
+
+
+        
         <Route 
           path="/dashboard/participants/create" 
           element={
@@ -432,6 +447,7 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        
 
         {/* ================================
             ATTENDANCE ROUTES
@@ -476,7 +492,7 @@ function App() {
             </ProtectedRoute>
           } 
         />
-        <Route 
+         <Route 
           path="/dashboard/attendance/sessions" 
           element={
             <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff']} requireFullAuth={true}>
@@ -485,8 +501,26 @@ function App() {
           } 
         />
 
-        {/* ================================
-            ASSESSMENTS ROUTES
+        {/* NEW - Create Session Route */}
+        <Route 
+          path="/dashboard/attendance/sessions/create" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff']} requireFullAuth={true}>
+              <CreateSessionPage />
+            </ProtectedRoute>
+          } 
+        />
+
+        <Route 
+  path="/dashboard/attendance/sessions/:id/attendance" 
+  element={
+    <ProtectedRoute allowedRoles={['admin', 'teacher', 'program_manager', 'staff']} requireFullAuth={true}>
+      <SessionAttendancePage />
+    </ProtectedRoute>
+  } 
+/>
+        
+            { /*ASSESSMENTS ROUTES
             ================================ */}
         <Route 
           path="/dashboard/assessments" 
@@ -535,7 +569,7 @@ function App() {
         <Route 
           path="/dashboard/reports/general" 
           element={
-            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'director']} requireFullAuth={true}>
+            <ProtectedRoute allowedRoles={['admin', 'program_manager', 'director','teacher','donor']} requireFullAuth={true}>
               <GeneralReport />
             </ProtectedRoute>
           } 
@@ -552,6 +586,51 @@ function App() {
             </ProtectedRoute>
           } 
         />
+
+{/* ================================
+    SCHOOLS ROUTES
+    ================================ */}
+<Route 
+  path="/dashboard/schools" 
+  element={
+    <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher', 'staff']} requireFullAuth={true}>
+      <SchoolsListPage />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/dashboard/schools/create" 
+  element={
+    <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher', 'staff']} requireFullAuth={true}>
+      <CreateSchoolPage />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/dashboard/schools/:id" 
+  element={
+    <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher', 'staff']} requireFullAuth={true}>
+      <SchoolDetailPage />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/dashboard/schools/:schoolId/students/create" 
+  element={
+    <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher', 'staff']} requireFullAuth={true}>
+      <CreateStudentPage />
+    </ProtectedRoute>
+  } 
+/>
+<Route 
+  path="/dashboard/schools/students/:id" 
+  element={
+    <ProtectedRoute allowedRoles={['admin', 'program_manager', 'teacher', 'staff']} requireFullAuth={true}>
+      <StudentDetailPage />
+    </ProtectedRoute>
+  } 
+/>
+
 
         {/* ================================
             REDIRECTS

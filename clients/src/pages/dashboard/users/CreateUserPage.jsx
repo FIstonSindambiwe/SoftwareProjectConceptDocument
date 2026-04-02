@@ -482,6 +482,69 @@ const CreateUserPage = () => {
         </div>
 
         <form onSubmit={handleSubmit}>
+
+          {/* Personal Information Card */}
+          <Card title="Personal Information" className="mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <Input
+                label="First Name"
+                name="first_name"
+                value={formData.first_name}
+                onChange={handleChange}
+                error={errors.first_name}
+                disabled={isLoading}
+              />
+
+              <Input
+                label="Last Name"
+                name="last_name"
+                value={formData.last_name}
+                onChange={handleChange}
+                error={errors.last_name}
+                disabled={isLoading}
+              />
+
+              <Input
+                label="Phone Number"
+                name="phone_number"
+                type="tel"
+                value={formData.phone_number}
+                onChange={handleChange}
+                error={errors.phone_number}
+                disabled={isLoading}
+                helperText="Optional"
+              />
+
+              <Input
+                label="Organization"
+                name="organization"
+                value={formData.organization}
+                onChange={handleChange}
+                error={errors.organization}
+                disabled={isLoading}
+                helperText="Optional"
+              />
+
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Bio
+                </label>
+                <textarea
+                  name="bio"
+                  rows={3}
+                  value={formData.bio}
+                  onChange={handleChange}
+                  disabled={isLoading}
+                  className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  placeholder="Brief bio or description (optional)"
+                />
+                {errors.bio && (
+                  <p className="mt-1 text-sm text-red-600">{errors.bio}</p>
+                )}
+              </div>
+            </div>
+          </Card>
+
           {/* Account Information Card */}
           <Card title="Account Information">
             <div className="space-y-5">
@@ -574,68 +637,8 @@ const CreateUserPage = () => {
             </div>
           </Card>
 
-          {/* Personal Information Card */}
-          <Card title="Personal Information" className="mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <Input
-                label="First Name"
-                name="first_name"
-                value={formData.first_name}
-                onChange={handleChange}
-                error={errors.first_name}
-                disabled={isLoading}
-              />
-
-              <Input
-                label="Last Name"
-                name="last_name"
-                value={formData.last_name}
-                onChange={handleChange}
-                error={errors.last_name}
-                disabled={isLoading}
-              />
-
-              <Input
-                label="Phone Number"
-                name="phone_number"
-                type="tel"
-                value={formData.phone_number}
-                onChange={handleChange}
-                error={errors.phone_number}
-                disabled={isLoading}
-                helperText="Optional"
-              />
-
-              <Input
-                label="Organization"
-                name="organization"
-                value={formData.organization}
-                onChange={handleChange}
-                error={errors.organization}
-                disabled={isLoading}
-                helperText="Optional"
-              />
-
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Bio
-                </label>
-                <textarea
-                  name="bio"
-                  rows={3}
-                  value={formData.bio}
-                  onChange={handleChange}
-                  disabled={isLoading}
-                  className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  placeholder="Brief bio or description (optional)"
-                />
-                {errors.bio && (
-                  <p className="mt-1 text-sm text-red-600">{errors.bio}</p>
-                )}
-              </div>
-            </div>
-          </Card>
-
+          
+          
           {/* Role Selection Card */}
           <Card title="Role & Permissions" className="mt-6">
             <div className="space-y-5">
